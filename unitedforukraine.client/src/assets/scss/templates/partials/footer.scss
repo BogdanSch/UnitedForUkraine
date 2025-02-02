@@ -1,0 +1,19 @@
+.footer {
+  color: $white;
+  background-color: $dark-navy;
+
+  &__wrap {
+    @include flex-row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__list {
+    @include flex-row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+  &__item {
+    color: $white !important;
+  }
+}

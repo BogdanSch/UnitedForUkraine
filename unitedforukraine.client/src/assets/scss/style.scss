@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@mixin flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+@mixin flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+$primary: #005bbb;
+$secondary: #ffd700;
+$accent: #ff5722;
+$green: #4caf50;
+$pale-blue: #d6eaf8;
+$dark-navy: #001f3f;
+$text-dark-gray: #212121;
+$white: #f9f9f9;
+$bg-light-gray: #f5f5f5;
+
+@import "./general.scss";
+@import "./templates/partials/header.scss";
+@import "./templates/partials/footer.scss";
+@import "./templates/hero.scss";

@@ -1,0 +1,54 @@
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+.wrapper {
+  @include flex-col;
+  min-height: 100vh;
+  // overflow: hidden;
+  background: $pale-blue;
+  color: $text-dark-gray;
+}
+
+.main {
+  margin-top: 40px;
+  flex: 1;
+  @include flex-col;
+  @include flex-center;
+}
+
+section {
+  width: 100%;
+}
+
+.text-content {
+  display: block;
+  margin: 0 auto;
+  max-width: 90%;
+  padding: 0 20px;
+}
+
+.site-logo {
+  @include flex-row();
+  justify-content: center;
+  align-items: center;
+  column-gap: 8px;
+
+  &__svg {
+    width: 36px;
+    height: 36px;
+    color: $primary !important;
+  }
+}
+
+.btn {
+  padding: 12px 20px;
+
+  &-primary {
+    background-color: $primary;
+  }
+  &-outline-primary {
+    border: none;
+    border: 1px solid $primary;
+  }
+}

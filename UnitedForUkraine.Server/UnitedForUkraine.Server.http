@@ -1,0 +1,6 @@
+@UnitedForUkraine.Server_HostAddress = http://localhost:5210
+
+GET {{UnitedForUkraine.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

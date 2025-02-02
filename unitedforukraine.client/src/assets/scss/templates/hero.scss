@@ -1,0 +1,52 @@
+.hero {
+  min-height: 90vh;
+  @include flex-col;
+  @include flex-center;
+  position: relative;
+  overflow: hidden; // Ensures overlay stays contained
+
+  .container {
+    width: 100%;
+    flex-grow: 1;
+    @include flex-col;
+    @include flex-center;
+  }
+
+  &__wrap {
+    width: 100%;
+    position: relative;
+    background-image: url("/assets/img/hero-background.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    flex-grow: 1;
+    @include flex-col;
+    @include flex-center;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.355);
+      z-index: 1;
+    }
+
+    .text-content {
+      max-width: 60%;
+      position: relative;
+      z-index: 2;
+      margin: 0;
+      color: $white;
+      align-self: flex-start;
+      justify-self: flex-end;
+    }
+  }
+  &__title {
+    padding: 12px;
+    background-color: $bg-light-gray;
+    color: $dark-navy;
+  }
+}
