@@ -1,12 +1,12 @@
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 import { Campaign } from "../types";
+import { Card, ProgressBar } from "../components";
+import formatMoney from "../utils/formatMoney";
 
-import Card from "../components/Card";
-
-type CampaignsListProps = {
-  //   campaigns: Campaign[];
-};
+type CampaignsListProps = {};
 
 const CampaignsList: FC<CampaignsListProps> = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -15,14 +15,14 @@ const CampaignsList: FC<CampaignsListProps> = () => {
     const fetchData = async () => {
       const options = {
         method: "GET",
-        url: "https://localhost:7043/api/Home/getCompaigns",
+        url: "https://localhost:7043/api/Home/getCampaigns",
       };
 
       try {
         const { data } = await axios.request(options);
 
         console.log(data);
-        setCampaigns(data?.campaigns || []);
+        setCampaigns(data || []);
       } catch (error) {
         console.error(error);
       }
@@ -33,15 +33,45 @@ const CampaignsList: FC<CampaignsListProps> = () => {
 
   return (
     <ul className="campaigns__list mt-5">
-      {campaigns?.length ? (
+      {campaigns.length > 0 ? (
         campaigns.map((campaign: Campaign) => (
-          <Card
-            key={campaign.id}
-            title={campaign.title}
-            description={campaign.description}
-            imageSrc={campaign.imageUrl}
-            imageAlt={campaign.title}
-          />
+          <li className="campaigns__item" key={campaign.id}>
+            <Card
+              imageSrc={campaign.imageUrl}
+              imageAlt={campaign.title}
+              cardStatus={campaign.status}
+            >
+              <h3 className="card-title">{campaign.title}</h3>
+              <p className="card-text text-muted">{campaign.description}</p>
+              <p className="card-text text-muted">
+                <strong>Goal:</strong> {formatMoney(campaign.goalAmount)}{" "}
+                {campaign.currency}
+              </p>
+              <ProgressBar
+                className="mt-3 mb-4"
+                currentAmount={campaign.raisedAmount}
+                requiredAmount={campaign.goalAmount}
+              />
+              {campaign.status === "Ongoing" ? (
+                <Link
+                  className="btn btn-outline-success"
+                  to={`/campaigns/${campaign.id}/`}
+                >
+                  <div className="d-flex flex-row align-items-center gap-2">
+                    <span>Donate Now</span>
+                    <i className="bi bi-cash-coin"></i>
+                  </div>
+                </Link>
+              ) : (
+                <Link
+                  className="btn btn-success"
+                  to={`/campaigns/${campaign.id}/`}
+                >
+                  <span>Coming soon</span>
+                </Link>
+              )}
+            </Card>
+          </li>
         ))
       ) : (
         <p className="text-center">No campaigns have been found!</p>

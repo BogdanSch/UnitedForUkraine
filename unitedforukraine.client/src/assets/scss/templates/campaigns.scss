@@ -1,7 +1,30 @@
 .campaigns {
-    &__headline {
-        @include flex-row();
-        justify-content: space-between;
-        align-items: center;
+  &__headline {
+    @include flex-row();
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__list {
+    padding-left: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    column-gap: 12px;
+    row-gap: 8px;
+  }
+
+  &__item {
+    .card {
+      position: relative;
+      width: 100%;
+      height: 100%;
     }
+    &:last-child {
+      grid-column: span 2;
+    }
+    &:first-child {
+      grid-column: span 2;
+    }
+  }
 }

@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
-import CampaignsList from "../../containers/CampaignsList";
-import Image from "../../components/Image";
+import { CampaignsList } from "../../containers";
+import { Card, Image } from "../../components";
 import aboutImage from "/assets/img/aboutPreviewAbstract.webp";
 
 const HomePage: FC = () => {
@@ -11,22 +11,18 @@ const HomePage: FC = () => {
       <section className="hero" id="hero">
         <div className="container">
           <div className="hero__wrap">
-            <div className="card hero__card">
-              <div className="card-body">
-                <h1 className="hero__title">
-                  United for Ukraine: Stand with Us
-                </h1>
-                <p className="hero__description">
-                  Providing essential aid, shelter, and opportunities for
-                  Ukrainian refugees as they rebuild their lives with dignity,
-                  hope, and resilience. Join us in making a difference today.
-                </p>
-                <Link className="btn btn-outline-primary" to={`/projects`}>
-                  <i className="bi bi-balloon-heart-fill me-2"></i>
-                  <span className="small ms-2">Donate Now</span>
-                </Link>
-              </div>
-            </div>
+            <Card className="hero__card" imageSrc="" imageAlt="">
+              <h1 className="hero__title">United for Ukraine: Stand with Us</h1>
+              <p className="hero__description">
+                Providing essential aid, shelter, and opportunities for
+                Ukrainian refugees as they rebuild their lives with dignity,
+                hope, and resilience. Join us in making a difference today.
+              </p>
+              <Link className="btn btn-outline-primary" to={`/campaigns`}>
+                <i className="bi bi-balloon-heart-fill me-2"></i>
+                <span className="small ms-2">Donate Now</span>
+              </Link>
+            </Card>
           </div>
         </div>
       </section>
@@ -46,7 +42,7 @@ const HomePage: FC = () => {
                 war. Join us in making a difference—because together, we are
                 stronger.
               </p>
-              <Link className="btn btn-primary" to="about">
+              <Link className="btn btn-primary" to="/about">
                 Read more.
               </Link>
             </div>

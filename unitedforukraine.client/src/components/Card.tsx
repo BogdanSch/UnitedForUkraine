@@ -1,28 +1,33 @@
 import { FC, ReactNode } from "react";
 import Image from "./Image";
-import { describe } from "node:test";
 
 type CardProps = {
-  title: string;
-  description: string;
+  className?: string;
   imageSrc: string;
   imageAlt: string;
+  cardStatus?: string;
+  children: ReactNode;
   [key: string]: any;
 };
 
 const Card: FC<CardProps> = ({
-  title,
-  description,
+  className = "",
   imageSrc = "",
   imageAlt = "",
+  cardStatus = "",
+  children,
   ...rest
 }) => {
   return (
-    <div className="card h-100 p-4" {...rest}>
-      {imageSrc !== "" && (
-        <Image className={`card-img`} src={imageSrc} alt={imageAlt} />
-      )}
+    <div className={`card p-4 ${className}`} {...rest}>
+      <div className="card-image">
+        {cardStatus !== "" && <div className={`card-status`}>{cardStatus}</div>}
+        {imageSrc !== "" && (
+          <Image className={`card-img`} src={imageSrc} alt={imageAlt} />
+        )}
+      </div>
       <div className="card-body">
+        {children}
         {/* <div className="icon-wrapper bg-soft-primary">
           <svg
             width="24"
@@ -35,8 +40,6 @@ const Card: FC<CardProps> = ({
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
           </svg>
         </div> */}
-        <h3 className="card-title">{title}</h3>
-        <p className="card-text text-muted">{description}</p>
       </div>
     </div>
   );

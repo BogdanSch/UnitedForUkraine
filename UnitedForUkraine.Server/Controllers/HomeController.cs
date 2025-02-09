@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Interfaces;
+using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Controllers;
 
@@ -15,18 +17,42 @@ public class HomeController : ControllerBase
         _donationRepository = donationRepository;
         _campaignRepository = campaignRepository;
     }
-    [HttpGet("getCompaigns")]
+    [HttpGet("getCampaigns")]
     public async Task<IActionResult> GetCampaignsData()
     {
         var campaigns = await _campaignRepository.GetCampaigns(_pageCount);
+        var response = campaigns.Select(c => new
+        {
+            c.Id,
+            c.Title,
+            c.Description,
+            c.GoalAmount,
+            c.RaisedAmount,
+            Status = Enum.GetName(typeof(CampaignStatus), c.Status),
+            Currency = Enum.GetName(typeof(CurrencyType), c.Currency),
+            c.StartDate,
+            c.EndDate,
+            c.ImageUrl
+        }).ToList();
 
-        return Ok(new { campaigns });
+        return Ok(response);
     }
     [HttpGet("getDonations")]
     public async Task<IActionResult> GetDontaionsData()
     {
         var donations = await _donationRepository.GetDonations(_pageCount);
+        var response = donations.Select(d => new
+        {
+            d.Id,
+            d.UserId,
+            d.Amount,
+            Currency = Enum.GetName(typeof(CurrencyType), d.Currency),
+            PaymentMethod = Enum.GetName(typeof(PaymentMethod), d.PaymentMethod),
+            Status = Enum.GetName(typeof(DonationStatus), d.Status),
+            d.PaymentDate,
+            d.CampaignId
+        }).ToList();
 
-        return Ok(new { donations });
+        return Ok(response);
     }
 }
