@@ -1,0 +1,22 @@
+.about {
+  &__wrap {
+    @include flex-row();
+    justify-content: space-between;
+    align-items: center;
+  }
+  .text-content {
+    text-align: left;
+    max-width: 56%;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .about__wrap {
+    flex-direction: column-reverse;
+    row-gap: 20px;
+  }
+  .text-content {
+    max-width: 100% !important;
+    text-align: center !important;
+  }
+}

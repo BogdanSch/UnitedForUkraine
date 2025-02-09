@@ -1,7 +1,8 @@
 import { FC, useEffect, useRef } from "react";
 // import bootstrap from "bootstrap";
 import { ScrollSpy } from "bootstrap";
-import Logo from "../logo/Logo";
+import { Logo } from "../../components";
+import { Link } from "react-router-dom";
 
 const Header: FC = () => {
   const headerRef = useRef<HTMLDivElement>(null)!;
@@ -53,9 +54,9 @@ const Header: FC = () => {
       ref={headerRef}
     >
       <div className="container">
-        <a className="navbar-brand fw-bold" href="#page-top">
+        <Link className="navbar-brand fw-bold" to="/">
           <Logo />
-        </a>
+        </Link>
         <button
           ref={navbarTogglerRef}
           className="navbar-toggler"
@@ -75,26 +76,35 @@ const Header: FC = () => {
             ref={navbarListRef}
           >
             <li className="nav-item">
-              <a className="nav-link me-lg-3" href="#features">
-                Features
-              </a>
+              <Link className="nav-link me-lg-3" to="home">
+                Home
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link me-lg-3" href="#download">
-                Download
-              </a>
+              <Link className="nav-link me-lg-3" to="about">
+                About
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link me-lg-3" to="/campaigns">
+                Campaigns
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link me-lg-3" to="blog">
+                Blog
+              </Link>
             </li>
           </ul>
-          <button
+          <Link
             className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"
-            data-bs-toggle="modal"
-            data-bs-target="#feedbackModal"
+            to={`/campaigns`}
           >
             <span className="d-flex align-items-center">
-              <i className="bi-chat-text-fill me-2"></i>
-              <span className="small">Send Feedback</span>
+              <i className="bi bi-balloon-heart-fill me-2"></i>
+              <span className="small">Donate Now</span>
             </span>
-          </button>
+          </Link>
         </nav>
       </div>
     </header>

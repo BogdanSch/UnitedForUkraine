@@ -13,33 +13,48 @@ public class DonationRepository : IDonationRepository
         _context = context;
     }
 
-    public Task<Donation> AddDonation(Donation donation)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Donation> DeleteDonation(int id)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<IEnumerable<Donation>> GetAllDonations()
     {
-        return await _context.Donations.ToListAsync();
+        return await _context.Donations.OrderByDescending(d => d.PaymentDate).ToListAsync();
+    }
+    public async Task<Donation?> GetDonationById(int id)
+    {
+        return await _context.Donations.FirstOrDefaultAsync(dontaion => dontaion.Id == id);
+    }
+    public async Task<IEnumerable<Donation>> GetDonations(int donationsAmount)
+    {
+        return await _context.Donations
+            .OrderByDescending(d => d.PaymentDate)
+            .Take(donationsAmount)
+            .ToListAsync();
+    }
+    public async Task<Donation> Add(Donation donation)
+    {
+        await _context.Donations.AddAsync(donation);
+        await Save();
+        return donation;
+    }
+    public async Task<Donation?> Delete(int id)
+    {
+        Donation? donation = await _context.Donations.FindAsync(id);
+
+        if (donation != null)
+        {
+            _context.Donations.Remove(donation);
+            await Save();
+        }
+
+        return donation;
+    }
+    public async Task<bool> Update(Donation donation)
+    {
+        _context.Donations.Update(donation);
+        return await Save();
     }
 
-    public Task<Donation> GetDonation(int id)
+    public async Task<bool> Save()
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<Donation>> GetDonations(int donationsAmount)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool UpdateDonation(Donation donation)
-    {
-        throw new NotImplementedException();
+        int saved = _context.SaveChanges();
+        return saved > 0;
     }
 }

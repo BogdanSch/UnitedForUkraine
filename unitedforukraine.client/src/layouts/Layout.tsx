@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Outlet } from "react-router-dom";
 
-import { Header, Footer } from "../components";
+import { Header, Footer } from "./partials";
 
 const Layout: FC = () => {
   return (

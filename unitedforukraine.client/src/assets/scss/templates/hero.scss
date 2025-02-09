@@ -1,9 +1,10 @@
 .hero {
-  min-height: 90vh;
+  min-height: 96vh;
+  margin-top: 20px;
   @include flex-col;
   @include flex-center;
   position: relative;
-  overflow: hidden; // Ensures overlay stays contained
+  overflow: hidden;
 
   .container {
     width: 100%;
@@ -13,6 +14,7 @@
   }
 
   &__wrap {
+    padding: 20px;
     width: 100%;
     position: relative;
     background-image: url("/assets/img/hero-background.jpg");
@@ -30,23 +32,27 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.355);
+      background: rgba(0, 0, 0, 0.4);
       z-index: 1;
     }
+  }
+  &__card {
+    transition: all 0.6s ease-out;
+    position: relative;
+    z-index: 2;
+    max-width: 500px;
+    margin: 0;
+    color: $dark-navy;
+    background-color: $bg-light-gray;
+    // background: rgba(255, 255, 255, 0.9);
+    align-self: flex-start;
+    justify-self: flex-end;
 
-    .text-content {
-      max-width: 60%;
-      position: relative;
-      z-index: 2;
-      margin: 0;
-      color: $white;
-      align-self: flex-start;
-      justify-self: flex-end;
+    &:hover {
+      transform: scale(1.03);
     }
   }
   &__title {
-    padding: 12px;
-    background-color: $bg-light-gray;
     color: $dark-navy;
   }
 }

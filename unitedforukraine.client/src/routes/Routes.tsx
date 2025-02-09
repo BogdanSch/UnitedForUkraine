@@ -7,7 +7,8 @@ export const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-      { path: "", element: <HomePage /> },
+      { index: true, element: <HomePage /> },
+      { path: "home", element: <HomePage /> },
       { path: "unauthorized", element: <UnauthorizedPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],

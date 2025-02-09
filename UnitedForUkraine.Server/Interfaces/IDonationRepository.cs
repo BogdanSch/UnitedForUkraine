@@ -6,8 +6,9 @@ public interface IDonationRepository
 {
     Task<IEnumerable<Donation>> GetAllDonations();
     Task<IEnumerable<Donation>> GetDonations(int donationsAmount);
-    Task<Donation> GetDonation(int id);
-    Task<Donation> AddDonation(Donation donation);
-    bool UpdateDonation(Donation donation);
-    Task<Donation> DeleteDonation(int id);
+    Task<Donation> GetDonationById(int id);
+    Task<Donation> Add(Donation donation);
+    Task<Donation> Delete(int id);
+    Task<bool> Update(Donation donation);
+    Task<bool> Save();
 }

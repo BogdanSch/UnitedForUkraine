@@ -1,0 +1,7 @@
+.campaigns {
+    &__headline {
+        @include flex-row();
+        justify-content: space-between;
+        align-items: center;
+    }
+}

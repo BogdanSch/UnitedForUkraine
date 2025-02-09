@@ -26,7 +26,15 @@ $text-dark-gray: #212121;
 $white: #f9f9f9;
 $bg-light-gray: #f5f5f5;
 
+$fw-light: 300;
+$fw-normal: 500;
+$fw-bold: 700;
+$fw-super-bold: 900;
+
+@import "./animations.scss";
 @import "./general.scss";
 @import "./templates/partials/header.scss";
 @import "./templates/partials/footer.scss";
 @import "./templates/hero.scss";
+@import "./templates/about.scss";
+@import "./templates/campaigns.scss";
