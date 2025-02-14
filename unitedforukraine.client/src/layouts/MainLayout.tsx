@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 import { Header, Footer } from "./partials";
 
-const Layout: FC = () => {
+const MainLayout: FC = () => {
   return (
     <>
       <Header />
@@ -25,4 +25,4 @@ const Layout: FC = () => {
   );
 };
 
-export default Layout;
+export default MainLayout;

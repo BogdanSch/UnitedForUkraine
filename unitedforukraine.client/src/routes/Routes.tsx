@@ -1,22 +1,33 @@
 import { createBrowserRouter } from "react-router-dom";
-import Layout from "../layouts/Layout";
+import MainLayout from "../layouts/MainLayout";
+import AuthLayout from "../layouts/AuthLayout";
+
 import {
   CampaignIndex,
   HomePage,
+  LoginPage,
   NotFoundPage,
-  UnauthorizedPage,
+  RegisterPage,
 } from "../pages";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <MainLayout />,
     children: [
       { index: true, element: <HomePage /> },
       { path: "home", element: <HomePage /> },
       { path: "campaigns", element: <CampaignIndex /> },
-      { path: "unauthorized", element: <UnauthorizedPage /> },
+      // { path: "unauthorized", element: <UnauthorizedPage /> },
       { path: "*", element: <NotFoundPage /> },
+    ],
+  },
+  {
+    path: "/auth",
+    element: <AuthLayout />,
+    children: [
+      { path: "login", element: <LoginPage /> },
+      { path: "register", element: <RegisterPage /> },
     ],
   },
 ]);
