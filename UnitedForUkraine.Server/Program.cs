@@ -25,7 +25,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddDefaultTokenProviders();
 
 IConfigurationSection jwtSettings = builder.Configuration.GetSection("JwtSettings");
-byte[] key = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
+byte[] key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
 
 builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
@@ -41,7 +41,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("https://localhost:49723")
                   .AllowAnyMethod()
-                  .AllowAnyHeader();
+                  .AllowAnyHeader()
+                  .AllowCredentials();
         });
 });
 

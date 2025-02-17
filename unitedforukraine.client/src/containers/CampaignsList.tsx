@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Campaign } from "../types";
 import { Card, ProgressBar } from "../components";
 import formatMoney from "../utils/formatMoney";
+import { API_URL } from "../variables";
 
 type CampaignsListProps = {};
 
@@ -15,7 +16,7 @@ const CampaignsList: FC<CampaignsListProps> = () => {
     const fetchData = async () => {
       const options = {
         method: "GET",
-        url: "https://localhost:7043/api/Home/getCampaigns",
+        url: `${API_URL}/Campaign/getCampaigns`,
       };
 
       try {

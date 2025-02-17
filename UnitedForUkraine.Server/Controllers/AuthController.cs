@@ -11,7 +11,7 @@ using UnitedForUkraine.Server.DTOs.User;
 
 namespace UnitedForUkraine.Server.Controllers
 {
-    [Route("api/auth")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -40,11 +40,17 @@ namespace UnitedForUkraine.Server.Controllers
             var token = GenerateJwtToken(user);
             return Ok(new { token });
         }
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok(new { message = "Successfully logged out" });
+        }
 
         private string GenerateJwtToken(AppUser user)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>

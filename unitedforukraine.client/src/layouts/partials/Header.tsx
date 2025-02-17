@@ -1,80 +1,66 @@
-import { FC, useEffect, useRef } from "react";
-// import bootstrap from "bootstrap";
+import { FC, useEffect } from "react";
 import { ScrollSpy } from "bootstrap";
+import { Link, useLocation } from "react-router-dom";
+
 import { Logo } from "../../components";
-import { Link } from "react-router-dom";
+import { SignOutForm } from "../../containers";
 
 const Header: FC = () => {
-  const headerRef = useRef<HTMLDivElement>(null)!;
-  const navbarTogglerRef = useRef<HTMLButtonElement>(null)!;
-  const navbarListRef = useRef<HTMLUListElement>(null)!;
+  const location = useLocation();
 
   useEffect(() => {
-    if (
-      !headerRef.current ||
-      !navbarTogglerRef.current ||
-      !navbarListRef.current
-    ) {
-      return;
-    }
-
-    const scrollSpy = new ScrollSpy(document.body, {
+    new ScrollSpy(document.body, {
       target: "#mainNav",
       offset: 74,
     });
 
-    const navbarToggler = navbarTogglerRef.current;
-    const navbarList = navbarListRef.current;
-    const responsiveNavItems = Array.from(
-      navbarList.querySelectorAll(".nav-link")
-    );
-
-    const handleNavItemClick = () => {
-      if (window.getComputedStyle(navbarToggler!).display !== "none") {
-        navbarToggler!.click();
-      }
-    };
-
-    responsiveNavItems.forEach((item) => {
-      item.addEventListener("click", handleNavItemClick);
-    });
-
     return () => {
-      responsiveNavItems.forEach((item) => {
-        item.removeEventListener("click", handleNavItemClick);
-      });
-      scrollSpy.dispose();
+      ScrollSpy.getInstance(document.body)?.dispose();
     };
-  }, [headerRef, navbarTogglerRef, navbarListRef]);
+  }, []);
+
+  useEffect(() => {
+    const currentPathName: string = location.pathname;
+
+    const navLinks: HTMLLIElement[] = Array.from(
+      document.querySelectorAll<HTMLLIElement>(".nav-link")
+    );
+    navLinks.forEach((navLink) => {
+      const navLinkPathName: string = navLink.getAttribute("href")!;
+
+      if (
+        navLinkPathName === currentPathName ||
+        (navLinkPathName === "/home" && currentPathName === "/")
+      ) {
+        navLink.classList.add("active");
+      } else {
+        navLink.classList.remove("active");
+      }
+    });
+  }, [location]);
 
   return (
     <header
       className="header navbar navbar-expand-lg navbar-light fixed-top shadow-sm"
       id="mainNav"
-      ref={headerRef}
     >
       <div className="container">
         <Link className="navbar-brand fw-bold" to="/">
           <Logo />
         </Link>
         <button
-          ref={navbarTogglerRef}
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
-          data-bs-target="#navbarResponsive"
+          data-bs-target="#responsiveNavbar"
           aria-controls="navbarResponsive"
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          Menu
           <i className="bi-list"></i>
         </button>
-        <nav className="collapse navbar-collapse" id="navbarResponsive">
-          <ul
-            className="navbar-nav ms-auto me-4 my-3 my-lg-0"
-            ref={navbarListRef}
-          >
+        <nav className="collapse navbar-collapse" id="responsiveNavbar">
+          <ul className="navbar-nav ms-auto me-4 my-3 my-lg-0">
             <li className="nav-item">
               <Link className="nav-link me-lg-3" to="home">
                 Home
@@ -105,6 +91,29 @@ const Header: FC = () => {
               <span className="small">Donate Now</span>
             </span>
           </Link>
+          <div className="header__profile dropdown">
+            <button
+              type="button"
+              className="btn btn-profile d-block link-body-emphasis text-decoration-none dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <svg className="header__profile-svg" width="32" height="32">
+                <use xlinkHref="#userProfile"></use>
+              </svg>
+            </button>
+            <ul className="dropdown-menu">
+              <li>
+                <Link className="dropdown-item" to={`/dashboard`}>
+                  My profile
+                </Link>
+              </li>
+              <hr className="dropdown-divider" />
+              <li>
+                <SignOutForm />
+              </li>
+            </ul>
+          </div>
         </nav>
       </div>
     </header>
