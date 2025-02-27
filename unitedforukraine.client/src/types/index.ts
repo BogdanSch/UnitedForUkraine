@@ -23,3 +23,7 @@ export type Donation = {
 };
 
 export type CampaignStatus = "Ongoing" | "Completed" | "Upcoming" | "Cancelled";
+
+export type User = {
+  
+};

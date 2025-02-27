@@ -33,7 +33,7 @@ const Image: FC<ImageProps> = ({ className, id, src, alt }) => {
   }, [blurDivRef]);
 
   return (
-    <div className="blur-load" ref={blurDivRef}>
+    <div className={`blur-load ${className}__container`} ref={blurDivRef}>
       <img
         className={`image ${className}`}
         id={id}

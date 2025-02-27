@@ -17,6 +17,10 @@ body {
   @include flex-center;
 }
 
+p {
+  color: $text-light-gray;
+}
+
 section {
   width: 100%;
 }
@@ -44,6 +48,7 @@ section {
   }
 
   &.loaded {
+    background-image: none;
     &::before {
       animation: none;
       content: none;
@@ -155,5 +160,12 @@ section {
       background-color: $primary;
       color: $white;
     }
+  }
+}
+
+.form {
+  &-text {
+    font-size: 12px;
+    font-weight: $fw-light;
   }
 }

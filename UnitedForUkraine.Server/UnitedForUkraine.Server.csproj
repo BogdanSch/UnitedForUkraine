@@ -35,4 +35,6 @@
     </ProjectReference>
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="properties" /></VisualStudio></ProjectExtensions>
+
 </Project>

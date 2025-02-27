@@ -12,7 +12,7 @@ using UnitedForUkraine.Server.Data;
 namespace UnitedForUkraine.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250131220700_InitialCreate")]
+    [Migration("20250222172213_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
