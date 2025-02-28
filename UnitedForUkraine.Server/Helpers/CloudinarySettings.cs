@@ -1,4 +1,4 @@
-﻿namespace RunGroupWebApp.Helpers;
+﻿namespace UnitedForUkraine.Server.Helpers;
 
 public class CloudinarySettings
 {

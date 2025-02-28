@@ -1,10 +1,8 @@
 import axios from "axios";
 import { FC, createContext, useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-// import useLocalStorage from "../hooks/useLocalStorage";
+import useLocalStorage from "../hooks/useLocalStorage";
 import { API_URL } from "../variables";
 import { User } from "../types";
-import useLocalStorage from "../hooks/useLocalStorage";
 
 interface IAuthContextProps {
   user: User | null;
@@ -61,6 +59,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     setAuthToken(authToken);
     fetchUserData(authToken);
   };
+
+  // const registerUser = (userData: User) => {
+  //   setAuthToken(authToken);
+  //   fetchUserData(authToken);
+  // };
 
   const logoutUser = () => {
     setUser(null);

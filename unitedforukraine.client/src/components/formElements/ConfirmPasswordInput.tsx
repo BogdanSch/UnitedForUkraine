@@ -18,11 +18,11 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ value, onChange }) => {
     <div className="input-group flex-nowrap password-input-wrapper">
       <Input
         type={showPassword ? "text" : "password"}
-        id="password"
-        name="password"
+        id="confirmPassword"
+        name="confirmPassword"
         className="form-password"
         value={value}
-        placeholder="Enter password"
+        placeholder="Repeat password"
         onChange={onChange}
         autoComplete="current-password"
         aria-describedby="passwordHelpInline"

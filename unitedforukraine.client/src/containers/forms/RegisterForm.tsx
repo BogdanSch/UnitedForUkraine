@@ -1,14 +1,15 @@
 import { FC, useState, ChangeEvent, FormEvent, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_URL } from "../variables";
+import { API_URL } from "../../variables";
 import axios, { AxiosError } from "axios";
 
-import PasswordInput from "../components/formElements/PasswordInput";
-import AuthContext from "../contexts/AuthContext";
+import PasswordInput from "../../components/formElements/PasswordInput";
+import AuthContext from "../../contexts/AuthContext";
+import { ConfirmPasswordInput } from "../../components";
 
 const MIN_PASSWORD_LENGTH: number = 7;
 
-const SignInForm: FC = () => {
+const RegisterForm: FC = () => {
   const navigate = useNavigate();
   const { authenticateUser } = useContext(AuthContext);
 
@@ -21,6 +22,7 @@ const SignInForm: FC = () => {
   const [errors, setErrors] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
     isFormValid: true,
   });
 
@@ -36,6 +38,7 @@ const SignInForm: FC = () => {
     let newErrors = {
       email: "",
       password: "",
+      confirmPassword: "",
       isFormValid: true,
     };
 
@@ -62,6 +65,10 @@ const SignInForm: FC = () => {
       newErrors.isFormValid = false;
     }
 
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = `Passwords should be identical!`;
+      newErrors.isFormValid = false;
+    }
     setErrors(newErrors);
     return newErrors.isFormValid;
   };
@@ -79,7 +86,7 @@ const SignInForm: FC = () => {
 
       try {
         const response = await axios.post(
-          `${API_URL}/Auth/login`,
+          `${API_URL}/Auth/register`,
           formData,
           options
         );
@@ -89,7 +96,9 @@ const SignInForm: FC = () => {
         navigate("/dashboard");
       } catch (error) {
         if (error instanceof AxiosError) {
-          console.error(error.response?.data.message || "An error occurred");
+          console.error(
+            error.response?.data.message || "An error has occurred"
+          );
         } else {
           console.error("Unexpected error:", error);
         }
@@ -110,16 +119,17 @@ const SignInForm: FC = () => {
     setErrors({
       email: "",
       password: "",
+      confirmPassword: "",
       isFormValid: true,
     });
   }
 
   return (
     <form
-      className="login__form mt-5"
+      className="register__form mt-5"
       onSubmit={handleSubmit}
       onReset={handleReset}
-      aria-labelledby="loginForm"
+      aria-labelledby="registerForm"
     >
       <div className="mb-3">
         <label htmlFor="email" className="form-label">
@@ -157,6 +167,20 @@ const SignInForm: FC = () => {
           </div>
         )}
       </div>
+      <div className="mb-3">
+        <label htmlFor="password" className="form-label">
+          Confirm Password*
+        </label>
+        <ConfirmPasswordInput
+          value={formData.confirmPassword}
+          onChange={handleChange}
+        />
+        {errors.confirmPassword && (
+          <div className="alert alert-danger mt-1" role="alert">
+            {errors.confirmPassword}
+          </div>
+        )}
+      </div>
       <div className="mb-3 form-check">
         <input
           type="checkbox"
@@ -170,9 +194,9 @@ const SignInForm: FC = () => {
           Remember Me
         </label>
       </div>
-      <div className="login__form-buttons mt-2">
+      <div className="register__form-buttons mt-2">
         <button type="submit" className="btn btn-secondary">
-          Login
+          Register
         </button>
         <button type="reset" className="btn btn-outline-danger">
           Reset
@@ -182,4 +206,4 @@ const SignInForm: FC = () => {
   );
 };
 
-export default SignInForm;
+export default RegisterForm;
