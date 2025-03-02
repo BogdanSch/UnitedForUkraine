@@ -25,7 +25,7 @@ public class AuthTokenService : IAuthTokenService
         List<Claim> claims = new()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.UserName!)
+                new Claim(ClaimTypes.Name, user.UserName!),
             };
 
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512);

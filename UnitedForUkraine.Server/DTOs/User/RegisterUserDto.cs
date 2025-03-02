@@ -4,13 +4,11 @@ namespace UnitedForUkraine.Server.DTOs.User;
 
 public class RegisterUserDto
 {
-    [DataType(DataType.Text)]
-    public required string UserName;
+    public required string UserName { get; set; } = string.Empty;
     [DataType(DataType.EmailAddress)]
     public required string Email { get; set; }
     [DataType(DataType.Password)]
     public required string Password { get; set; }
     [DataType(DataType.Password)]
     public required string ConfirmPassword { get; set; }
-    public bool RememberMe { get; set; } = false;
 }

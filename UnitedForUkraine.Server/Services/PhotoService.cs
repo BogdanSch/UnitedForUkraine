@@ -1,8 +1,8 @@
 ﻿using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
 using Microsoft.Extensions.Options;
-using RunGroupWebApp.Helpers;
 using UnitedForUkraine.Server.Interfaces;
+using UnitedForUkraine.Server.Helpers;
 
 namespace UnitedForUkraine.Server.Services;
 

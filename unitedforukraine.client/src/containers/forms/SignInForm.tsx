@@ -1,75 +1,34 @@
-import { FC, useState, ChangeEvent, FormEvent, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { FC, FormEvent, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../variables";
 import axios, { AxiosError } from "axios";
 
 import PasswordInput from "../../components/formElements/PasswordInput";
 import AuthContext from "../../contexts/AuthContext";
-
-const MIN_PASSWORD_LENGTH: number = 7;
+import { useAuthForm } from "../../hooks/";
+import { Input } from "../../components";
 
 const SignInForm: FC = () => {
   const navigate = useNavigate();
   const { authenticateUser } = useContext(AuthContext);
 
-  const [formData, setFormData] = useState({
+  const {
+    formData,
+    errors,
+    handleChange,
+    validateForm,
+    setFormData,
+    setErrors,
+  } = useAuthForm({
     email: "",
     password: "",
-    confirmPassword: "",
     rememberMe: false,
   });
-  const [errors, setErrors] = useState({
-    email: "",
-    password: "",
-    isFormValid: true,
-  });
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleValidation = (): boolean => {
-    let newErrors = {
-      email: "",
-      password: "",
-      isFormValid: true,
-    };
-
-    const emailValidation: RegExp = /(.+)@(.+){2,}\.(.+){2,}/;
-
-    if (!formData.email.match(emailValidation)) {
-      newErrors.email = "Invalid email format!";
-      newErrors.isFormValid = false;
-    }
-
-    const upperCaseLettersValidation: RegExp = /[A-Z]/g;
-    const numbersValidation: RegExp = /(?=(.*\d){3})/;
-
-    if (formData.password.length < MIN_PASSWORD_LENGTH) {
-      newErrors.password = `Password should be at least ${MIN_PASSWORD_LENGTH} characters long!`;
-      newErrors.isFormValid = false;
-    } else if (!formData.password.match(upperCaseLettersValidation)) {
-      newErrors.password =
-        "Password should contain at least one capital (uppercase) letter!";
-      newErrors.isFormValid = false;
-    } else if (!formData.password.match(numbersValidation)) {
-      newErrors.password =
-        "Password should contain at least three digits (0-9)!";
-      newErrors.isFormValid = false;
-    }
-
-    setErrors(newErrors);
-    return newErrors.isFormValid;
-  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (handleValidation()) {
+    if (validateForm()) {
       console.log("Form validated!");
 
       const options = {
@@ -97,8 +56,8 @@ const SignInForm: FC = () => {
     }
   };
 
-  function handleReset(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault();
+  const handleReset = (event: FormEvent<HTMLFormElement>): void => {
+    // event.preventDefault();
 
     setFormData({
       email: "",
@@ -110,13 +69,12 @@ const SignInForm: FC = () => {
     setErrors({
       email: "",
       password: "",
-      isFormValid: true,
     });
-  }
+  };
 
   return (
     <form
-      className="login__form mt-5"
+      className="login__form mt-4"
       onSubmit={handleSubmit}
       onReset={handleReset}
       aria-labelledby="loginForm"
@@ -125,7 +83,7 @@ const SignInForm: FC = () => {
         <label htmlFor="email" className="form-label">
           Email*
         </label>
-        <input
+        <Input
           type="email"
           id="email"
           name="email"
@@ -134,7 +92,7 @@ const SignInForm: FC = () => {
           placeholder="Enter email"
           onChange={handleChange}
           autoComplete="email"
-          required
+          isRequired={true}
         />
         {errors.email && (
           <div className="alert alert-danger mt-1" role="alert">
@@ -177,6 +135,11 @@ const SignInForm: FC = () => {
         <button type="reset" className="btn btn-outline-danger">
           Reset
         </button>
+      </div>
+      <div className="mt-4 text-center">
+        <p>
+          Don't have an account? <Link to="/auth/register">Sign up here</Link>.
+        </p>
       </div>
     </form>
   );

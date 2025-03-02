@@ -1,0 +1,6 @@
+.register-image {
+  border-radius: 16px;
+}
+.register-image__container {
+  max-width: 50%;
+}

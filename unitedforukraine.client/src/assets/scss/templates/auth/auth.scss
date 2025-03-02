@@ -1,0 +1,31 @@
+@import "./login.scss";
+@import "./register.scss";
+
+.auth {
+  &__wrap {
+    @include flex-row();
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 12px;
+  }
+  &__hero-content {
+    padding: 12px 16px;
+  }
+  &__title {
+    text-align: center;
+    font-weight: $fw-bold;
+  }
+  &__description {
+    text-align: center;
+    font-weight: $fw-normal;
+  }
+}
+
+@media screen and (max-width: 764px) {
+  .auth {
+    &__wrap {
+      @include flex-col();
+      row-gap: 12px;
+    }
+  }
+}

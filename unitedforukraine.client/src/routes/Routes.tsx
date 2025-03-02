@@ -8,6 +8,7 @@ import {
   LoginPage,
   NotFoundPage,
   RegisterPage,
+  SuccessfulRegistration,
 } from "../pages";
 
 export const router = createBrowserRouter([
@@ -18,7 +19,7 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "home", element: <HomePage /> },
       { path: "campaigns", element: <CampaignIndex /> },
-      // { path: "unauthorized", element: <UnauthorizedPage /> },
+      { path: "registered", element: <SuccessfulRegistration /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },

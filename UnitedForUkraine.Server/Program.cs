@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using RunGroupWebApp.Helpers;
 using Scalar.AspNetCore;
 using System.Text;
 using UnitedForUkraine.Server.Data;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
 using UnitedForUkraine.Server.Repositories;
@@ -27,6 +27,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<IAuthTokenService, AuthTokenService>();
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 //string myAllowLocalhost = "AllowLocalhost";

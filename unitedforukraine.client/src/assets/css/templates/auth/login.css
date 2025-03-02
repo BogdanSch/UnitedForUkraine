@@ -1,0 +1,6 @@
+.login-image {
+  border-radius: 16px;
+}
+.login-image__container {
+  max-width: 50%;
+}

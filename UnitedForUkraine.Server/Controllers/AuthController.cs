@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using UnitedForUkraine.Server.Models;
 using UnitedForUkraine.Server.DTOs.User;
 using Microsoft.AspNetCore.Authorization;
 using UnitedForUkraine.Server.Data;
+using UnitedForUkraine.Server.Services;
+using UnitedForUkraine.Server.Interfaces;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -17,13 +16,13 @@ namespace UnitedForUkraine.Server.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly IConfiguration _config;
+        private readonly IAuthTokenService _authTokenService;
 
-        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration config)
+        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _config = config;
+            _authTokenService = authTokenService;
         }
 
         [HttpPost("login")]
@@ -37,7 +36,7 @@ namespace UnitedForUkraine.Server.Controllers
             if (!result.Succeeded)
                 return Unauthorized(new { message = "Invalid email or password" });
 
-            string token = GenerateJwtToken(user);
+            string token = _authTokenService.CreateToken(user);
 
             return Ok(token);
         }
@@ -103,29 +102,6 @@ namespace UnitedForUkraine.Server.Controllers
         {
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Successfully logged out" });
-        }
-
-        private string GenerateJwtToken(AppUser user)
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.UserName!)
-            };
-
-            var jwtSettings = _config.GetSection("JwtSettings");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-
-            JwtSecurityToken tokenDescriptor = new(
-                issuer: jwtSettings["Issuer"],
-                audience: jwtSettings["Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(2),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
     }
 }

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Image } from "../../components";
 
-import registerImage from "/assets/img/registerImage.png";
+import registerImage from "/assets/img/registerImage.jpg";
 import { RegisterForm } from "../../containers/";
 
 const RegisterPage: FC = () => {

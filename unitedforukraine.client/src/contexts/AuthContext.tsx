@@ -71,12 +71,15 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     axios.post(`${API_URL}/Auth/logout`);
   };
 
+  const isAuthenticated = () => !!user && !!authToken;
+
   const contextValue = useMemo(
     () => ({
       user,
       authToken,
       authenticateUser,
       logoutUser,
+      isAuthenticated,
     }),
     [user, authToken]
   );
