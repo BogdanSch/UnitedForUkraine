@@ -17,6 +17,12 @@ body {
   @include flex-center;
 }
 
+h1,
+h2 {
+  font-family: "Montserrat", sans-serif;
+  // letter-spacing: -0.05rem;
+}
+
 p {
   color: $text-light-gray;
 }
@@ -98,6 +104,10 @@ section {
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
+  &-border {
+    border: 2px solid $primary-transparent;
+  }
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -143,9 +153,16 @@ section {
 }
 
 .btn {
-  transition: all 0.4s ease-in-out;
   padding: 12px 24px;
-  border-radius: 4px;
+  border-radius: 24px;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+    border-top-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    // border-left-radius: 16px;
+  }
 
   &-primary {
     background-color: $primary;
@@ -160,6 +177,35 @@ section {
       background-color: $primary;
       color: $white;
     }
+  }
+  &-sky {
+    background-color: $sky-blue;
+    color: $white;
+    // padding: 10px 20px;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+
+    &:hover {
+      background-color: $sky-blue; // Darker blue on hover
+    }
+  }
+  &-outline-sky {
+    background-color: transparent;
+    border: 2px solid $sky-blue;
+    color: $sky-blue;
+
+    &:hover {
+      background-color: $sky-blue;
+      color: $white;
+    }
+  }
+}
+
+@media screen and (max-width: 63rem) {
+  .btn {
+    padding: 8px 20px;
+    border-radius: 20px;
   }
 }
 

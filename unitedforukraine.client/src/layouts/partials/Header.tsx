@@ -1,12 +1,14 @@
-import { FC, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import { ScrollSpy } from "bootstrap";
 import { Link, useLocation } from "react-router-dom";
 
 import { Logo } from "../../components";
 import { SignOutForm } from "../../containers";
+import AuthContext from "../../contexts/AuthContext";
 
 const Header: FC = () => {
   const location = useLocation();
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     new ScrollSpy(document.body, {
@@ -59,8 +61,11 @@ const Header: FC = () => {
         >
           <i className="bi-list"></i>
         </button>
-        <nav className="collapse navbar-collapse" id="responsiveNavbar">
-          <ul className="navbar-nav ms-auto me-4 my-3 my-lg-0">
+        <nav
+          className="header__navbart collapse navbar-collapse"
+          id="responsiveNavbar"
+        >
+          <ul className="header__list navbar-nav ms-auto me-4 my-3 my-lg-0">
             <li className="nav-item">
               <Link className="nav-link me-lg-3" to="home">
                 Home
@@ -91,29 +96,40 @@ const Header: FC = () => {
               <span className="small">Donate Now</span>
             </span>
           </Link>
-          <div className="header__profile dropdown">
-            <button
-              type="button"
-              className="btn btn-profile d-block link-body-emphasis text-decoration-none dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <svg className="header__profile-svg" width="32" height="32">
-                <use xlinkHref="#userProfile"></use>
-              </svg>
-            </button>
-            <ul className="dropdown-menu">
-              <li>
-                <Link className="dropdown-item" to={`/dashboard`}>
-                  My profile
-                </Link>
-              </li>
-              <hr className="dropdown-divider" />
-              <li>
-                <SignOutForm />
-              </li>
-            </ul>
-          </div>
+          {isAuthenticated() ? (
+            <div className="header__profile dropdown">
+              <button
+                type="button"
+                className="btn btn-profile d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <svg className="header__profile-svg" width="32" height="32">
+                  <use xlinkHref="#userProfile"></use>
+                </svg>
+              </button>
+              <ul className="dropdown-menu">
+                <li>
+                  <Link className="dropdown-item" to={`/dashboard`}>
+                    My profile
+                  </Link>
+                </li>
+                <hr className="dropdown-divider" />
+                <li>
+                  <SignOutForm />
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <div className="header__auth-buttons card p-2">
+              <Link className="btn btn-outline-secondary" to={`/auth/login`}>
+                Log in
+              </Link>
+              <Link className="btn btn-sky" to={`/auth/register`}>
+                Sign up
+              </Link>
+            </div>
+          )}
         </nav>
       </div>
     </header>

@@ -1,0 +1,24 @@
+.features {
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    list-style: none;
+    padding-left: 0;
+  }
+  &__item {
+    @include flex-row;
+    @include flex-center;
+    column-gap: 8px;
+    min-height: 200px;
+
+    // &.card {
+    //   border: 2px solid $primary-transparent;
+    // }
+
+    &-svg {
+      color: $sky-blue;
+      font-size: 3rem;
+    }
+  }
+}

@@ -28,3 +28,14 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .campaigns {
+    &__headline {
+      @include flex-col();
+      justify-content: center;
+      align-items: flex-start;
+      row-gap: 8px;
+    }
+  }
+}

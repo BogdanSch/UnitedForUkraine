@@ -9,6 +9,7 @@ interface IAuthContextProps {
   authToken: string | null;
   authenticateUser: (authToken: string) => void;
   logoutUser: () => void;
+  isAuthenticated: () => boolean;
 }
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ const AuthContext = createContext<IAuthContextProps>({
   authToken: null,
   authenticateUser: () => {},
   logoutUser: () => {},
+  isAuthenticated: () => false,
 });
 
 export default AuthContext;

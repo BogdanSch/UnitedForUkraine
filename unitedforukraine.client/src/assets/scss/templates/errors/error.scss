@@ -1,0 +1,54 @@
+.error {
+  @include flex-col();
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+
+  &__wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  &__card {
+    text-align: center;
+    background: radial-gradient(circle at top, #212529, #06060672);
+    padding: 2rem;
+    max-width: 600px;
+    min-height: 320px;
+    // box-shadow: 0 4px 20px $sky-blue;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+
+  &__title {
+    color: $sky-blue;
+    font-size: 4rem;
+    font-weight: $fw-super-bold;
+    // text-shadow: 0 4px 10px rgba(44, 130, 201, 0.5);
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  &__sub-title {
+    color: $pale-blue;
+    text-transform: capitalize;
+    font-size: 1.5rem;
+    font-weight: $fw-bold;
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out 0.5s forwards;
+  }
+
+  &__description {
+    color: $white;
+    font-size: 1rem;
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out 0.8s forwards;
+  }
+
+  .btn {
+    text-transform: uppercase;
+  }
+}

@@ -1,6 +1,9 @@
 .header {
   background-color: $bg-light-gray !important;
 
+  &__list {
+    flex-wrap: wrap;
+  }
   &__profile {
     &-svg {
       fill: $white;
@@ -15,6 +18,21 @@
       display: block;
       padding: 8px 24px;
       width: 100%;
+    }
+  }
+  &__auth-buttons {
+    @include flex-row;
+    column-gap: 4px;
+    margin-left: 12px;
+  }
+}
+
+@media screen and (max-width: 62rem) {
+  .header {
+    &__auth-buttons {
+      justify-content: center;
+      column-gap: 6px;
+      margin-left: 0;
     }
   }
 }

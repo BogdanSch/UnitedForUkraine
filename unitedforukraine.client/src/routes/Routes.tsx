@@ -19,7 +19,6 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "home", element: <HomePage /> },
       { path: "campaigns", element: <CampaignIndex /> },
-      { path: "registered", element: <SuccessfulRegistration /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },
@@ -29,6 +28,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
+      { path: "registered", element: <SuccessfulRegistration /> },
     ],
   },
 ]);
