@@ -36,7 +36,7 @@ public class AuthTokenService : IAuthTokenService
             Expires = DateTime.Now.AddDays(7),
             SigningCredentials = creds,
             Issuer = _jwtSettings["Issuer"]!,
-            Audience = _config["JWT:Audience"]
+            Audience = _jwtSettings["Audience"]
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();

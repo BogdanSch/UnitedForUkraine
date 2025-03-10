@@ -1,12 +1,9 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
-import { CampaignsList } from "../../containers";
+import { CampaignsList, StatisticsList } from "../../containers";
 import { Card, Image } from "../../components";
 import aboutImage from "/assets/img/aboutPreviewAbstract.webp";
-
-import formatMoney from "../../utils/formatMoney";
-import formatNumber from "../../utils/formatNumber";
 
 const HomePage: FC = () => {
   return (
@@ -137,48 +134,7 @@ const HomePage: FC = () => {
                 View Your Statistics
               </Link>
             </div>
-            <ul className="statistics__list mt-4">
-              <li className="statistics__item card card-border p-3">
-                <div className="statistics__item-group">
-                  <i className="bi bi-currency-exchange"></i>
-                  <h4 className="statistics__item-title">
-                    Total Donations Received
-                  </h4>
-                </div>
-                <p className="statistics__item-amount">
-                  {formatMoney(1200000)} <span className="currency">UAH</span>
-                </p>
-              </li>
-              <li className="statistics__item card card-border p-3">
-                <div className="statistics__item-group">
-                  <i className="bi bi-card-checklist"></i>
-                  <h4 className="statistics__item-title">
-                    Total Donations Number
-                  </h4>
-                </div>
-                <p className="statistics__item-amount">
-                  {formatNumber(50000)}+
-                </p>
-              </li>
-              <li className="statistics__item card card-border p-3">
-                <div className="statistics__item-group">
-                  <i className="bi bi-arrow-left-right"></i>
-                  <h4 className="statistics__item-title">Average Donation</h4>
-                </div>
-                <p className="statistics__item-amount">
-                  {formatMoney(1200)} <span className="currency">UAH</span>
-                </p>
-              </li>
-              <li className="statistics__item card card-border p-3">
-                <div className="statistics__item-group">
-                  <i className="bi bi-people"></i>
-                  <h4 className="statistics__item-title">Unique Donors</h4>
-                </div>
-                <p className="statistics__item-amount">
-                  {formatNumber(35000)}+
-                </p>
-              </li>
-            </ul>
+            <StatisticsList />
           </div>
         </div>
       </section>

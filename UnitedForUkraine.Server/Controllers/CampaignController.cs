@@ -15,7 +15,7 @@ public class CampaignController : ControllerBase
     {
         _campaignRepository = campaignRepository;
     }
-    [HttpGet("getCampaigns")]
+    [HttpGet("campaigns")]
     public async Task<IActionResult> GetCampaignsData()
     {
         var campaigns = await _campaignRepository.GetCampaigns(PAGE_ITEMS_COUNT);

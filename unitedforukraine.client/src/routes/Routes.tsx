@@ -3,6 +3,7 @@ import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
 
 import {
+  CampaignDetail,
   CampaignIndex,
   HomePage,
   LoginPage,
@@ -18,8 +19,17 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: "home", element: <HomePage /> },
-      { path: "campaigns", element: <CampaignIndex /> },
       { path: "*", element: <NotFoundPage /> },
+    ],
+  },
+  {
+    path: "/campaigns",
+    element: <MainLayout />,
+    children: [
+      { index: true, element: <CampaignIndex /> },
+      { path: "detail/:id", element: <CampaignDetail /> },
+      { path: "edit/:id", element: <CampaignIndex /> },
+      { path: "create", element: <CampaignIndex /> },
     ],
   },
   {

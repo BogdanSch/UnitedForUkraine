@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UnitedForUkraine.Server.Data.Enums;
+using UnitedForUkraine.Server.DTOs.Donation;
 using UnitedForUkraine.Server.Interfaces;
 
 namespace UnitedForUkraine.Server.Controllers;
@@ -15,22 +16,38 @@ public class DonationController : ControllerBase
     {
         _donationRepository = donationRepository;
     }
-    [HttpGet("getDonations")]
+    [HttpGet("donations")]
     public async Task<IActionResult> GetDontaionsData()
     {
         var donations = await _donationRepository.GetDonations(PAGE_ITEMS_COUNT);
-        var response = donations.Select(d => new
+
+        if (!donations.Any()) return Ok(new List<DonationDto>());
+
+        List<DonationDto> response = donations.Select(d => new DonationDto
         {
-            d.Id,
-            d.UserId,
-            d.Amount,
+            Id = d.Id,
+            UserId = d.UserId,
+            Amount = d.Amount,
             Currency = Enum.GetName(typeof(CurrencyType), d.Currency),
             PaymentMethod = Enum.GetName(typeof(PaymentMethod), d.PaymentMethod),
             Status = Enum.GetName(typeof(DonationStatus), d.Status),
-            d.PaymentDate,
-            d.CampaignId
+            PaymentDate = d.PaymentDate.ToString("MM-dd-yyyy HH:mm:ss"),
+            CampaignId = d.CampaignId
         }).ToList();
 
         return Ok(response);
+    }
+    [HttpGet("statistics")]
+    public async Task<IActionResult> GetTotalDontaionsNumber()
+    {
+        DonationStatisticsDto statisticsDto = new()
+        {
+            DonationsCount = await _donationRepository.GetTotalDonationsCount(),
+            TotalDonationsAmount = _donationRepository.GetTotalDonationsAmount(),
+            AverageDonationsAmount = await _donationRepository.GetAverageDonationsAmount(),
+            UniqueDonorsCount = await _donationRepository.GetUniqueDonorsCount()
+        };
+
+        return Ok(statisticsDto);
     }
 }

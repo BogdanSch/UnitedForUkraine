@@ -16,7 +16,7 @@ const CampaignsList: FC<CampaignsListProps> = () => {
     const fetchData = async () => {
       const options = {
         method: "GET",
-        url: `${API_URL}/Campaign/getCampaigns`,
+        url: `${API_URL}/Campaign/campaigns`,
       };
 
       try {
@@ -56,7 +56,7 @@ const CampaignsList: FC<CampaignsListProps> = () => {
               {campaign.status === "Ongoing" ? (
                 <Link
                   className="btn btn-outline-success"
-                  to={`/campaigns/${campaign.id}/`}
+                  to={`/campaigns/detail/${campaign.id}/`}
                 >
                   <div className="d-flex flex-row align-items-center gap-2">
                     <span>Donate Now</span>
@@ -66,7 +66,7 @@ const CampaignsList: FC<CampaignsListProps> = () => {
               ) : (
                 <Link
                   className="btn btn-success"
-                  to={`/campaigns/${campaign.id}/`}
+                  to={`/campaigns/detail/${campaign.id}/`}
                 >
                   <span>Coming soon</span>
                 </Link>

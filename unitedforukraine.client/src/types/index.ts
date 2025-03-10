@@ -24,6 +24,11 @@ export type Donation = {
 
 export type CampaignStatus = "Ongoing" | "Completed" | "Upcoming" | "Cancelled";
 
-export type User = {
-  
+export type User = {};
+
+export type Statistics = {
+  donationsCount: number;
+  totalDonationsAmount: number;
+  averageDonationsAmount: number;
+  uniqueDonorsCount: number;
 };

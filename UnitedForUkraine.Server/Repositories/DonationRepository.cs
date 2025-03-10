@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
@@ -17,7 +18,7 @@ public class DonationRepository : IDonationRepository
     {
         return await _context.Donations.OrderByDescending(d => d.PaymentDate).ToListAsync();
     }
-    public async Task<Donation?> GetDonationById(int id)
+    public async Task<Donation> GetDonationById(int id)
     {
         return await _context.Donations.FirstOrDefaultAsync(dontaion => dontaion.Id == id);
     }
@@ -31,30 +32,55 @@ public class DonationRepository : IDonationRepository
     public async Task<Donation> Add(Donation donation)
     {
         await _context.Donations.AddAsync(donation);
-        await Save();
+        Save();
         return donation;
     }
-    public async Task<Donation?> Delete(int id)
+    public async Task<Donation> Delete(int id)
     {
         Donation? donation = await _context.Donations.FindAsync(id);
 
         if (donation != null)
         {
             _context.Donations.Remove(donation);
-            await Save();
+            Save();
         }
 
         return donation;
     }
-    public async Task<bool> Update(Donation donation)
+    public bool Update(Donation donation)
     {
         _context.Donations.Update(donation);
-        return await Save();
+        return Save();
     }
 
-    public async Task<bool> Save()
+    public bool Save()
     {
         int saved = _context.SaveChanges();
         return saved > 0;
+    }
+
+    public async Task<int> GetTotalDonationsCount()
+    {
+        return await _context.Donations.CountAsync();
+    }
+
+    public decimal GetTotalDonationsAmount()
+    {
+        return _context.Donations.Sum(d => (decimal?)d.Amount) ?? 0m;
+    }
+
+    public async Task<int> GetAverageDonationsAmount()
+    {
+        int totalDonationsCount = await GetTotalDonationsCount();
+        decimal totalDonationsAmount = GetTotalDonationsAmount();
+        return (int)Math.Round(totalDonationsAmount / totalDonationsCount);
+    }
+
+    public async Task<int> GetUniqueDonorsCount()
+    {
+        return await _context.Donations
+           .Select(d => d.UserId)
+           .Distinct()
+           .CountAsync();
     }
 }
