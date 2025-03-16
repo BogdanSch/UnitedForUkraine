@@ -28,9 +28,9 @@ public class DonationController : ControllerBase
             Id = d.Id,
             UserId = d.UserId,
             Amount = d.Amount,
-            Currency = Enum.GetName(typeof(CurrencyType), d.Currency),
-            PaymentMethod = Enum.GetName(typeof(PaymentMethod), d.PaymentMethod),
-            Status = Enum.GetName(typeof(DonationStatus), d.Status),
+            Currency = Enum.GetName(typeof(CurrencyType), d.Currency)!,
+            PaymentMethod = Enum.GetName(typeof(PaymentMethod), d.PaymentMethod)!,
+            Status = Enum.GetName(typeof(DonationStatus), d.Status)!,
             PaymentDate = d.PaymentDate.ToString("MM-dd-yyyy HH:mm:ss"),
             CampaignId = d.CampaignId
         }).ToList();

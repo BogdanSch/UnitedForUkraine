@@ -68,7 +68,7 @@ const HomePage: FC = () => {
                 View All Campaigns
               </Link>
             </div>
-            <CampaignsList />
+            <CampaignsList showPaginationButtons={false} />
           </div>
         </div>
       </section>

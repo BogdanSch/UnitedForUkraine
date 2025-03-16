@@ -27,6 +27,14 @@
       grid-column: span 2;
     }
   }
+
+  &__paginator {
+    // margin: 0 auto;
+    @include flex-row();
+    justify-content: center;
+    align-items: center;
+    column-gap: 0;
+  }
 }
 
 @media screen and (max-width: 768px) {

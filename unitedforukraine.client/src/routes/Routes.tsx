@@ -3,7 +3,9 @@ import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
 
 import {
+  CampaignCreate,
   CampaignDetail,
+  CampaignEdit,
   CampaignIndex,
   HomePage,
   LoginPage,
@@ -28,8 +30,8 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <CampaignIndex /> },
       { path: "detail/:id", element: <CampaignDetail /> },
-      { path: "edit/:id", element: <CampaignIndex /> },
-      { path: "create", element: <CampaignIndex /> },
+      { path: "edit/:id", element: <CampaignEdit /> },
+      { path: "create", element: <CampaignCreate /> },
     ],
   },
   {

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ContosoUniversity;
+using Microsoft.AspNetCore.Mvc;
 using UnitedForUkraine.Server.Data.Enums;
+using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
 
@@ -10,29 +12,33 @@ namespace UnitedForUkraine.Server.Controllers;
 public class CampaignController : ControllerBase
 {
     private readonly ICampaignRepository _campaignRepository;
-    private const int PAGE_ITEMS_COUNT = 6;
+    private const int ITEMS_PER_QUERY_COUNT = 6;
+
     public CampaignController(ICampaignRepository campaignRepository)
     {
         _campaignRepository = campaignRepository;
     }
+
     [HttpGet("campaigns")]
-    public async Task<IActionResult> GetCampaignsData()
+    public async Task<IActionResult> GetCampaignsData([FromQuery] int page = 1)
     {
-        var campaigns = await _campaignRepository.GetCampaigns(PAGE_ITEMS_COUNT);
-        var response = campaigns.Select(c => new
+        var campaigns = _campaignRepository.GetAllCampaigns();
+        PaginatedList<Campaign> paginatedCampaigns = await PaginatedList<Campaign>.CreateAsync(campaigns, page, ITEMS_PER_QUERY_COUNT);
+
+        List<CampaignDto> campainsList = paginatedCampaigns.Select(c => new CampaignDto()
         {
-            c.Id,
-            c.Title,
-            c.Description,
-            c.GoalAmount,
-            c.RaisedAmount,
-            Status = Enum.GetName(typeof(CampaignStatus), c.Status),
-            Currency = Enum.GetName(typeof(CurrencyType), c.Currency),
-            c.StartDate,
-            c.EndDate,
-            c.ImageUrl
+            Id = c.Id,
+            Title = c.Title,
+            Description = c.Description,
+            GoalAmount = c.GoalAmount,
+            RaisedAmount = c.RaisedAmount,
+            Status = Enum.GetName(typeof(CampaignStatus), c.Status)!,
+            Currency = Enum.GetName(typeof(CurrencyType), c.Currency)!,
+            StartDate = c.StartDate.ToString("MM-dd-yyyy HH:mm:ss"),
+            EndDate = c.EndDate.ToString("MM-dd-yyyy HH:mm:ss"),
+            ImageUrl = c.ImageUrl
         }).ToList();
 
-        return Ok(response);
+        return Ok(new CampaignsDto() { Campaigns = campainsList, HasPreviousPage = paginatedCampaigns.HasPreviousPage, HasNextPage = paginatedCampaigns.HasNextPage});
     }
 }

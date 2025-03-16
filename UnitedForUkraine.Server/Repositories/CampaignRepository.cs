@@ -13,45 +13,49 @@ public class CampaignRepository : ICampaignRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Campaign>> GetAllCampaigns()
+    public IQueryable<Campaign> GetAllCampaigns()
     {
-        return await _context.Campaigns.OrderByDescending(c => c.StartDate).ToListAsync();
+        return _context.Campaigns.AsNoTracking().OrderByDescending(c => c.StartDate);
     }
     public async Task<Campaign> GetCampaignById(int id)
     {
         return await _context.Campaigns.FirstOrDefaultAsync(campaign => campaign.Id == id);
     }
-    public async Task<IEnumerable<Campaign>> GetCampaigns(int donationsAmount)
+    public async Task<IEnumerable<Campaign>> GetCampaigns(int campaignsAmount)
     {
         return await _context.Campaigns
             .OrderByDescending(c => c.StartDate)
-            .Take(donationsAmount)
-            .ToListAsync();
+            .Take(campaignsAmount)
+            .ToListAsync(); 
     }
     public async Task<Campaign> Add(Campaign campaign)
     {
         await _context.Campaigns.AddAsync(campaign);
-        await Save();
+        Save();
         return campaign;
     }
     public async Task<Campaign> Delete(int id)
     {
-        Campaign? camaign = await _context.Campaigns.FindAsync(id);
+        Campaign? campaign = await _context.Campaigns.FindAsync(id);
 
-        if (camaign != null)
+        if (campaign != null)
         {
-            _context.Campaigns.Remove(camaign);
-            await Save();
+            _context.Campaigns.Remove(campaign);
+            Save();
+        }
+        else
+        {
+            throw new Exception("Campaign not found");
         }
 
-        return camaign;
+        return campaign;
     }
-    public async Task<bool> Update(Campaign campaign)
+    public bool Update(Campaign campaign)
     {
         _context.Campaigns.Update(campaign);
-        return await Save();
+        return Save();
     }
-    public async Task<bool> Save()
+    public bool Save()
     {
         int saved = _context.SaveChanges();
         return saved > 0;
