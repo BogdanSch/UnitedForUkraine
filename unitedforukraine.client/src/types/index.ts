@@ -1,4 +1,4 @@
-export type Campaign = {
+export type CampaignDto = {
   id: number;
   title: string;
   description: string;
@@ -11,9 +11,10 @@ export type Campaign = {
   imageUrl: string;
 };
 
-export type Donation = {
+export type DonationDto = {
   id: number;
   userId: number;
+  userName: string;
   amount: number;
   currency: string;
   paymentDate: string;
@@ -24,11 +25,16 @@ export type Donation = {
 
 export type CampaignStatus = "Ongoing" | "Completed" | "Upcoming" | "Cancelled";
 
-export type User = {};
+export type UserDto = {};
 
 export type Statistics = {
   donationsCount: number;
   totalDonationsAmount: number;
   averageDonationsAmount: number;
   uniqueDonorsCount: number;
+};
+
+export type TimelineItem = {
+  date: string;
+  description: string;
 };

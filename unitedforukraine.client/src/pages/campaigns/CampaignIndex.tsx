@@ -3,7 +3,7 @@ import { CampaignsList } from "../../containers";
 
 const CampaignIndex: FC = () => {
   return (
-    <section className="campaigns" id="campaigns">
+    <section className="campaigns mt-5" id="campaigns">
       <div className="container">
         <div className="campaigns__wrap">
           <div className="campaigns__headline">

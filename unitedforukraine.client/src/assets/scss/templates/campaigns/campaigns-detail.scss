@@ -1,0 +1,111 @@
+.campaigns {
+  &-detail {
+    &__header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    &__image {
+      border-radius: 20px;
+      width: 100%;
+      max-height: 30rem;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+    &__description {
+      font-size: 1.2rem;
+      font-weight: $fw-bold;
+      color: $text-light-gray;
+      line-height: 1.6;
+    }
+    &__progress {
+      padding: 1rem;
+      text-align: center;
+
+      p {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+
+        strong {
+          color: $dark-navy;
+        }
+      }
+    }
+    &__info {
+      position: relative;
+      padding: 1rem;
+      text-align: center;
+
+      p {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        strong {
+          color: $dark-navy;
+        }
+      }
+    }
+    .status {
+      font-weight: 700;
+      text-transform: uppercase;
+      &.ongoing {
+        color: $green-light;
+      }
+      &.completed {
+        color: $white;
+      }
+      &.upcoming {
+        color: $accent;
+      }
+    }
+    &__status {
+      position: absolute;
+      content: "";
+      top: 8px;
+      right: 8px;
+      z-index: 1000;
+      padding: 8px 12px;
+      background-color: $primary;
+      border-radius: 8px;
+      font-weight: $fw-bold;
+      font-size: 1.2rem;
+      color: $text-dark-gray;
+    }
+    &__donations-list {
+      @include flex-col();
+      align-items: center;
+      column-gap: 4px;
+      padding: 0;
+    }
+    &__donations-item {
+      width: clamp(300px, 70%, 100%);
+      @include flex-row();
+      justify-content: space-between;
+      align-items: center;
+
+      &-date {
+        color: $sky-blue;
+        font-weight: $fw-bold;
+      }
+      &-amount {
+        span {
+          color: $green-light;
+          font-weight: $fw-super-bold;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 50rem) {
+  .campaigns {
+    &-detail {
+      &__status {
+        top: 4px;
+        right: 4px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+    }
+  }
+}

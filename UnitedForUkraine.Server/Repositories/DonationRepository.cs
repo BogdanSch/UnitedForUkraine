@@ -16,11 +16,15 @@ public class DonationRepository : IDonationRepository
 
     public async Task<IEnumerable<Donation>> GetAllDonations()
     {
-        return await _context.Donations.OrderByDescending(d => d.PaymentDate).ToListAsync();
+        return await _context.Donations.Include(d => d.User).OrderByDescending(d => d.PaymentDate).ToListAsync();
+    }
+    public async Task<IEnumerable<Donation>> GetAllDonationsByCampaignId(int campaignId)
+    {
+        return await _context.Donations.Where(d => d.CampaignId == campaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate).ToListAsync();
     }
     public async Task<Donation> GetDonationById(int id)
     {
-        return await _context.Donations.FirstOrDefaultAsync(dontaion => dontaion.Id == id);
+        return await _context.Donations.Include(d => d.User).FirstOrDefaultAsync(dontaion => dontaion.Id == id);
     }
     public async Task<IEnumerable<Donation>> GetDonations(int donationsAmount)
     {

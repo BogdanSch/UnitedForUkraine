@@ -2,10 +2,10 @@ import axios from "axios";
 import { FC, createContext, useState, useEffect, useMemo } from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { API_URL } from "../variables";
-import { User } from "../types";
+import { UserDto } from "../types";
 
 interface IAuthContextProps {
-  user: User | null;
+  user: UserDto | null;
   authToken: string | null;
   authenticateUser: (authToken: string) => void;
   logoutUser: () => void;
@@ -30,7 +30,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     "authToken",
     ""
   );
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserDto | null>(null);
 
   const fetchUserData = (authToken: string): void => {
     if (!authToken) return;

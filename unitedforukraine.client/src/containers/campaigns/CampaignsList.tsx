@@ -1,9 +1,9 @@
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
-import { Campaign } from "../../types";
-import { Card, ProgressBar } from "../../components";
+import { CampaignDto } from "../../types";
+import { CampaignActionButton, Card, ProgressBar } from "../../components";
 import formatMoney from "../../utils/formatMoney";
 import { API_URL } from "../../variables";
 import CampaignsPaginator from "./CampaignsPaginator";
@@ -12,10 +12,8 @@ type CampaignsListProps = {
   showPaginationButtons: boolean;
 };
 
-const CampaignsList: FC<CampaignsListProps> = ({
-  showPaginationButtons,
-}) => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
+  const [campaigns, setCampaigns] = useState<CampaignDto[]>([]);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
@@ -52,7 +50,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
     <>
       <ul className="campaigns__list mt-5">
         {campaigns.length > 0 ? (
-          campaigns.map((campaign: Campaign) => (
+          campaigns.map((campaign: CampaignDto) => (
             <li className="campaigns__item" key={campaign.id}>
               <Card
                 imageSrc={campaign.imageUrl}
@@ -70,24 +68,10 @@ const CampaignsList: FC<CampaignsListProps> = ({
                   currentAmount={campaign.raisedAmount}
                   requiredAmount={campaign.goalAmount}
                 />
-                {campaign.status === "Ongoing" ? (
-                  <Link
-                    className="btn btn-outline-success"
-                    to={`/campaigns/detail/${campaign.id}/`}
-                  >
-                    <div className="d-flex flex-row align-items-center gap-2">
-                      <span>Donate Now</span>
-                      <i className="bi bi-cash-coin"></i>
-                    </div>
-                  </Link>
-                ) : (
-                  <Link
-                    className="btn btn-success"
-                    to={`/campaigns/detail/${campaign.id}/`}
-                  >
-                    <span>Coming soon</span>
-                  </Link>
-                )}
+                <CampaignActionButton
+                  campaignId={campaign.id}
+                  campaignStatus={campaign.status}
+                />
               </Card>
             </li>
           ))

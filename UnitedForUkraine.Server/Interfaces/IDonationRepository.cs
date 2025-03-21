@@ -5,6 +5,7 @@ namespace UnitedForUkraine.Server.Interfaces;
 public interface IDonationRepository
 {
     Task<IEnumerable<Donation>> GetAllDonations();
+    Task<IEnumerable<Donation>> GetAllDonationsByCampaignId(int campaignId);
     Task<IEnumerable<Donation>> GetDonations(int donationsAmount);
     Task<Donation> GetDonationById(int id);
     decimal GetTotalDonationsAmount();

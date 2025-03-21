@@ -1,6 +1,6 @@
 ﻿namespace UnitedForUkraine.Server.DTOs.Campaign
 {
-    public class CampaignsDto
+    public class PaginatedCampaignsDto
     {
         public List<CampaignDto> Campaigns { get; set; }
         public bool HasPreviousPage { get; set; }

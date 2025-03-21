@@ -15,11 +15,11 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -29,21 +29,6 @@ builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IAuthTokenService, AuthTokenService>();
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
-
-//string myAllowLocalhost = "AllowLocalhost";
-//IConfigurationSection frontendSettings = builder.Configuration.GetSection("FrontendSettings");
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy(myAllowLocalhost,
-//        policy =>
-//        {
-//            policy.WithOrigins(frontendSettings["Url"]!)
-//                  .AllowAnyMethod()
-//                  .AllowAnyHeader()
-//                  .AllowCredentials();
-//        });
-//});
-
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
@@ -58,8 +43,7 @@ builder.Services.AddAuthentication(options =>
    options.DefaultScheme =
    options.DefaultSignInScheme =
    options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-    .AddJwtBearer(options =>
+}).AddJwtBearer(options =>
     {
         //options.RequireHttpsMetadata = true;
         //options.SaveToken = true;
@@ -108,11 +92,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors(cors => cors.AllowAnyMethod()
-//cors.WithOrigins(frontendSettings["Url"])
+
+IConfigurationSection frontendSettings = builder.Configuration.GetSection("FrontendSettings");
+app.UseCors(cors => cors
+                  .WithOrigins(frontendSettings["Url"]!)
+                  .AllowAnyMethod()
                   .AllowAnyHeader()
-                  .AllowCredentials()
-                  .SetIsOriginAllowed(origin => true));
+                  .AllowCredentials());
+                  //.SetIsOriginAllowed(origin => true));
 
 app.UseAuthentication();
 app.UseAuthorization();

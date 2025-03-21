@@ -6,6 +6,7 @@ namespace UnitedForUkraine.Server.DTOs.Donation
     {
         public int Id { get; set; }
         public required string UserId { get; set; }
+        public required string UserName { get; set; }
 
         [DataType(DataType.Currency)]
         public decimal Amount { get; set; }
