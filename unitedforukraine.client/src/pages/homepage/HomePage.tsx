@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Link } from "react-router-dom";
 
 import { CampaignsList, StatisticsList } from "../../containers";
-import { Card, Image } from "../../components";
+import { Card, Image, SectionHeadline } from "../../components";
 import aboutImage from "/assets/img/aboutPreviewAbstract.webp";
 
 const HomePage: FC = () => {
@@ -30,8 +30,10 @@ const HomePage: FC = () => {
         <div className="container">
           <div className="about__wrap">
             <div className="text-content">
-              <h4 className="section-indicator">About Us</h4>
-              <h2 className="about__title">Helping Ukrainian nation</h2>
+              <SectionHeadline
+                sectionTitle={`About Us`}
+                headingTitle={`Helping Ukrainian nation`}
+              />
               <p className="about__description">
                 Our mission is to provide essential support to the Ukrainian
                 people during these challenging times. We work tirelessly to
@@ -57,7 +59,7 @@ const HomePage: FC = () => {
       <section className="campaigns" id="campaigns">
         <div className="container">
           <div className="campaigns__wrap">
-            <div className="campaigns__headline">
+            {/* <div className="campaigns__headline">
               <div className="text-group">
                 <h4 className="section-indicator">Campaigns</h4>
                 <h2 className="campaigns__title">
@@ -67,7 +69,16 @@ const HomePage: FC = () => {
               <Link className="btn btn-outline-dark" to="/campaigns">
                 View All Campaigns
               </Link>
-            </div>
+            </div> */}
+            <SectionHeadline
+              className={`campaigns__headline`}
+              sectionTitle={`Campaigns`}
+              headingTitle={`Support Our Current Campaigns`}
+            >
+              <Link className="btn btn-outline-dark" to="/campaigns">
+                View All Campaigns
+              </Link>
+            </SectionHeadline>
             <CampaignsList showPaginationButtons={false} />
           </div>
         </div>
@@ -75,10 +86,14 @@ const HomePage: FC = () => {
       <section className="features" id="features">
         <div className="container">
           <div className="features__wrap">
-            <div className="text-group text-end">
+            <SectionHeadline
+              sectionTitle={`Features`}
+              headingTitle={`Our values`}
+            />
+            {/* <div className="text-group text-end">
               <h4 className="section-indicator">Features</h4>
               <h2 className="features__title">Our values</h2>
-            </div>
+            </div> */}
             <ul className="features__list mt-5">
               <li className="features__item card card-border p-4">
                 <div className="features__item-body">
@@ -118,7 +133,21 @@ const HomePage: FC = () => {
       <section className="statistics" id="statistics">
         <div className="container">
           <div className="statistics__wrap">
-            <div className="statistics__headline">
+            <SectionHeadline
+              className={`statistics__headline`}
+              sectionTitle={`Donations Statistics`}
+              headingTitle={`For the past 30 days`}
+              description={`A transparent overview of donation activity over the past 30
+                  days, showcasing contributions and their impact.`}
+            >
+              <Link
+                className="btn btn-outline-secondary"
+                to="/dashboard#donations"
+              >
+                View Your Statistics
+              </Link>
+            </SectionHeadline>
+            {/* <div className="statistics__headline">
               <div className="text-group">
                 <h4 className="section-indicator">Donations Statistics</h4>
                 <h2 className="statistics__title">For the past 30 days</h2>
@@ -133,7 +162,7 @@ const HomePage: FC = () => {
               >
                 View Your Statistics
               </Link>
-            </div>
+            </div> */}
             <StatisticsList />
           </div>
         </div>

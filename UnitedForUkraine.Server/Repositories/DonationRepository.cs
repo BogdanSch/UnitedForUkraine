@@ -18,9 +18,9 @@ public class DonationRepository : IDonationRepository
     {
         return await _context.Donations.Include(d => d.User).OrderByDescending(d => d.PaymentDate).ToListAsync();
     }
-    public async Task<IEnumerable<Donation>> GetAllDonationsByCampaignId(int campaignId)
+    public IQueryable<Donation> GetAllDonationsByCampaignId(int campaignId)
     {
-        return await _context.Donations.Where(d => d.CampaignId == campaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate).ToListAsync();
+        return _context.Donations.Where(d => d.CampaignId == campaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
     }
     public async Task<Donation> GetDonationById(int id)
     {

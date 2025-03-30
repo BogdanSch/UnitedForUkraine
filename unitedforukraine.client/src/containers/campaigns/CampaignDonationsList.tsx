@@ -10,7 +10,7 @@ type CampaigDonationsListProps = {
 const CampaignDonationsList: FC<CampaigDonationsListProps> = ({
   campaignId,
 }) => {
-  const [donations, setDonations] = useState<DonationDto[] | null>(null);
+  const [donations, setDonations] = useState<DonationDto[]>([]);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [currentDonationsPage, setCurrentDonationsPage] = useState<number>(1);
 
@@ -25,20 +25,20 @@ const CampaignDonationsList: FC<CampaigDonationsListProps> = ({
         const { data } = await axios.request(options);
 
         console.log(data);
-        setDonations(data.donations);
+        setDonations([...donations, ...data.donations]);
         setHasNextPage(data.hasNextPage);
       } catch (error) {
         console.error(error);
       }
     };
     fetchDonationsData();
-  }, [campaignId]);
+  }, [campaignId, currentDonationsPage]);
 
   return (
     <div className="campaigns-detail__donations">
       <h2 className="sub-heading">Recent donations</h2>
       <ul className="campaigns-detail__donations-list">
-        {donations?.map((donation: DonationDto) => (
+        {donations.map((donation: DonationDto) => (
           <li
             className="campaigns-detail__donations-item card p-3"
             key={`donations${donation.id}`}

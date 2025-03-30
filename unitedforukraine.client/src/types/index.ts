@@ -5,7 +5,7 @@ export type CampaignDto = {
   goalAmount: number;
   raisedAmount: number;
   status: CampaignStatus;
-  currency: string;
+  currency: Currency;
   startDate: string;
   endDate: string;
   imageUrl: string;
@@ -23,7 +23,18 @@ export type DonationDto = {
   campaignId: number;
 };
 
-export type CampaignStatus = "Ongoing" | "Completed" | "Upcoming" | "Cancelled";
+export enum CampaignStatus {
+  Upcoming,
+  Ongoing,
+  Completed,
+  Cancelled,
+}
+
+export enum Currency {
+  USD,
+  EUR,
+  UAH,
+}
 
 export type UserDto = {};
 

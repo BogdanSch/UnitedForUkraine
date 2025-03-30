@@ -8,7 +8,7 @@ import { CampaignDto, TimelineItem } from "../../types";
 import CampaigDonationsList from "../../containers/campaigns/CampaignDonationsList";
 import { Timeline } from "../../components";
 
-const CampaignDetail: FC = () => {
+const CampaignsDetail: FC = () => {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
   const navigate = useNavigate();
   let { id } = useParams();
@@ -106,4 +106,4 @@ const CampaignDetail: FC = () => {
   );
 };
 
-export default CampaignDetail;
+export default CampaignsDetail;

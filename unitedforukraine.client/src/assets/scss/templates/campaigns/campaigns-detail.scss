@@ -73,7 +73,7 @@
     &__donations-list {
       @include flex-col();
       align-items: center;
-      column-gap: 4px;
+      row-gap: 4px;
       padding: 0;
     }
     &__donations-item {

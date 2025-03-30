@@ -24,6 +24,8 @@ const Header: FC = () => {
   useEffect(() => {
     const currentPathName: string = location.pathname;
 
+    console.log(currentPathName);
+
     const navLinks: HTMLLIElement[] = Array.from(
       document.querySelectorAll<HTMLLIElement>(".nav-link")
     );
@@ -32,6 +34,7 @@ const Header: FC = () => {
 
       if (
         navLinkPathName === currentPathName ||
+        currentPathName.includes(navLinkPathName) ||
         (navLinkPathName === "/home" && currentPathName === "/")
       ) {
         navLink.classList.add("active");
@@ -67,12 +70,12 @@ const Header: FC = () => {
         >
           <ul className="header__list navbar-nav ms-auto me-4 my-3 my-lg-0">
             <li className="nav-item">
-              <Link className="nav-link me-lg-3" to="home">
+              <Link className="nav-link me-lg-3" to="/home">
                 Home
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link me-lg-3" to="about">
+              <Link className="nav-link me-lg-3" to="/about">
                 About
               </Link>
             </li>
@@ -82,7 +85,7 @@ const Header: FC = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link me-lg-3" to="blog">
+              <Link className="nav-link me-lg-3" to="/blog">
                 Blog
               </Link>
             </li>

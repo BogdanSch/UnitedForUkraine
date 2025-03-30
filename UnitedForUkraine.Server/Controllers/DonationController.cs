@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ContosoUniversity;
+using Microsoft.AspNetCore.Mvc;
 using UnitedForUkraine.Server.Data.Enums;
-using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.DTOs.Donation;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
+using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.Repositories;
 
 namespace UnitedForUkraine.Server.Controllers;
 
@@ -26,45 +27,25 @@ public class DonationController : ControllerBase
 
         if (!donations.Any()) return Ok(new List<DonationDto>());
 
-        List<DonationDto> response = donations.Select(d => new DonationDto
-        {
-            Id = d.Id,
-            UserId = d.UserId,
-            UserName = d.User.UserName,
-            Amount = d.Amount,
-            Currency = Enum.GetName(d.Currency)!,
-            PaymentMethod = Enum.GetName(d.PaymentMethod)!,
-            Status = Enum.GetName(d.Status)!,
-            PaymentDate = d.PaymentDate.ToString("MM-dd-yyyy HH:mm:ss"),
-            CampaignId = d.CampaignId
-        }).ToList();
+        List<DonationDto> response = donations.Select(d => d.ToDonationDto()).ToList();
 
         return Ok(response);
     }
     [HttpGet("donations/campaign/{campaignId}")]
     public async Task<IActionResult> GetCampaignDonationById(int campaignId, [FromQuery] int page = 1)
     {
-        var donations = await _donationRepository.GetAllDonationsByCampaignId(campaignId);
+        var donations = _donationRepository.GetAllDonationsByCampaignId(campaignId);
 
         if (!donations.Any())
         {
-            return Ok(new LoadedDonationsDto());
+            return Ok(new PaginatedDonationsDto());
         }
 
-        List<DonationDto> donationDtos = donations.Select(d => new DonationDto()
-        {
-            Id = d.Id,
-            UserId = d.UserId,
-            UserName = d.User.UserName,
-            Amount = d.Amount,
-            Currency = Enum.GetName(typeof(CurrencyType), d.Currency)!,
-            PaymentMethod = Enum.GetName(typeof(PaymentMethod), d.PaymentMethod)!,
-            Status = Enum.GetName(typeof(DonationStatus), d.Status)!,
-            PaymentDate = d.PaymentDate.ToString("MM-dd-yyyy HH:mm:ss"),
-            CampaignId = d.CampaignId
-        }).Skip((page - 1) * PAGE_ITEMS_COUNT).Take(PAGE_ITEMS_COUNT).ToList();
+        PaginatedList<Donation> loadedDonations = await PaginatedList<Donation>.CreateAsync(donations, page, PAGE_ITEMS_COUNT);
 
-        return Ok(new LoadedDonationsDto() { Donations = donationDtos, HasNextPage = true });
+        List<DonationDto> donationDtos = loadedDonations.Select(d => d.ToDonationDto()).ToList();
+
+        return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));
     }
     [HttpGet("donations/{id}")]
     public async Task<IActionResult> GetDontaionDataById(int id)
@@ -74,19 +55,7 @@ public class DonationController : ControllerBase
         if (targetDonation == null) 
             return NotFound();
 
-        DonationDto donationDto = new()
-        {
-            Id = targetDonation.Id,
-            UserId = targetDonation.UserId,
-            UserName = targetDonation.User.UserName!,
-            Amount = targetDonation.Amount,
-            Currency = Enum.GetName(typeof(CurrencyType), targetDonation.Currency)!,
-            PaymentMethod = Enum.GetName(typeof(PaymentMethod), targetDonation.PaymentMethod)!,
-            Status = Enum.GetName(typeof(DonationStatus), targetDonation.Status)!,
-            PaymentDate = targetDonation.PaymentDate.ToString("MM-dd-yyyy HH:mm:ss"),
-            CampaignId = targetDonation.CampaignId
-        };
-
+        DonationDto donationDto = targetDonation.ToDonationDto();
         return Ok(donationDto);
     }
     [HttpGet("statistics")]

@@ -7,3 +7,4 @@ export { default as PasswordInput } from "./formElements/PasswordInput";
 export { default as ConfirmPasswordInput } from "./formElements/ConfirmPasswordInput";
 export { default as CampaignActionButton } from "./campaigns/CampaignActionButton";
 export { default as Timeline } from "./Timeline";
+export { default as SectionHeadline } from "./SectionHeadline";
