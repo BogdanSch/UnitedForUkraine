@@ -2,11 +2,17 @@ import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { CampaignActionButton, Image, ProgressBar } from "../../components";
 import { API_URL } from "../../variables";
 import { CampaignDto, TimelineItem } from "../../types";
+import {
+  CampaignActionButton,
+  Image,
+  ProgressBar,
+  Timeline,
+} from "../../components";
 import CampaigDonationsList from "../../containers/campaigns/CampaignDonationsList";
-import { Timeline } from "../../components";
+import { convertCampaignStatusToString } from "../../utils/campaignMapper";
+import { convertCurrencyToString } from "../../utils/currency";
 
 const CampaignsDetail: FC = () => {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
@@ -74,8 +80,12 @@ const CampaignsDetail: FC = () => {
             </div>
             <Timeline timelines={getCampaignTimelines()} />
             <div className="campaigns-detail__status">
-              <span className={`status ${campaign?.status.toLowerCase()}`}>
-                {campaign?.status}
+              <span
+                className={`status ${convertCampaignStatusToString(
+                  campaign?.status || 0
+                )}`}
+              >
+                {convertCampaignStatusToString(campaign?.status || 0)}
               </span>
             </div>
           </div>
@@ -84,11 +94,11 @@ const CampaignsDetail: FC = () => {
             <div className="mt-3">
               <p>
                 <strong>Raised:</strong> {campaign?.raisedAmount}{" "}
-                {campaign?.currency}
+                {convertCurrencyToString(campaign?.currency || 0)}
               </p>
               <p>
                 <strong>Goal:</strong> {campaign?.goalAmount}{" "}
-                {campaign?.currency}
+                {convertCurrencyToString(campaign?.currency || 0)}
               </p>
               <div className="w-50 mx-auto">
                 <ProgressBar

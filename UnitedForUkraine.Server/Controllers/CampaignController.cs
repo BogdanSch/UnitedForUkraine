@@ -53,46 +53,24 @@ public class CampaignController : ControllerBase
     }
     [HttpPost("campaigns/create/")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateCampaign(int id, CreateCampaignDto updatedCampaignDto)
+    public async Task<IActionResult> CreateCampaign(CreateCampaignRequestDto createdCampaignDto)
     {
-        Campaign? targetCampaign = await _campaignRepository.GetCampaignById(id);
-
-        if (targetCampaign == null)
-        {
-            return NotFound();
-        }
-
-        if (!DateTime.TryParseExact(updatedCampaignDto.StartDate, DateSettings.DEFAULT_DATE_FORMAT, null, DateTimeStyles.None, out var newStartDate))
-            return BadRequest($"Invalid start date format: {updatedCampaignDto.StartDate}");
-        if (!DateTime.TryParseExact(updatedCampaignDto.EndDate, DateSettings.DEFAULT_DATE_FORMAT, null, DateTimeStyles.None, out var newEndDate))
-            return BadRequest($"Invalid end date format: {updatedCampaignDto.EndDate}");
-
-        targetCampaign.Title = updatedCampaignDto.Title;
-        targetCampaign.Description = updatedCampaignDto.Description;
-        targetCampaign.GoalAmount = updatedCampaignDto.GoalAmount;
-        targetCampaign.RaisedAmount = updatedCampaignDto.RaisedAmount;
-        targetCampaign.Status = (CampaignStatus)updatedCampaignDto.Status;
-        //targetCampaign.Currency = newCurrencyType;
-        targetCampaign.StartDate = newStartDate;
-        targetCampaign.EndDate = newEndDate;
-
-        if (updatedCampaignDto.ImageUrl != null)
-            targetCampaign.ImageUrl = updatedCampaignDto.ImageUrl;
-
         try
         {
+            Campaign newCampaign = createdCampaignDto.FromCreateCampaignDtoToCampaign();
+            await _campaignRepository.Add(newCampaign);
             _campaignRepository.Save();
+
+            return CreatedAtAction(nameof(GetCampaignsDataById), new { id = newCampaign.Id }, newCampaign.ToCampaignDto());
         }
         catch (Exception)
         {
-            return NotFound();
+            return BadRequest();
         }
-
-        return NoContent();
     }
     [HttpPut("campaigns/{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateCampaign(int id, UpdateCampaignDto updatedCampaignDto)
+    public async Task<IActionResult> UpdateCampaign(int id, UpdateCampaignRequestDto updatedCampaignDto)
     {
         if (id != updatedCampaignDto.Id)
         {
@@ -106,32 +84,28 @@ public class CampaignController : ControllerBase
             return NotFound();
         }
 
-        if (!DateTime.TryParseExact(updatedCampaignDto.StartDate, DateSettings.DEFAULT_DATE_FORMAT, null, DateTimeStyles.None, out var newStartDate))
-            return BadRequest($"Invalid start date format: {updatedCampaignDto.StartDate}");
-        if (!DateTime.TryParseExact(updatedCampaignDto.EndDate, DateSettings.DEFAULT_DATE_FORMAT, null, DateTimeStyles.None, out var newEndDate))
-            return BadRequest($"Invalid end date format: {updatedCampaignDto.EndDate}");
-
-        targetCampaign.Title = updatedCampaignDto.Title;
-        targetCampaign.Description = updatedCampaignDto.Description;
-        targetCampaign.GoalAmount = updatedCampaignDto.GoalAmount;
-        targetCampaign.RaisedAmount = updatedCampaignDto.RaisedAmount;
-        targetCampaign.Status = (CampaignStatus)updatedCampaignDto.Status;
-        //targetCampaign.Currency = newCurrencyType;
-        targetCampaign.StartDate = newStartDate;
-        targetCampaign.EndDate = newEndDate;
-
-        if(updatedCampaignDto.ImageUrl != null)
-            targetCampaign.ImageUrl = updatedCampaignDto.ImageUrl;
-
         try
         {
+            (var startDate, var endDate) = CampaignMappers.ParseStartAndEndDate(updatedCampaignDto.StartDate, updatedCampaignDto.EndDate);
+            targetCampaign.Title = updatedCampaignDto.Title;
+            targetCampaign.Description = updatedCampaignDto.Description;
+            targetCampaign.GoalAmount = updatedCampaignDto.GoalAmount;
+            targetCampaign.RaisedAmount = updatedCampaignDto.RaisedAmount;
+            targetCampaign.Status = (CampaignStatus)updatedCampaignDto.Status;
+            //targetCampaign.Currency = newCurrencyType;
+            targetCampaign.StartDate = startDate;
+            targetCampaign.EndDate = endDate;
+
+            if (updatedCampaignDto.ImageUrl != null)
+                targetCampaign.ImageUrl = updatedCampaignDto.ImageUrl;
+
+
             _campaignRepository.Save();
         }
         catch (Exception)
         {
             return NotFound();
         }
-
         return NoContent();
     }
     [HttpDelete("campaigns/{id}")]

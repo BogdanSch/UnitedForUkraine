@@ -79,10 +79,27 @@ const Header: FC = () => {
                 About
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link me-lg-3" to="/campaigns">
+            <li className="nav-item sub-menu dropdown">
+              <Link
+                className="nav-link me-lg-3 dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                to="/campaigns"
+              >
                 Campaigns
               </Link>
+              <ul className="dropdown-menu">
+                <li className="dropdown-menu__item">
+                  <Link className="dropdown-item" to="/campaigns">
+                    View all campaigns
+                  </Link>
+                </li>
+                <li className="dropdown-menu__item">
+                  <Link className="dropdown-item" to="/campaigns/create">
+                    Create a new campaign
+                  </Link>
+                </li>
+              </ul>
             </li>
             <li className="nav-item">
               <Link className="nav-link me-lg-3" to="/blog">

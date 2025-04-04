@@ -31,8 +31,9 @@ const HomePage: FC = () => {
           <div className="about__wrap">
             <div className="text-content">
               <SectionHeadline
-                sectionTitle={`About Us`}
-                headingTitle={`Helping Ukrainian nation`}
+                className={`about__headline`}
+                title={`About Us`}
+                sectionIndicatorTitle={`Helping Ukrainian nation`}
               />
               <p className="about__description">
                 Our mission is to provide essential support to the Ukrainian
@@ -72,8 +73,8 @@ const HomePage: FC = () => {
             </div> */}
             <SectionHeadline
               className={`campaigns__headline`}
-              sectionTitle={`Campaigns`}
-              headingTitle={`Support Our Current Campaigns`}
+              title={`Support Our Current Campaigns`}
+              sectionIndicatorTitle={`Campaigns`}
             >
               <Link className="btn btn-outline-dark" to="/campaigns">
                 View All Campaigns
@@ -87,13 +88,10 @@ const HomePage: FC = () => {
         <div className="container">
           <div className="features__wrap">
             <SectionHeadline
-              sectionTitle={`Features`}
-              headingTitle={`Our values`}
+              className={`features__headline`}
+              title={`Our values`}
+              sectionIndicatorTitle={`Features`}
             />
-            {/* <div className="text-group text-end">
-              <h4 className="section-indicator">Features</h4>
-              <h2 className="features__title">Our values</h2>
-            </div> */}
             <ul className="features__list mt-5">
               <li className="features__item card card-border p-4">
                 <div className="features__item-body">
@@ -135,10 +133,9 @@ const HomePage: FC = () => {
           <div className="statistics__wrap">
             <SectionHeadline
               className={`statistics__headline`}
-              sectionTitle={`Donations Statistics`}
-              headingTitle={`For the past 30 days`}
-              description={`A transparent overview of donation activity over the past 30
-                  days, showcasing contributions and their impact.`}
+              sectionIndicatorTitle={`Donations Statistics`}
+              title={`For the past 30 days`}
+              description={`A transparent overview of donation activity over the past 30 days, showcasing contributions and their impact.`}
             >
               <Link
                 className="btn btn-outline-secondary"
@@ -147,22 +144,7 @@ const HomePage: FC = () => {
                 View Your Statistics
               </Link>
             </SectionHeadline>
-            {/* <div className="statistics__headline">
-              <div className="text-group">
-                <h4 className="section-indicator">Donations Statistics</h4>
-                <h2 className="statistics__title">For the past 30 days</h2>
-                <p className="statistics__description">
-                  A transparent overview of donation activity over the past 30
-                  days, showcasing contributions and their impact.
-                </p>
-              </div>
-              <Link
-                className="btn btn-outline-secondary"
-                to="/dashboard#donations"
-              >
-                View Your Statistics
-              </Link>
-            </div> */}
+
             <StatisticsList />
           </div>
         </div>

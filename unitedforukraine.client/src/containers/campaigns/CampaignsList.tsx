@@ -1,12 +1,13 @@
-import axios from "axios";
+﻿import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { CampaignDto } from "../../types";
 import { CampaignActionButton, Card, ProgressBar } from "../../components";
-import formatMoney from "../../utils/formatMoney";
 import { API_URL } from "../../variables";
 import CampaignsPaginator from "./CampaignsPaginator";
+import { convertCampaignStatusToString } from "../../utils/campaignMapper";
+import { convertCurrencyToString, formatMoney } from "../../utils/currency";
 
 type CampaignsListProps = {
   showPaginationButtons: boolean;
@@ -55,13 +56,13 @@ const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
               <Card
                 imageSrc={campaign.imageUrl}
                 imageAlt={campaign.title}
-                cardStatus={campaign.status}
+                cardStatus={convertCampaignStatusToString(campaign.status)}
               >
                 <h3 className="card-title">{campaign.title}</h3>
                 <p className="card-text text-muted">{campaign.description}</p>
                 <p className="card-text text-muted">
                   <strong>Goal:</strong> {formatMoney(campaign.goalAmount)}{" "}
-                  {campaign.currency}
+                  {convertCurrencyToString(campaign.currency)}
                 </p>
                 <ProgressBar
                   className="mt-3 mb-4"
@@ -84,7 +85,6 @@ const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
           currentPageIndex={pageIndex}
           hasPreviousPage={hasPreviousPage}
           hasNextPage={hasNextPage}
-          // setNewPageIndex={setPageIndex}
         />
       )}
     </>

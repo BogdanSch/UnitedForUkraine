@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_URL } from "../variables";
 import { Statistics } from "../types";
 
-import formatMoney from "../utils/formatMoney";
+import { formatMoney } from "../utils/currency";
 import formatNumber from "../utils/formatNumber";
 
 const StatisticsList: FC = () => {

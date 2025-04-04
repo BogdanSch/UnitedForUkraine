@@ -2,32 +2,33 @@
 using Microsoft.AspNetCore.Mvc;
 using UnitedForUkraine.Server.Interfaces;
 
-namespace UnitedForUkraine.Server.Controllers
+namespace UnitedForUkraine.Server.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class PhotoController : ControllerBase
 {
-    public class PhotoController : ControllerBase
+    private readonly IPhotoService _photoService;
+
+    public PhotoController(IPhotoService photoService)
     {
-        private readonly IPhotoService _photoService;
+        _photoService = photoService;
+    }
 
-        public PhotoController(IPhotoService photoService)
+    [HttpPost("upload")]
+    public async Task<IActionResult> Upload([FromForm] IFormFile imageFile)
+    {
+        if (imageFile == null || imageFile.Length > 0)
         {
-            _photoService = photoService;
+            BadRequest("Image is null");
         }
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> Upload([FromBody] IFormFile imageFile)
+        ImageUploadResult result = await _photoService.AddPhotoAsync(imageFile!);
+
+        if(result.Error != null)
         {
-            if (imageFile == null)
-            {
-                BadRequest("Image is null");
-            }
-
-            ImageUploadResult result = await _photoService.AddPhotoAsync(imageFile!);
-
-            if(result.Error != null)
-            {
-                return BadRequest(result.Error.Message);
-            }
-            return Ok(result.PublicId);
+            return BadRequest(result.Error.Message);
         }
+        return Ok(result.SecureUrl.ToString());
     }
 }

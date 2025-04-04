@@ -1,6 +1,6 @@
 ﻿namespace UnitedForUkraine.Server.DTOs.Campaign
 {
-    public class UpdateCampaignDto
+    public class UpdateCampaignRequestDto
     {
         public int Id { get; set; }
         public required string Title { get; set; }

@@ -1,31 +1,65 @@
+import axios from "axios";
 import { ChangeEvent, FC, FormEvent, useState } from "react";
-import { CampaignStatus, Currency } from "../../types";
+import {
+  CampaignStatus,
+  CreateCampaignRequestDto,
+  Currency,
+} from "../../types";
+import { API_URL } from "../../variables";
+import { uploadImageAsync } from "../../utils/imageUploader";
+import { useNavigate } from "react-router-dom";
 
 const CreateCampaignForm: FC = () => {
-  const [formData, setFormData] = useState<Record<string, any>>({
+  const [formData, setFormData] = useState<CreateCampaignRequestDto>({
     title: "",
     description: "",
     goalAmount: 0,
-    raisedAmount: 0,
     status: CampaignStatus.Upcoming,
     currency: Currency.UAH,
     startDate: "",
     endDate: "",
-    image: File,
+    imageUrl: "",
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, any>>({
+    title: "",
+    description: "",
+    goalAmount: 0,
+    status: CampaignStatus.Upcoming,
+    currency: Currency.UAH,
+    startDate: "",
+    endDate: "",
+  });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const navigate = useNavigate();
 
   const isValid = (): boolean => {
     const newErrors: Record<string, string> = {};
 
+    if (!formData.title) {
+      newErrors.title = "Title is required";
+    }
+
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
-    throw new Error("Function not implemented.");
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    if (!isValid()) {
+      e.preventDefault();
+      return;
+    }
+
+    try {
+      const { data } = await axios.post(`${API_URL}/Campaign/create`, formData);
+
+      if (data.id) {
+        navigate(`/campaigns/detail/${data.id}`);
+      }
+
+      throw new Error("Campaign creation failed");
+    } catch (error) {}
   };
 
-  const handleReset = (event: FormEvent<HTMLFormElement>): void => {
+  const handleReset = (): void => {
     setFormData({
       title: "",
       description: "",
@@ -36,16 +70,30 @@ const CreateCampaignForm: FC = () => {
       endDate: "",
       imageUrl: "",
     });
-
     setErrors({});
   };
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+  const handleImageChange = async (
+    e: ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
+    console.log(e.target.files);
+    const file = e.target.files?.[0] || null;
+
+    if (file) {
+      setImageFile(file);
+
+      const imageUrl: string = (await uploadImageAsync(file)) || "";
+      setFormData((prev) => ({
+        ...prev,
+        imageUrl: imageUrl,
+      }));
+    }
   };
 
   return (
@@ -102,27 +150,16 @@ const CreateCampaignForm: FC = () => {
           <option value="2">Two</option>
           <option value="3">Three</option>
         </select>
-        {/* <input
-          type="number"
-          className="form-control"
-          id="goalAmount"
-          name="goalAmount"
-          value={formData.goalAmount}
-          onChange={handleChange}
-        /> */}
       </div>
       <div className="mb-3">
         <label htmlFor="currency" className="form-label">
           Campaign Currency
         </label>
-        {/* <input
-          type="number"
-          className="form-control"
-          id="goalAmount"
-          name="goalAmount"
-          value={formData.goalAmount}
-          onChange={handleChange}
-        /> */}
+        <select className="form-select" aria-label="Default select example">
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
       </div>
       <div className="mb-3">
         <label htmlFor="startDate" className="form-label">
@@ -159,8 +196,8 @@ const CreateCampaignForm: FC = () => {
           type="file"
           id="image"
           name="image"
-          value={formData.image}
-          onChange={handleChange}
+          value={imageFile?.name || ""}
+          onChange={handleImageChange}
         />
       </div>
       <div className="campaign__form-buttons">

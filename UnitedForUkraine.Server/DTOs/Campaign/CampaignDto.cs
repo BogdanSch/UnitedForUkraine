@@ -9,8 +9,8 @@ namespace UnitedForUkraine.Server.DTOs.Campaign
         public required string Description { get; set; }
         public required decimal GoalAmount { get; set; }
         public required decimal RaisedAmount { get; set; }
-        public required string Status { get; set; }
-        public required string Currency { get; set; }
+        public required int Status { get; set; }
+        public required int Currency { get; set; }
         public required string StartDate { get; set; }
         public required string EndDate { get; set; }
         public required string ImageUrl { get; set; }
