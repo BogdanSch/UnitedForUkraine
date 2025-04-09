@@ -52,7 +52,7 @@ public class DonationController : ControllerBase
     {
         Donation targetDonation = await _donationRepository.GetDonationById(id);
 
-        if (targetDonation == null) 
+        if (targetDonation == null)
             return NotFound();
 
         DonationDto donationDto = targetDonation.ToDonationDto();

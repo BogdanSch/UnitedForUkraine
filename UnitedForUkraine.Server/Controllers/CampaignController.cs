@@ -1,7 +1,6 @@
 ﻿using ContosoUniversity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.Helpers;
@@ -86,7 +85,8 @@ public class CampaignController : ControllerBase
 
         try
         {
-            (var startDate, var endDate) = CampaignMappers.ParseStartAndEndDate(updatedCampaignDto.StartDate, updatedCampaignDto.EndDate);
+            (var startDate, var endDate) = DateSettings.ParseStartAndEndDate(updatedCampaignDto.StartDate, updatedCampaignDto.EndDate);
+
             targetCampaign.Title = updatedCampaignDto.Title;
             targetCampaign.Description = updatedCampaignDto.Description;
             targetCampaign.GoalAmount = updatedCampaignDto.GoalAmount;

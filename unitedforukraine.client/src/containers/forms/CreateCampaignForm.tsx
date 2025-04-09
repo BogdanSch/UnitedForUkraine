@@ -1,12 +1,13 @@
 import axios from "axios";
 import { ChangeEvent, FC, FormEvent, useState } from "react";
+import { ErrorAlert } from "../../components/";
 import {
   CampaignStatus,
   CreateCampaignRequestDto,
   Currency,
 } from "../../types";
-import { API_URL } from "../../variables";
 import { uploadImageAsync } from "../../utils/imageUploader";
+import { API_URL } from "../../variables";
 import { useNavigate } from "react-router-dom";
 
 const CreateCampaignForm: FC = () => {
@@ -20,23 +21,32 @@ const CreateCampaignForm: FC = () => {
     endDate: "",
     imageUrl: "",
   });
-  const [errors, setErrors] = useState<Record<string, any>>({
+  const [errors, setErrors] = useState<Record<string, string>>({
     title: "",
     description: "",
-    goalAmount: 0,
-    status: CampaignStatus.Upcoming,
-    currency: Currency.UAH,
+    goalAmount: "",
     startDate: "",
     endDate: "",
   });
+
+  const [requestError, setRequestError] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
   const isValid = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.title) {
-      newErrors.title = "Title is required";
+    if (formData.title.length < 10) {
+      newErrors.title = "The title must be at least 10 characters long";
+    }
+    if (formData.description.length < 40) {
+      newErrors.title = "The description must be at least 40 characters long";
+    }
+    if (formData.goalAmount <= 0) {
+      newErrors.goalAmount = "The goal amount must be greater than 0";
+    }
+    if(formData.startDate <= new Date())
+      newErrors.startDate = "The start date must be in the future or today";
     }
 
     return Object.keys(errors).length === 0;
@@ -54,9 +64,11 @@ const CreateCampaignForm: FC = () => {
       if (data.id) {
         navigate(`/campaigns/detail/${data.id}`);
       }
-
       throw new Error("Campaign creation failed");
-    } catch (error) {}
+    } catch (error) {
+      setRequestError("Failed to create campaign. Please try again later.");
+      console.error("Error creating campaign:", error);
+    }
   };
 
   const handleReset = (): void => {
@@ -72,13 +84,25 @@ const CreateCampaignForm: FC = () => {
     });
     setErrors({});
   };
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ): void => {
+    if (e.target instanceof HTMLInputElement) {
+      const { name, value, type, checked } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    } else if (e.target instanceof HTMLTextAreaElement) {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
+
   const handleImageChange = async (
     e: ChangeEvent<HTMLInputElement>
   ): Promise<void> => {
@@ -87,8 +111,8 @@ const CreateCampaignForm: FC = () => {
 
     if (file) {
       setImageFile(file);
-
       const imageUrl: string = (await uploadImageAsync(file)) || "";
+
       setFormData((prev) => ({
         ...prev,
         imageUrl: imageUrl,
@@ -98,10 +122,11 @@ const CreateCampaignForm: FC = () => {
 
   return (
     <form
-      className="campaign__form"
+      className="campaigns__form"
       onSubmit={handleSubmit}
       onReset={handleReset}
     >
+      {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="title" className="form-label">
           Campaign Title
@@ -113,20 +138,27 @@ const CreateCampaignForm: FC = () => {
           name="title"
           value={formData.title}
           onChange={handleChange}
+          minLength={10}
+          required
         />
+        {errors.title && <ErrorAlert errorMessage={errors.title} />}
       </div>
       <div className="mb-3">
         <label htmlFor="description" className="form-label">
           Campaign Description
         </label>
-        <input
-          type="text"
+        <textarea
+          rows={5}
           className="form-control"
           id="description"
           name="description"
-          value={formData.description}
           onChange={handleChange}
-        />
+          minLength={40}
+          required
+        >
+          {formData.description}
+        </textarea>
+        {errors.description && <ErrorAlert errorMessage={errors.description} />}
       </div>
       <div className="mb-3">
         <label htmlFor="goalAmount" className="form-label">
@@ -139,7 +171,9 @@ const CreateCampaignForm: FC = () => {
           name="goalAmount"
           value={formData.goalAmount}
           onChange={handleChange}
+          required
         />
+        {errors.goalAmount && <ErrorAlert errorMessage={errors.goalAmount} />}
       </div>
       <div className="mb-3">
         <label htmlFor="status" className="form-label">
@@ -172,7 +206,9 @@ const CreateCampaignForm: FC = () => {
           name="startDate"
           value={formData.startDate}
           onChange={handleChange}
+          required
         />
+        {errors.startDate && <ErrorAlert errorMessage={errors.startDate} />}
       </div>
       <div className="mb-3">
         <label htmlFor="endDate" className="form-label">
@@ -185,7 +221,9 @@ const CreateCampaignForm: FC = () => {
           name="endDate"
           value={formData.endDate}
           onChange={handleChange}
+          required
         />
+        {errors.endDate && <ErrorAlert errorMessage={errors.endDate} />}
       </div>
       <div className="mb-3">
         <label htmlFor="image" className="form-label">
@@ -198,9 +236,10 @@ const CreateCampaignForm: FC = () => {
           name="image"
           value={imageFile?.name || ""}
           onChange={handleImageChange}
+          required
         />
       </div>
-      <div className="campaign__form-buttons">
+      <div className="campaigns__form-buttons">
         <button type="submit" className="btn btn-primary">
           Submit
         </button>

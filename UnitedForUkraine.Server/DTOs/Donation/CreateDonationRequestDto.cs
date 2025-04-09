@@ -2,9 +2,8 @@
 
 namespace UnitedForUkraine.Server.DTOs.Donation
 {
-    public class DonationDto
+    public class CreateDonationRequestDto
     {
-        public int Id { get; set; }
         public string UserId { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
 

@@ -11,7 +11,7 @@ public class Donation
     public int Id { get; set; }
 
     [ForeignKey(nameof(AppUser))]
-    public string UserId { get; set; }
+    public string UserId { get; set; } = string.Empty;
     public AppUser User { get; set; }
 
     [Precision(18, 2)]

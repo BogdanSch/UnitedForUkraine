@@ -8,15 +8,6 @@ namespace UnitedForUkraine.Server.Mappers
 {
     public static class CampaignMappers
     {
-        public static (DateTime start, DateTime end) ParseStartAndEndDate(string startDate, string endDate)
-        {
-            if (!DateTime.TryParseExact(startDate, DateSettings.DEFAULT_DATE_FORMAT, null, DateTimeStyles.None, out var parsedStartDate))
-                throw new Exception($"Invalid start date format: {startDate}");
-            if (!DateTime.TryParseExact(endDate, DateSettings.DEFAULT_DATE_FORMAT, null, DateTimeStyles.None, out var parsedEndDate))
-                throw new Exception($"Invalid end date format: {endDate}");
-
-            return (parsedStartDate, parsedEndDate);
-        }
         public static CampaignDto ToCampaignDto(this Campaign campaign)
         {
             return new CampaignDto
@@ -35,7 +26,7 @@ namespace UnitedForUkraine.Server.Mappers
         }
         public static Campaign FromCreateCampaignDtoToCampaign(this CreateCampaignRequestDto newCampaign)
         {
-            (var startDate, var endDate) = ParseStartAndEndDate(newCampaign.StartDate, newCampaign.EndDate);
+            (var startDate, var endDate) = DateSettings.ParseStartAndEndDate(newCampaign.StartDate, newCampaign.EndDate);
 
             return new Campaign
             {

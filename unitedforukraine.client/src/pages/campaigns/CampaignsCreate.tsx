@@ -10,6 +10,7 @@ const CampaignsCreate: FC = () => {
           <SectionHeadline
             title={"Create a new Campaign"}
             sectionIndicatorTitle={"Campaigns"}
+            className="mb-5"
           />
           <CreateCampaignsForm />
         </div>

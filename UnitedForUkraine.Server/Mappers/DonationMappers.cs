@@ -1,4 +1,6 @@
-﻿using UnitedForUkraine.Server.DTOs.Donation;
+﻿using UnitedForUkraine.Server.Data.Enums;
+using UnitedForUkraine.Server.DTOs.Campaign;
+using UnitedForUkraine.Server.DTOs.Donation;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Models;
 
@@ -15,10 +17,23 @@ namespace UnitedForUkraine.Server.Mappers
                 CampaignId = donation.CampaignId,
                 UserName = donation.User.UserName!,
                 Amount = donation.Amount,
-                Currency = Enum.GetName(donation.Currency)!,
-                PaymentMethod = Enum.GetName(donation.PaymentMethod)!,
-                Status = Enum.GetName(donation.Status)!,
+                Currency = (int)donation.Currency,
+                PaymentMethod = (int)donation.PaymentMethod,
+                Status = (int)donation.Status,
                 PaymentDate = donation.PaymentDate.ToString(DateSettings.DEFAULT_DATE_FORMAT)
+            };
+        }
+        public static Donation FromCreateDonationDtoToCampaign(this CreateDonationRequestDto newDonation)
+        {
+            return new Donation
+            {
+                UserId = newDonation.UserId,
+                CampaignId = newDonation.CampaignId,
+                Amount = newDonation.Amount,
+                Currency = (CurrencyType)newDonation.Currency,
+                PaymentMethod = (PaymentMethod)newDonation.PaymentMethod,
+                Status = (DonationStatus)newDonation.Status,
+                PaymentDate = DateSettings.ParseDate(newDonation.PaymentDate)
             };
         }
     }

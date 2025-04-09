@@ -8,3 +8,4 @@ export { default as ConfirmPasswordInput } from "./formElements/ConfirmPasswordI
 export { default as CampaignActionButton } from "./campaigns/CampaignActionButton";
 export { default as Timeline } from "./Timeline";
 export { default as SectionHeadline } from "./SectionHeadline";
+export { default as ErrorAlert } from "./ErrorAlert";
