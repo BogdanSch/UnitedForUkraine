@@ -37,6 +37,15 @@
     align-items: center;
     column-gap: 0;
   }
+  // campaigns__form-buttons
+  &__form {
+    &-buttons {
+      @include flex-row();
+      // justify-content: center;
+      // align-items: center;
+      column-gap: 8px;
+    }
+  }
 }
 
 @media screen and (max-width: 768px) {

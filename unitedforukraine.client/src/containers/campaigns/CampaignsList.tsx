@@ -29,7 +29,7 @@ const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
     const fetchData = async () => {
       const options = {
         method: "GET",
-        url: `${API_URL}/Campaign/campaigns?page=${currentPage}`,
+        url: `${API_URL}/campaigns?page=${currentPage}`,
       };
 
       try {

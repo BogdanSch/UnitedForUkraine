@@ -10,7 +10,7 @@ using UnitedForUkraine.Server.Models;
 namespace UnitedForUkraine.Server.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/donations")]
 public class DonationController : ControllerBase
 {
     private readonly IDonationRepository _donationRepository;
@@ -20,7 +20,7 @@ public class DonationController : ControllerBase
     {
         _donationRepository = donationRepository;
     }
-    [HttpGet("donations")]
+    [HttpGet]
     public async Task<IActionResult> GetDontaionsData()
     {
         var donations = await _donationRepository.GetDonations(PAGE_ITEMS_COUNT);
@@ -31,7 +31,7 @@ public class DonationController : ControllerBase
 
         return Ok(response);
     }
-    [HttpGet("donations/campaign/{campaignId:int}")]
+    [HttpGet("campaign/{campaignId:int}")]
     public async Task<IActionResult> GetCampaignDonationById(int campaignId, [FromQuery] int page = 1)
     {
         var donations = _donationRepository.GetAllDonationsByCampaignId(campaignId);
@@ -47,7 +47,7 @@ public class DonationController : ControllerBase
 
         return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));
     }
-    [HttpGet("donations/{id:int}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetDontaionDataById(int id)
     {
         Donation targetDonation = await _donationRepository.GetDonationById(id);

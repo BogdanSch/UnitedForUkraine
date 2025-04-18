@@ -12,7 +12,7 @@ public class PhotoService : IPhotoService
     private readonly int PHOTO_DIMENSION = 500;
     public PhotoService(IOptions<CloudinarySettings> config)
     {
-        Account account = new Account(config.Value.CloudName, config.Value.ApiKey, config.Value.ApiSecret);
+        Account account = new(config.Value.CloudName, config.Value.ApiKey, config.Value.ApiSecret);
         _cloudinary = new Cloudinary(account);
     }
     public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
@@ -33,7 +33,7 @@ public class PhotoService : IPhotoService
         }
         return uploadResult;
     }
-    public async Task<DeletionResult> DeletePhotoAsync(string publicId)
+    public async Task<DeletionResult> RemovePhotoAsync(string publicId)
     {
         DeletionParams deletionParams = new(publicId);
         DeletionResult result = await _cloudinary.DestroyAsync(deletionParams);

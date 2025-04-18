@@ -11,7 +11,7 @@ using UnitedForUkraine.Server.Models;
 namespace UnitedForUkraine.Server.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/campaigns")]
 public class CampaignController : ControllerBase
 {
     private readonly ICampaignRepository _campaignRepository;
@@ -22,7 +22,7 @@ public class CampaignController : ControllerBase
         _campaignRepository = campaignRepository;
     }
 
-    [HttpGet("campaigns")]
+    [HttpGet]
     public async Task<IActionResult> GetCampaignsData([FromQuery] int page = 1)
     {
         var campaigns = _campaignRepository.GetAllCampaigns();
@@ -38,7 +38,7 @@ public class CampaignController : ControllerBase
 
         return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
     }
-    [HttpGet("campaigns/{id:int}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCampaignsDataById(int id)
     {
         Campaign targetCampaign = await _campaignRepository.GetCampaignById(id);
@@ -50,7 +50,7 @@ public class CampaignController : ControllerBase
 
         return Ok(campaignDto);
     }
-    [HttpPost("campaigns/create/")]
+    [HttpPost("create/")]
     //[Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateCampaign(CreateCampaignRequestDto createdCampaignDto)
     {
@@ -67,8 +67,8 @@ public class CampaignController : ControllerBase
             return BadRequest();
         }
     }
-    [HttpPut("campaigns/{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [HttpPut("{id:int}")]
+    //[Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCampaign(int id, UpdateCampaignRequestDto updatedCampaignDto)
     {
         if (id != updatedCampaignDto.Id)
@@ -108,7 +108,7 @@ public class CampaignController : ControllerBase
         }
         return NoContent();
     }
-    [HttpDelete("campaigns/{id:int}")]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCampaign(int id)
     {

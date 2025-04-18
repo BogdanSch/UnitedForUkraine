@@ -16,11 +16,11 @@ public class PhotoController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> Upload([FromForm] IFormFile imageFile)
+    public async Task<IActionResult> UploadPhotoAsync([FromForm] IFormFile imageFile)
     {
-        if (imageFile == null || imageFile.Length > 0)
+        if (imageFile == null || imageFile.Length <= 0)
         {
-            BadRequest("Image is null");
+            BadRequest("Image is null!");
         }
 
         ImageUploadResult result = await _photoService.AddPhotoAsync(imageFile!);
@@ -30,5 +30,24 @@ public class PhotoController : ControllerBase
             return BadRequest(result.Error.Message);
         }
         return Ok(result.SecureUrl.ToString());
+    }
+    [HttpPost("delete")]
+    public async Task<IActionResult> DeletePhotoAsync([FromForm] string publicUrl)
+    {
+        if (string.IsNullOrWhiteSpace(publicUrl))
+        {
+            BadRequest("Image url is null!");
+        }
+
+        string publicId = publicUrl.Split('/').Last().Split('.')[0];
+        //var deleteParams = new DeletionParams(publicId);
+        DeletionResult result = await _photoService.RemovePhotoAsync(publicId);
+
+        if (result.Error != null)
+        {
+            return BadRequest(result.Error.Message);
+        }
+
+        return NoContent();
     }
 }

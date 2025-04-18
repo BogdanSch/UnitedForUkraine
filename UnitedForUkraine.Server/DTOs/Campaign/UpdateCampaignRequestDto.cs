@@ -6,9 +6,9 @@ namespace UnitedForUkraine.Server.DTOs.Campaign
     {
         public int Id { get; set; }
         [MaxLength(265, ErrorMessage = "Title can't be over 265 over characters")]
-        [MinLength(10, ErrorMessage = "Title can't be less 10 over characters")]
+        [MinLength(10, ErrorMessage = "Title can't be less than 10 characters")]
         public required string Title { get; set; }
-        [MinLength(10, ErrorMessage = "Description can't be less 10 over characters")]
+        [MinLength(20, ErrorMessage = "Description can't be less less than 20 characters")]
         public required string Description { get; set; }
         public string? ImageUrl { get; set; } = string.Empty;
         [Range(1, 10e18)]

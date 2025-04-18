@@ -18,7 +18,7 @@ const CampaignDonationsList: FC<CampaigDonationsListProps> = ({
     const fetchDonationsData = async () => {
       const options = {
         method: "GET",
-        url: `${API_URL}/Donation/donations/campaign/${campaignId}?page=${currentDonationsPage}`,
+        url: `${API_URL}/donations/campaign/${campaignId}?page=${currentDonationsPage}`,
       };
 
       try {

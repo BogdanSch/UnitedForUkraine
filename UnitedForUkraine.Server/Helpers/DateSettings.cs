@@ -4,7 +4,7 @@ namespace UnitedForUkraine.Server.Helpers
 {
     public static class DateSettings
     {
-        public const string DEFAULT_DATE_FORMAT = "MM-dd-yyyy HH:mm:ss";
+        public const string DEFAULT_DATE_FORMAT = "MM-dd-yyyy";
         public static DateTime ParseDate(string dateString)
         {
             if (!DateTime.TryParseExact(dateString, DEFAULT_DATE_FORMAT, null, DateTimeStyles.None, out DateTime parsedDate))

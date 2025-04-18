@@ -23,7 +23,7 @@ const CampaignsDetail: FC = () => {
     const fetchCampaignData = async () => {
       const options = {
         method: "GET",
-        url: `${API_URL}/Campaign/campaigns/${id}`,
+        url: `${API_URL}/campaigns/${id}`,
       };
 
       try {
@@ -33,7 +33,7 @@ const CampaignsDetail: FC = () => {
         setCampaign(data);
       } catch (error) {
         console.error(error);
-        // navigate("/notFound");
+        navigate("/notFound");
       }
     };
 

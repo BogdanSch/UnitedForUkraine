@@ -39,14 +39,17 @@ const CreateCampaignForm: FC = () => {
     if (formData.title.length < 10) {
       newErrors.title = "The title must be at least 10 characters long";
     }
-    if (formData.description.length < 40) {
+    if (formData.title.length > 265) {
+      newErrors.title = "The title must be at most 265 characters long";
+    }
+    if (formData.description.length < 20) {
       newErrors.description =
-        "The description must be at least 40 characters long";
+        "The description must be at least 20 characters long";
     }
     if (formData.goalAmount <= 0) {
       newErrors.goalAmount = "The goal amount must be greater than 0";
     }
-    if (new Date(formData.startDate) <= new Date()) {
+    if (new Date(formData.startDate) < new Date()) {
       newErrors.startDate = "The start date must be in the future or today";
     }
     if (new Date(formData.endDate) <= new Date()) {
@@ -61,23 +64,24 @@ const CreateCampaignForm: FC = () => {
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-    if (!isValid()) {
-      e.preventDefault();
-      return;
-    }
+    e.preventDefault();
+    if (!isValid()) return;
 
     try {
       const { data } = await axios.post(
-        `${API_URL}/Campaign/campaigns/create`,
+        `${API_URL}/campaigns/create`,
         formData
       );
 
-      if (data.id) {
-        navigate(`/campaigns/detail/${data.id}`);
+      console.log(data);
+
+      if (!data.id) {
+        throw new Error("Campaign creation failed");
       }
-      throw new Error("Campaign creation failed");
+
+      navigate(`/campaigns/detail/${data.id}`);
     } catch (error) {
-      setRequestError("Failed to create campaign. Please try again later.");
+      setRequestError("Failed to create campaign. Please try again later!");
       console.error("Error creating campaign:", error);
     }
   };
@@ -135,7 +139,8 @@ const CreateCampaignForm: FC = () => {
       // setImageFile(file);
       const imageUrl: string = (await uploadImageAsync(file)) || "";
 
-      if (!imageUrl) {
+      console.log(imageUrl);
+      if (imageUrl.length === 0) {
         setRequestError("Failed to read image file.");
         return;
       }
@@ -152,7 +157,6 @@ const CreateCampaignForm: FC = () => {
       className="campaigns__form"
       onSubmit={handleSubmit}
       onReset={handleReset}
-      // method="post"
     >
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
@@ -167,6 +171,7 @@ const CreateCampaignForm: FC = () => {
           value={formData.title}
           onChange={handleChange}
           minLength={10}
+          placeholder="Campaign title"
           required
         />
         {errors.title && <ErrorAlert errorMessage={errors.title} />}
@@ -182,7 +187,8 @@ const CreateCampaignForm: FC = () => {
           name="description"
           value={formData.description}
           onChange={handleChange}
-          minLength={40}
+          minLength={20}
+          placeholder="Campaign description"
           required
         />
         {errors.description && <ErrorAlert errorMessage={errors.description} />}
@@ -198,6 +204,8 @@ const CreateCampaignForm: FC = () => {
           name="goalAmount"
           value={formData.goalAmount}
           onChange={handleChange}
+          placeholder="Campaign goal amount"
+          min={0}
           required
         />
         {errors.goalAmount && <ErrorAlert errorMessage={errors.goalAmount} />}
@@ -269,6 +277,7 @@ const CreateCampaignForm: FC = () => {
           name="startDate"
           value={formData.startDate}
           onChange={handleChange}
+          placeholder="Campaign start date"
           required
         />
         {errors.startDate && <ErrorAlert errorMessage={errors.startDate} />}
@@ -284,6 +293,7 @@ const CreateCampaignForm: FC = () => {
           name="endDate"
           value={formData.endDate}
           onChange={handleChange}
+          placeholder="Campaign end date"
           required
         />
         {errors.endDate && <ErrorAlert errorMessage={errors.endDate} />}
@@ -299,6 +309,7 @@ const CreateCampaignForm: FC = () => {
           name="image"
           // value={imageFile?.name || ""}
           onChange={handleImageChange}
+          accept="image/png, image/jpeg"
           required
         />
       </div>

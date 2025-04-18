@@ -18,7 +18,7 @@ const StatisticsList: FC = () => {
     const fetchData = async () => {
       const options = {
         method: "GET",
-        url: `${API_URL}/Donation/statistics`,
+        url: `${API_URL}/donations/statistics`,
       };
 
       try {
