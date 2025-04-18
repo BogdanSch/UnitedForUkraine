@@ -38,7 +38,7 @@ public class CampaignController : ControllerBase
 
         return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
     }
-    [HttpGet("campaigns/{id}")]
+    [HttpGet("campaigns/{id:int}")]
     public async Task<IActionResult> GetCampaignsDataById(int id)
     {
         Campaign targetCampaign = await _campaignRepository.GetCampaignById(id);
@@ -51,7 +51,7 @@ public class CampaignController : ControllerBase
         return Ok(campaignDto);
     }
     [HttpPost("campaigns/create/")]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateCampaign(CreateCampaignRequestDto createdCampaignDto)
     {
         try
@@ -67,7 +67,7 @@ public class CampaignController : ControllerBase
             return BadRequest();
         }
     }
-    [HttpPut("campaigns/{id}")]
+    [HttpPut("campaigns/{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCampaign(int id, UpdateCampaignRequestDto updatedCampaignDto)
     {
@@ -108,7 +108,7 @@ public class CampaignController : ControllerBase
         }
         return NoContent();
     }
-    [HttpDelete("campaigns/{id}")]
+    [HttpDelete("campaigns/{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCampaign(int id)
     {

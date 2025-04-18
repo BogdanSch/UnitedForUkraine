@@ -31,7 +31,7 @@ public class DonationController : ControllerBase
 
         return Ok(response);
     }
-    [HttpGet("donations/campaign/{campaignId}")]
+    [HttpGet("donations/campaign/{campaignId:int}")]
     public async Task<IActionResult> GetCampaignDonationById(int campaignId, [FromQuery] int page = 1)
     {
         var donations = _donationRepository.GetAllDonationsByCampaignId(campaignId);
@@ -47,7 +47,7 @@ public class DonationController : ControllerBase
 
         return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));
     }
-    [HttpGet("donations/{id}")]
+    [HttpGet("donations/{id:int}")]
     public async Task<IActionResult> GetDontaionDataById(int id)
     {
         Donation targetDonation = await _donationRepository.GetDonationById(id);

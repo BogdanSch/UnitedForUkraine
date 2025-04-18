@@ -32,7 +32,7 @@ namespace UnitedForUkraine.Server.Mappers
                 Amount = newDonation.Amount,
                 Currency = (CurrencyType)newDonation.Currency,
                 PaymentMethod = (PaymentMethod)newDonation.PaymentMethod,
-                Status = (DonationStatus)newDonation.Status,
+                Status = DonationStatus.Pending,
                 PaymentDate = DateSettings.ParseDate(newDonation.PaymentDate)
             };
         }

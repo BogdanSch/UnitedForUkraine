@@ -8,11 +8,12 @@ namespace UnitedForUkraine.Server.DTOs.Donation
         public string UserName { get; set; } = string.Empty;
 
         [DataType(DataType.Currency)]
+        [Range(0, 10e18)]
         public decimal Amount { get; set; }
         public int Currency { get; set; }
         public int PaymentMethod { get; set; }
-        public int Status { get; set; }
-        public string PaymentDate { get; set; } = string.Empty;
-        public int CampaignId { get; set; }
+        //public int Status { get; set; }
+        public required string PaymentDate { get; set; } = string.Empty;
+        public required int CampaignId { get; set; }
     }
 }

@@ -7,7 +7,7 @@ import {
   Currency,
 } from "../../types";
 import { uploadImageAsync } from "../../utils/imageUploader";
-import { API_URL } from "../../variables";
+import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../variables";
 import { useNavigate } from "react-router-dom";
 
 const CreateCampaignForm: FC = () => {
@@ -15,11 +15,11 @@ const CreateCampaignForm: FC = () => {
     title: "",
     description: "",
     goalAmount: 0,
-    status: CampaignStatus.Upcoming,
-    currency: Currency.UAH,
+    status: 0,
+    currency: 0,
     startDate: "",
     endDate: "",
-    imageUrl: "",
+    imageUrl: API_IMAGE_PLACEHOLDER_URL,
   });
   const [errors, setErrors] = useState<Record<string, string>>({
     title: "",
@@ -28,28 +28,36 @@ const CreateCampaignForm: FC = () => {
     startDate: "",
     endDate: "",
   });
-
   const [requestError, setRequestError] = useState<string>("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  // const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
   const isValid = (): boolean => {
+    setErrors({});
     const newErrors: Record<string, string> = {};
 
     if (formData.title.length < 10) {
       newErrors.title = "The title must be at least 10 characters long";
     }
     if (formData.description.length < 40) {
-      newErrors.title = "The description must be at least 40 characters long";
+      newErrors.description =
+        "The description must be at least 40 characters long";
     }
     if (formData.goalAmount <= 0) {
       newErrors.goalAmount = "The goal amount must be greater than 0";
     }
-    if(formData.startDate <= new Date())
+    if (new Date(formData.startDate) <= new Date()) {
       newErrors.startDate = "The start date must be in the future or today";
     }
+    if (new Date(formData.endDate) <= new Date()) {
+      newErrors.endDate = "The end date must be in the future or today";
+    }
+    if (new Date(formData.startDate) >= new Date(formData.endDate)) {
+      newErrors.endDate = "The end date must be after the start date";
+    }
 
-    return Object.keys(errors).length === 0;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -59,7 +67,10 @@ const CreateCampaignForm: FC = () => {
     }
 
     try {
-      const { data } = await axios.post(`${API_URL}/Campaign/create`, formData);
+      const { data } = await axios.post(
+        `${API_URL}/Campaign/campaigns/create`,
+        formData
+      );
 
       if (data.id) {
         navigate(`/campaigns/detail/${data.id}`);
@@ -88,19 +99,30 @@ const CreateCampaignForm: FC = () => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
-    if (e.target instanceof HTMLInputElement) {
-      const { name, value, type, checked } = e.target;
+    const target = e.target;
+
+    if (target instanceof HTMLInputElement) {
+      const { name, value, type, checked } = target;
       setFormData((prev) => ({
         ...prev,
         [name]: type === "checkbox" ? checked : value,
       }));
-    } else if (e.target instanceof HTMLTextAreaElement) {
-      const { name, value } = e.target;
+    } else if (target instanceof HTMLTextAreaElement) {
+      const { name, value } = target;
       setFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
+  };
+
+  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>): void => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: Number(value),
+    }));
   };
 
   const handleImageChange = async (
@@ -110,8 +132,13 @@ const CreateCampaignForm: FC = () => {
     const file = e.target.files?.[0] || null;
 
     if (file) {
-      setImageFile(file);
+      // setImageFile(file);
       const imageUrl: string = (await uploadImageAsync(file)) || "";
+
+      if (!imageUrl) {
+        setRequestError("Failed to read image file.");
+        return;
+      }
 
       setFormData((prev) => ({
         ...prev,
@@ -125,6 +152,7 @@ const CreateCampaignForm: FC = () => {
       className="campaigns__form"
       onSubmit={handleSubmit}
       onReset={handleReset}
+      // method="post"
     >
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
@@ -152,12 +180,11 @@ const CreateCampaignForm: FC = () => {
           className="form-control"
           id="description"
           name="description"
+          value={formData.description}
           onChange={handleChange}
           minLength={40}
           required
-        >
-          {formData.description}
-        </textarea>
+        />
         {errors.description && <ErrorAlert errorMessage={errors.description} />}
       </div>
       <div className="mb-3">
@@ -179,20 +206,56 @@ const CreateCampaignForm: FC = () => {
         <label htmlFor="status" className="form-label">
           Campaign Status
         </label>
-        <select className="form-select" aria-label="Default select example">
-          <option value="1">One</option>
+        <select
+          id="status"
+          name="status"
+          className="form-select"
+          aria-label="Campaign status select"
+          value={formData.status}
+          onChange={handleSelectChange}
+        >
+          {Object.keys(CampaignStatus)
+            .filter((key) => !isNaN(Number(CampaignStatus[key as any])))
+            .map((key) => (
+              <option
+                key={key}
+                value={CampaignStatus[key as keyof typeof CampaignStatus]}
+              >
+                {key}
+              </option>
+            ))}
+          {/* <option value="1">One</option>
           <option value="2">Two</option>
-          <option value="3">Three</option>
+          <option value="3">Three</option> */}
         </select>
       </div>
       <div className="mb-3">
         <label htmlFor="currency" className="form-label">
           Campaign Currency
         </label>
-        <select className="form-select" aria-label="Default select example">
+        {/* <select className="form-select" aria-label="Default select example">
           <option value="1">One</option>
           <option value="2">Two</option>
           <option value="3">Three</option>
+        </select> */}
+        <select
+          id="currency"
+          name="currency"
+          className="form-select"
+          aria-label="Campaign currency select"
+          value={formData.currency}
+          onChange={handleSelectChange}
+        >
+          {Object.keys(Currency)
+            .filter((key) => !isNaN(Number(Currency[key as any])))
+            .map((key) => (
+              <option key={key} value={Currency[key as keyof typeof Currency]}>
+                {key}
+              </option>
+            ))}
+          {/* <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option> */}
         </select>
       </div>
       <div className="mb-3">
@@ -234,7 +297,7 @@ const CreateCampaignForm: FC = () => {
           type="file"
           id="image"
           name="image"
-          value={imageFile?.name || ""}
+          // value={imageFile?.name || ""}
           onChange={handleImageChange}
           required
         />
