@@ -1,7 +1,6 @@
 import axios from "axios";
-import { FC, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-
+import { FC, useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../../variables";
 import { CampaignDto, TimelineItem } from "../../types";
 import {
@@ -10,7 +9,8 @@ import {
   ProgressBar,
   Timeline,
 } from "../../components";
-import CampaigDonationsList from "../../containers/campaigns/CampaignDonationsList";
+import { CampaignDonationsList } from "../../containers/";
+import AuthContext from "../../contexts/AuthContext";
 import { convertCampaignStatusToString } from "../../utils/campaignMapper";
 import { convertCurrencyToString } from "../../utils/currency";
 
@@ -18,6 +18,7 @@ const CampaignsDetail: FC = () => {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
   const navigate = useNavigate();
   let { id } = useParams();
+  // const { isAdmin, isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchCampaignData = async () => {
@@ -60,6 +61,24 @@ const CampaignsDetail: FC = () => {
     <section className="campaigns-detail">
       <div className="container">
         <article className="campaigns-detail__header">
+          {/* isAdmin() && isAuthenticated() */}
+          {true && (
+            <ul className="campaigns-detail__buttons-list">
+              <li className="campaigns-detail__buttons-item">
+                <Link className="btn btn-primary" to={`/campaigns/edit/${id}`}>
+                  Edit Campaign
+                </Link>
+              </li>
+              <li className="campaigns-detail__button-item">
+                <Link
+                  className="btn btn-outline-danger"
+                  to={`/campaigns/delete/${id}`}
+                >
+                  Delete Campaign
+                </Link>
+              </li>
+            </ul>
+          )}
           <Image
             className="campaigns-detail__image"
             src={campaign?.imageUrl!}
@@ -109,7 +128,7 @@ const CampaignsDetail: FC = () => {
               </div>
             </div>
           </div>
-          <CampaigDonationsList campaignId={id} />
+          <CampaignDonationsList campaignId={id} />
         </article>
       </div>
     </section>

@@ -2,12 +2,13 @@ import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import { API_URL } from "../../variables";
 import { DonationDto } from "../../types";
+import { convertDonationCurrencyToString } from "../../utils/donationMapper";
 
-type CampaigDonationsListProps = {
+type CampaignDonationsListProps = {
   campaignId: string | undefined;
 };
 
-const CampaignDonationsList: FC<CampaigDonationsListProps> = ({
+const CampaignDonationsList: FC<CampaignDonationsListProps> = ({
   campaignId,
 }) => {
   const [donations, setDonations] = useState<DonationDto[]>([]);
@@ -53,20 +54,22 @@ const CampaignDonationsList: FC<CampaigDonationsListProps> = ({
               <span>
                 +{donation.amount}
                 {` `}
-                {donation.currency}
+                {convertDonationCurrencyToString(donation.currency)}
               </span>
             </div>
           </li>
         ))}
       </ul>
-      <button
-        className={`btn btn-secondary ${hasNextPage ? "" : "disabled"}`}
-        onClick={() => {
-          setCurrentDonationsPage(currentDonationsPage + 1);
-        }}
-      >
-        Load more
-      </button>
+      {donations.length > 0 && (
+        <button
+          className={`btn btn-secondary ${hasNextPage ? "" : "disabled"}`}
+          onClick={() => {
+            setCurrentDonationsPage(currentDonationsPage + 1);
+          }}
+        >
+          Load more
+        </button>
+      )}
     </div>
   );
 };

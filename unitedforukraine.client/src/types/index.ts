@@ -28,10 +28,10 @@ export type DonationDto = {
   userId: number;
   userName: string;
   amount: number;
-  currency: string;
+  currency: number;
   paymentDate: string;
   paymentMethod: string;
-  status: string;
+  status: number;
   campaignId: number;
 };
 
@@ -48,7 +48,21 @@ export enum Currency {
   UAH,
 }
 
-export type UserDto = {};
+export type Address = {
+  id: number;
+  street: string;
+  city: string;
+  country: string;
+};
+
+export type UserDto = {
+  id: string;
+  userName: string;
+  email: string;
+  address: Address;
+  phoneNumber?: string;
+  isAdmin: boolean;
+};
 
 export type Statistics = {
   donationsCount: number;

@@ -11,7 +11,11 @@ import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../variables";
 import { uploadImageAsync } from "../../utils/imageUploader";
 import { convertDate } from "../../utils/dateConverter";
 
-const CreateCampaignForm: FC = () => {
+interface EditCampaignFormProps {
+  id: number;
+}
+
+const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
   const [formData, setFormData] = useState<CreateCampaignRequestDto>({
     title: "",
     description: "",
@@ -30,7 +34,6 @@ const CreateCampaignForm: FC = () => {
     endDate: "",
   });
   const [requestError, setRequestError] = useState<string>("");
-  // const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
   const isValid = (): boolean => {
@@ -64,17 +67,13 @@ const CreateCampaignForm: FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const fetchCampaignData = async (campaignId: number): Promise<void> => {};
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!isValid()) return;
 
     try {
-      // const payload: CreateCampaignRequestDto = {
-      //   ...formData,
-      //   startDate: new Date(formData.startDate).toISOString(),
-      //   endDate: new Date(formData.endDate).toISOString(),
-      // };
-
       const { data } = await axios.post(
         `${API_URL}/campaigns/create`,
         formData
@@ -349,4 +348,4 @@ const CreateCampaignForm: FC = () => {
   );
 };
 
-export default CreateCampaignForm;
+export default EditCampaignForm;

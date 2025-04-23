@@ -51,7 +51,7 @@ public class CampaignController : ControllerBase
         return Ok(campaignDto);
     }
     [HttpPost("create/")]
-    //[Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateCampaign(CreateCampaignRequestDto createdCampaignDto)
     {
         try
@@ -68,7 +68,7 @@ public class CampaignController : ControllerBase
         }
     }
     [HttpPut("{id:int}")]
-    //[Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "admin")]
     public async Task<IActionResult> UpdateCampaign(int id, UpdateCampaignRequestDto updatedCampaignDto)
     {
         if (id != updatedCampaignDto.Id)
@@ -109,7 +109,7 @@ public class CampaignController : ControllerBase
         return NoContent();
     }
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteCampaign(int id)
     {
         await _campaignRepository.Delete(id);

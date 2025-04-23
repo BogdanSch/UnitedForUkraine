@@ -10,6 +10,7 @@ interface IAuthContextProps {
   authenticateUser: (authToken: string) => void;
   logoutUser: () => void;
   isAuthenticated: () => boolean;
+  isAdmin: () => boolean;
 }
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ const AuthContext = createContext<IAuthContextProps>({
   authenticateUser: () => {},
   logoutUser: () => {},
   isAuthenticated: () => false,
+  isAdmin: () => false,
 });
 
 export default AuthContext;
@@ -62,11 +64,6 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     fetchUserData(authToken);
   };
 
-  // const registerUser = (userData: User) => {
-  //   setAuthToken(authToken);
-  //   fetchUserData(authToken);
-  // };
-
   const logoutUser = () => {
     setUser(null);
     removeAuthToken();
@@ -74,6 +71,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   const isAuthenticated = () => !!user && !!authToken;
+  const isAdmin = () => user?.isAdmin ?? false;
 
   const contextValue = useMemo(
     () => ({
@@ -82,6 +80,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       authenticateUser,
       logoutUser,
       isAuthenticated,
+      isAdmin,
     }),
     [user, authToken]
   );

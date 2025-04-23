@@ -101,6 +101,15 @@ section {
   }
 }
 
+[class$="__buttons-list"] {
+  list-style: none;
+  padding: 0;
+  @include flex-row;
+  column-gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 .section-indicator {
   font-style: italic;
   font-size: 20px;

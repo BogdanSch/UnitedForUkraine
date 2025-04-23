@@ -20,17 +20,18 @@ public class AuthTokenService : IAuthTokenService
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings["SecretKey"]!));
     }
 
-    public string CreateToken(AppUser user)
+    public string CreateToken(AppUser user, IList<string> roles)
     {
-        List<Claim> claims = new()
-            {
+        List<Claim> claims =
+            [
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName!),
-            };
+            ];
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512);
+        SigningCredentials creds = new(_key, SecurityAlgorithms.HmacSha512);
 
-        var tokenDescriptor = new SecurityTokenDescriptor
+        SecurityTokenDescriptor tokenDescriptor = new()
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.Now.AddDays(7),
@@ -39,7 +40,7 @@ public class AuthTokenService : IAuthTokenService
             Audience = _jwtSettings["Audience"]
         };
 
-        var tokenHandler = new JwtSecurityTokenHandler();
+        JwtSecurityTokenHandler tokenHandler = new();
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
 

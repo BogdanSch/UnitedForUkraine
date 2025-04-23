@@ -29,13 +29,15 @@ namespace UnitedForUkraine.Server.Controllers
         {
             AppUser? user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null)
-                return Unauthorized(new { message = "Invalid email or password" });
-
+                return Unauthorized(new { message = "Invalid email!" });
+           
             var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, loginDto.RememberMe, false);
             if (!result.Succeeded)
-                return Unauthorized(new { message = "Invalid email or password" });
+                return Unauthorized(new { message = "Invalid password!" });
 
-            string token = _authTokenService.CreateToken(user);
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+
+            string token = _authTokenService.CreateToken(user, roles);
 
             return Ok(token);
         }
@@ -65,10 +67,7 @@ namespace UnitedForUkraine.Server.Controllers
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(newUser, UserRoles.User);
-                // await _signInManager.SignInAsync(newUser, isPersistent: registerDto.RememberMe);
-
-                // string token = GenerateJwtToken(newUser);
-                return Ok(new { message = "Registration successful! Now, Please log in!" });
+                return Ok(new { message = "Registration successful! Now, please, log in!" });
             }
 
             return BadRequest(new { message = "An error has occured during registration. Try again later!" });
@@ -78,20 +77,22 @@ namespace UnitedForUkraine.Server.Controllers
         public async Task<IActionResult> GetUserInfo()
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized(new { message = "Invalid token" });
 
             AppUser? appUser = await _userManager.FindByIdAsync(userId);
             if (appUser == null)
-                return Unauthorized(new { message = "User not found" });
+                return Unauthorized(new { message = "User was not found" });
 
-            UserDto userDto = new UserDto()
+            UserDto userDto = new()
             {
                 Id = appUser.Id,
                 Email = appUser.Email!,
                 UserName = appUser.UserName!,
                 PhoneNumber = appUser.PhoneNumber,
                 Address = appUser.Address,
+                IsAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin)
             };
             return Ok(userDto);
         }
