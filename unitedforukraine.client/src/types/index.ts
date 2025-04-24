@@ -23,6 +23,18 @@ export type CreateCampaignRequestDto = {
   imageUrl: string;
 };
 
+export type UpdateCampaignRequestDto = {
+  title: string;
+  description: string;
+  goalAmount: number;
+  // raisedAmount: number;
+  status: CampaignStatus;
+  // currency: Currency;
+  startDate: string;
+  endDate: string;
+  imageUrl: string | null;
+};
+
 export type DonationDto = {
   id: number;
   userId: number;

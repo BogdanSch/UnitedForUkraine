@@ -6,7 +6,7 @@ import { CampaignDto } from "../../types";
 import { CampaignActionButton, Card, ProgressBar } from "../../components";
 import { API_URL } from "../../variables";
 import CampaignsPaginator from "./CampaignsPaginator";
-import { convertCampaignStatusToString } from "../../utils/campaignMapper";
+import { convertCampaignStatusToString } from "../../utils/campaignHelper";
 import { convertCurrencyToString, formatMoney } from "../../utils/currency";
 
 type CampaignsListProps = {

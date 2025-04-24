@@ -2,7 +2,7 @@ import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import { API_URL } from "../../variables";
 import { DonationDto } from "../../types";
-import { convertDonationCurrencyToString } from "../../utils/donationMapper";
+import { convertDonationCurrencyToString } from "../../utils/donationHelper";
 
 type CampaignDonationsListProps = {
   campaignId: string | undefined;

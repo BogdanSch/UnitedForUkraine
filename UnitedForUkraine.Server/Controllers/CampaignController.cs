@@ -72,16 +72,12 @@ public class CampaignController : ControllerBase
     public async Task<IActionResult> UpdateCampaign(int id, UpdateCampaignRequestDto updatedCampaignDto)
     {
         if (id != updatedCampaignDto.Id)
-        {
             return BadRequest();
-        }
 
         Campaign? targetCampaign = await _campaignRepository.GetCampaignById(id);
 
         if (targetCampaign == null)
-        {
             return NotFound();
-        }
 
         try
         {
@@ -97,8 +93,9 @@ public class CampaignController : ControllerBase
             targetCampaign.EndDate = endDate;
 
             if (updatedCampaignDto.ImageUrl != null)
+            {
                 targetCampaign.ImageUrl = updatedCampaignDto.ImageUrl;
-
+            }
 
             _campaignRepository.Save();
         }

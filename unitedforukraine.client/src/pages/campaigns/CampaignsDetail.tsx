@@ -1,7 +1,7 @@
-import axios from "axios";
+// import axios from "axios";
 import { FC, useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { API_URL } from "../../variables";
+// import { API_URL } from "../../variables";
 import { CampaignDto, TimelineItem } from "../../types";
 import {
   CampaignActionButton,
@@ -11,7 +11,10 @@ import {
 } from "../../components";
 import { CampaignDonationsList } from "../../containers/";
 import AuthContext from "../../contexts/AuthContext";
-import { convertCampaignStatusToString } from "../../utils/campaignMapper";
+import {
+  convertCampaignStatusToString,
+  fetchCampaignData,
+} from "../../utils/campaignHelper";
 import { convertCurrencyToString } from "../../utils/currency";
 
 const CampaignsDetail: FC = () => {
@@ -21,24 +24,17 @@ const CampaignsDetail: FC = () => {
   // const { isAdmin, isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
-    const fetchCampaignData = async () => {
-      const options = {
-        method: "GET",
-        url: `${API_URL}/campaigns/${id}`,
-      };
+    const fetcher = async () => {
+      const data = await fetchCampaignData(Number(id));
 
-      try {
-        const { data } = await axios.request(options);
-
-        console.log(data);
-        setCampaign(data);
-      } catch (error) {
-        console.error(error);
+      if (!data) {
         navigate("/notFound");
+        return;
       }
-    };
 
-    fetchCampaignData();
+      setCampaign(await fetchCampaignData(Number(id)));
+    };
+    fetcher();
   }, [id]);
 
   function getCampaignTimelines(): TimelineItem[] {
@@ -48,12 +44,15 @@ const CampaignsDetail: FC = () => {
     let endDate: string = campaign ? campaign.endDate : "";
 
     return [
-      { date: startDate, description: "Start date" },
+      {
+        date: new Date(startDate).toLocaleDateString(),
+        description: "Start date",
+      },
       {
         date: new Date().toLocaleDateString(),
         description: "Current date",
       },
-      { date: endDate, description: "End date" },
+      { date: new Date(endDate).toLocaleDateString(), description: "End date" },
     ];
   }
 

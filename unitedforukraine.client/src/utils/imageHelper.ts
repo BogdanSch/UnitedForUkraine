@@ -20,3 +20,16 @@ export const uploadImageAsync = async (file: File): Promise<string | null> => {
     return null;
   }
 };
+
+export const deleteImageAsync = async (imageUrl: string): Promise<boolean> => {
+  const formData = new FormData();
+  formData.append("publicUrl", imageUrl);
+
+  try {
+    await axios.post(`${API_URL}/Photo/delete`, formData);
+    return true;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return false;
+  }
+};

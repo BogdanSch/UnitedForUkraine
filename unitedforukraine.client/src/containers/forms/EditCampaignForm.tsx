@@ -1,30 +1,31 @@
 import axios from "axios";
-import { ChangeEvent, FC, FormEvent, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ErrorAlert } from "../../components/";
 import {
   CampaignStatus,
-  CreateCampaignRequestDto,
+  UpdateCampaignRequestDto,
   Currency,
 } from "../../types";
-import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../variables";
-import { uploadImageAsync } from "../../utils/imageUploader";
+import { API_URL } from "../../variables";
+import { uploadImageAsync } from "../../utils/imageHelper";
 import { convertDate } from "../../utils/dateConverter";
+import { fetchCampaignData } from "../../utils/campaignHelper";
 
 interface EditCampaignFormProps {
   id: number;
 }
 
 const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
-  const [formData, setFormData] = useState<CreateCampaignRequestDto>({
+  const [formData, setFormData] = useState<UpdateCampaignRequestDto>({
     title: "",
     description: "",
     goalAmount: 0,
     status: 0,
-    currency: 0,
+    // currency: 0,
     startDate: "",
     endDate: "",
-    imageUrl: API_IMAGE_PLACEHOLDER_URL,
+    imageUrl: null,
   });
   const [errors, setErrors] = useState<Record<string, string>>({
     title: "",
@@ -35,6 +36,21 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
   });
   const [requestError, setRequestError] = useState<string>("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetcher = async () => {
+      const data = await fetchCampaignData(Number(id));
+
+      if (!data) {
+        navigate("/notFound");
+        return;
+      }
+
+      setFormData(data);
+    };
+
+    fetcher();
+  }, [id]);
 
   const isValid = (): boolean => {
     setErrors({});
@@ -67,8 +83,6 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const fetchCampaignData = async (campaignId: number): Promise<void> => {};
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!isValid()) return;
@@ -98,7 +112,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       description: "",
       goalAmount: 0,
       status: CampaignStatus.Upcoming,
-      currency: Currency.UAH,
+      // currency: Currency.UAH,
       startDate: "",
       endDate: "",
       imageUrl: "",
@@ -252,35 +266,6 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
                 key={key}
                 value={CampaignStatus[key as keyof typeof CampaignStatus]}
               >
-                {key}
-              </option>
-            ))}
-          {/* <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option> */}
-        </select>
-      </div>
-      <div className="mb-3">
-        <label htmlFor="currency" className="form-label">
-          Campaign Currency
-        </label>
-        {/* <select className="form-select" aria-label="Default select example">
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select> */}
-        <select
-          id="currency"
-          name="currency"
-          className="form-select"
-          aria-label="Campaign currency select"
-          value={formData.currency}
-          onChange={handleSelectChange}
-        >
-          {Object.keys(Currency)
-            .filter((key) => !isNaN(Number(Currency[key as any])))
-            .map((key) => (
-              <option key={key} value={Currency[key as keyof typeof Currency]}>
                 {key}
               </option>
             ))}

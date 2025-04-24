@@ -8,7 +8,7 @@ import {
   Currency,
 } from "../../types";
 import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../variables";
-import { uploadImageAsync } from "../../utils/imageUploader";
+import { uploadImageAsync } from "../../utils/imageHelper";
 import { convertDate } from "../../utils/dateConverter";
 
 const CreateCampaignForm: FC = () => {
