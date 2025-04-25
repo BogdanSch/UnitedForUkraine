@@ -1,6 +1,7 @@
 import axios from "axios";
-import { FC, FormEvent } from "react";
+import { FC, FormEvent, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../../contexts/AuthContext";
 import { API_URL } from "../../variables";
 
 interface IDeleteCampaignFormProps {
@@ -8,6 +9,7 @@ interface IDeleteCampaignFormProps {
 }
 const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
   const navigate = useNavigate();
+  const { authToken } = useContext(AuthContext);
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
@@ -15,7 +17,11 @@ const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
     event.preventDefault();
 
     try {
-      await axios.delete(`${API_URL}/campaigns/${id}`);
+      await axios.delete(`${API_URL}/campaigns/${id}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
       navigate(`/campaigns`);
     } catch (error) {
       console.error("Error creating campaign:", error);

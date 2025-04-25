@@ -9,10 +9,13 @@ import {
   CampaignIndex,
   HomePage,
   LoginPage,
+  NotAuthorized,
   NotFoundPage,
   RegisterPage,
   SuccessfulRegistration,
+  About,
 } from "../pages";
+import ProtectedRoute from "./middleware/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +24,8 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: "home", element: <HomePage /> },
+      { path: "about", element: <About /> },
+      { path: "/notAuthorized", element: <NotAuthorized /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },
@@ -30,8 +35,22 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <CampaignIndex /> },
       { path: "detail/:id", element: <CampaignDetail /> },
-      { path: "edit/:id", element: <CampaignEdit /> },
-      { path: "create", element: <CampaignCreate /> },
+      {
+        path: "edit/:id",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <CampaignEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "create",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <CampaignCreate />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   {

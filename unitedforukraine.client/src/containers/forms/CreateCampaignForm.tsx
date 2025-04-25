@@ -1,6 +1,7 @@
 import axios from "axios";
-import { ChangeEvent, FC, FormEvent, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../../contexts/AuthContext";
 import { ErrorAlert } from "../../components/";
 import {
   CampaignStatus,
@@ -30,8 +31,8 @@ const CreateCampaignForm: FC = () => {
     endDate: "",
   });
   const [requestError, setRequestError] = useState<string>("");
-  // const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
+  const { authToken } = useContext(AuthContext);
 
   const isValid = (): boolean => {
     setErrors({});
@@ -69,15 +70,14 @@ const CreateCampaignForm: FC = () => {
     if (!isValid()) return;
 
     try {
-      // const payload: CreateCampaignRequestDto = {
-      //   ...formData,
-      //   startDate: new Date(formData.startDate).toISOString(),
-      //   endDate: new Date(formData.endDate).toISOString(),
-      // };
-
       const { data } = await axios.post(
         `${API_URL}/campaigns/create`,
-        formData
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       console.log(data);

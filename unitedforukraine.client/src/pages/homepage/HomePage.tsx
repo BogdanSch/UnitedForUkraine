@@ -144,7 +144,6 @@ const HomePage: FC = () => {
                 View Your Statistics
               </Link>
             </SectionHeadline>
-
             <StatisticsList />
           </div>
         </div>

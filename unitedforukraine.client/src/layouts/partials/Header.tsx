@@ -8,7 +8,7 @@ import AuthContext from "../../contexts/AuthContext";
 
 const Header: FC = () => {
   const location = useLocation();
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, isAdmin } = useContext(AuthContext);
 
   useEffect(() => {
     new ScrollSpy(document.body, {
@@ -94,11 +94,13 @@ const Header: FC = () => {
                     View all campaigns
                   </Link>
                 </li>
-                <li className="dropdown-menu__item">
-                  <Link className="dropdown-item" to="/campaigns/create">
-                    Create a new campaign
-                  </Link>
-                </li>
+                {isAuthenticated() && isAdmin() && (
+                  <li className="dropdown-menu__item">
+                    <Link className="dropdown-item" to="/campaigns/create">
+                      Create a new campaign
+                    </Link>
+                  </li>
+                )}
               </ul>
             </li>
             <li className="nav-item">

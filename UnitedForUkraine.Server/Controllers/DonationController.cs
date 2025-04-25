@@ -1,8 +1,6 @@
 ﻿using ContosoUniversity;
 using Microsoft.AspNetCore.Mvc;
-using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.DTOs.Donation;
-using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
@@ -34,6 +32,9 @@ public class DonationController : ControllerBase
     [HttpGet("campaign/{campaignId:int}")]
     public async Task<IActionResult> GetCampaignDonationById(int campaignId, [FromQuery] int page = 1)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var donations = _donationRepository.GetAllDonationsByCampaignId(campaignId);
 
         if (!donations.Any())

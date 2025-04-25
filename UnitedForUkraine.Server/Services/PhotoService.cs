@@ -9,7 +9,8 @@ namespace UnitedForUkraine.Server.Services;
 public class PhotoService : IPhotoService
 {
     private readonly Cloudinary _cloudinary;
-    private readonly int PHOTO_DIMENSION = 500;
+    public const int PHOTO_WIDTH = 900;
+    public const int PHOTO_HEIGHT = 450;
     public PhotoService(IOptions<CloudinarySettings> config)
     {
         Account account = new(config.Value.CloudName, config.Value.ApiKey, config.Value.ApiSecret);
@@ -26,7 +27,7 @@ public class PhotoService : IPhotoService
                 ImageUploadParams uploadParams = new ImageUploadParams()
                 {
                     File = new FileDescription(file.FileName, stream),
-                    Transformation = new Transformation().Height(this.PHOTO_DIMENSION).Width(this.PHOTO_DIMENSION).Crop("fill").Gravity("face")
+                    Transformation = new Transformation().Height(PHOTO_HEIGHT).Width(PHOTO_WIDTH).Crop("fill").Gravity("face")
                 };
                 uploadResult = await _cloudinary.UploadAsync(uploadParams);
             }

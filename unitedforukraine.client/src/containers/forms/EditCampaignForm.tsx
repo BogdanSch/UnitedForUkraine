@@ -1,6 +1,14 @@
 import axios from "axios";
-import { ChangeEvent, FC, FormEvent, useState, useEffect } from "react";
+import {
+  ChangeEvent,
+  FC,
+  FormEvent,
+  useState,
+  useEffect,
+  useContext,
+} from "react";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../../contexts/AuthContext";
 import { API_URL } from "../../variables";
 import { CampaignStatus, UpdateCampaignRequestDto } from "../../types";
 import { ErrorAlert } from "../../components/";
@@ -33,6 +41,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
   });
   const [requestError, setRequestError] = useState<string>("");
   const navigate = useNavigate();
+  const { authToken } = useContext(AuthContext);
 
   useEffect(() => {
     const fetcher = async () => {
@@ -87,7 +96,12 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     try {
       const response = await axios.put(
         `${API_URL}/campaigns/${formData.id}`,
-        formData
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       console.log(response);
@@ -98,8 +112,8 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
 
       navigate(`/campaigns/detail/${formData.id}`);
     } catch (error) {
-      setRequestError("Failed to create campaign. Please try again later!");
-      console.error("Error creating campaign:", error);
+      setRequestError("Failed to update the campaign. Please try again later!");
+      console.error("Error updating campaign:", error);
     }
   };
 

@@ -39,7 +39,7 @@ public class CampaignController : ControllerBase
         return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
     }
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetCampaignsDataById(int id)
+    public async Task<IActionResult> GetCampaignsDataById([FromRoute] int id)
     {
         Campaign targetCampaign = await _campaignRepository.GetCampaignById(id);
 
@@ -51,9 +51,12 @@ public class CampaignController : ControllerBase
         return Ok(campaignDto);
     }
     [HttpPost("create/")]
-    //[Authorize(Roles = "admin")]
-    public async Task<IActionResult> CreateCampaign(CreateCampaignRequestDto createdCampaignDto)
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> CreateCampaign([FromBody] CreateCampaignRequestDto createdCampaignDto)
     {
+        if(!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
             Campaign newCampaign = createdCampaignDto.FromCreateCampaignDtoToCampaign();
@@ -68,11 +71,14 @@ public class CampaignController : ControllerBase
         }
     }
     [HttpPut("{id:int}")]
-    //[Authorize(Roles = "admin")]
-    public async Task<IActionResult> UpdateCampaign(int id, UpdateCampaignRequestDto updatedCampaignDto)
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> UpdateCampaign([FromRoute] int id, [FromBody] UpdateCampaignRequestDto updatedCampaignDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (id != updatedCampaignDto.Id)
-            return BadRequest();
+            return BadRequest("Id doesn't match!");
 
         Campaign? targetCampaign = await _campaignRepository.GetCampaignById(id);
 
@@ -106,9 +112,12 @@ public class CampaignController : ControllerBase
         return NoContent();
     }
     [HttpDelete("{id:int}")]
-    //[Authorize(Roles = "admin")]
-    public async Task<IActionResult> DeleteCampaign(int id)
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> DeleteCampaign([FromRoute] int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         await _campaignRepository.Delete(id);
         return NoContent();
     }
