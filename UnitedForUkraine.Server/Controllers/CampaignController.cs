@@ -86,7 +86,7 @@ public class CampaignController : ControllerBase
             targetCampaign.Title = updatedCampaignDto.Title;
             targetCampaign.Description = updatedCampaignDto.Description;
             targetCampaign.GoalAmount = updatedCampaignDto.GoalAmount;
-            targetCampaign.RaisedAmount = updatedCampaignDto.RaisedAmount;
+            //targetCampaign.RaisedAmount = updatedCampaignDto.RaisedAmount;
             targetCampaign.Status = (CampaignStatus)updatedCampaignDto.Status;
             //targetCampaign.Currency = newCurrencyType;
             targetCampaign.StartDate = startDate;

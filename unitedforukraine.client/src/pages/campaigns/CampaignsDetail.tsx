@@ -9,7 +9,7 @@ import {
   ProgressBar,
   Timeline,
 } from "../../components";
-import { CampaignDonationsList } from "../../containers/";
+import { CampaignDonationsList, DeleteCampaignForm } from "../../containers/";
 import AuthContext from "../../contexts/AuthContext";
 import {
   convertCampaignStatusToString,
@@ -19,9 +19,9 @@ import { convertCurrencyToString } from "../../utils/currency";
 
 const CampaignsDetail: FC = () => {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
-  const navigate = useNavigate();
   let { id } = useParams();
-  // const { isAdmin, isAuthenticated } = useContext(AuthContext);
+  const { isAdmin, isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetcher = async () => {
@@ -60,8 +60,7 @@ const CampaignsDetail: FC = () => {
     <section className="campaigns-detail">
       <div className="container">
         <article className="campaigns-detail__header">
-          {/* isAdmin() && isAuthenticated() */}
-          {true && (
+          {isAuthenticated() && isAdmin() && (
             <ul className="campaigns-detail__buttons-list">
               <li className="campaigns-detail__buttons-item">
                 <Link className="btn btn-primary" to={`/campaigns/edit/${id}`}>
@@ -69,12 +68,7 @@ const CampaignsDetail: FC = () => {
                 </Link>
               </li>
               <li className="campaigns-detail__button-item">
-                <Link
-                  className="btn btn-outline-danger"
-                  to={`/campaigns/delete/${id}`}
-                >
-                  Delete Campaign
-                </Link>
+                <DeleteCampaignForm id={Number(id)} />
               </li>
             </ul>
           )}

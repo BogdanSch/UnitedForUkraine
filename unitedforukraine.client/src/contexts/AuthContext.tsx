@@ -42,7 +42,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     axios
       .get(`${API_URL}/Auth/userInfo`, {
         headers: {
-          Authorization: `Bearer ${authToken}`, // Properly include the Authorization header inside headers
+          Authorization: `Bearer ${authToken}`,
         },
       })
       .then((response) => {
@@ -65,9 +65,14 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logoutUser = () => {
+    axios.post(`${API_URL}/Auth/logout`, null, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
     setUser(null);
     removeAuthToken();
-    axios.post(`${API_URL}/Auth/logout`);
   };
 
   const isAuthenticated = () => !!user && !!authToken;

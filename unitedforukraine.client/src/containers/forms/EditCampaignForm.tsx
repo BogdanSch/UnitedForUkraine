@@ -1,14 +1,11 @@
 import axios from "axios";
 import { ChangeEvent, FC, FormEvent, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ErrorAlert } from "../../components/";
-import {
-  CampaignStatus,
-  UpdateCampaignRequestDto,
-  Currency,
-} from "../../types";
 import { API_URL } from "../../variables";
-import { uploadImageAsync } from "../../utils/imageHelper";
+import { CampaignStatus, UpdateCampaignRequestDto } from "../../types";
+import { ErrorAlert } from "../../components/";
+
+import { deleteImageAsync, uploadImageAsync } from "../../utils/imageHelper";
 import { convertDate } from "../../utils/dateConverter";
 import { fetchCampaignData } from "../../utils/campaignHelper";
 
@@ -18,14 +15,14 @@ interface EditCampaignFormProps {
 
 const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
   const [formData, setFormData] = useState<UpdateCampaignRequestDto>({
+    id: id,
     title: "",
     description: "",
     goalAmount: 0,
     status: 0,
-    // currency: 0,
     startDate: "",
     endDate: "",
-    imageUrl: null,
+    imageUrl: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({
     title: "",
@@ -69,9 +66,9 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     if (formData.goalAmount <= 0) {
       newErrors.goalAmount = "The goal amount must be greater than 0";
     }
-    if (new Date(formData.startDate) < new Date()) {
-      newErrors.startDate = "The start date must be in the future or today";
-    }
+    // if (new Date(formData.startDate) < new Date()) {
+    //   newErrors.startDate = "The start date must be in the future or today";
+    // }
     if (new Date(formData.endDate) <= new Date()) {
       newErrors.endDate = "The end date must be in the future or today";
     }
@@ -88,18 +85,18 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     if (!isValid()) return;
 
     try {
-      const { data } = await axios.post(
-        `${API_URL}/campaigns/create`,
+      const response = await axios.put(
+        `${API_URL}/campaigns/${formData.id}`,
         formData
       );
 
-      console.log(data);
+      console.log(response);
 
-      if (!data.id) {
-        throw new Error("Campaign creation failed");
+      if (response.status !== 204) {
+        throw new Error("Campaign updating failed!");
       }
 
-      navigate(`/campaigns/detail/${data.id}`);
+      navigate(`/campaigns/detail/${formData.id}`);
     } catch (error) {
       setRequestError("Failed to create campaign. Please try again later!");
       console.error("Error creating campaign:", error);
@@ -108,6 +105,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
 
   const handleReset = (): void => {
     setFormData({
+      id: id,
       title: "",
       description: "",
       goalAmount: 0,
@@ -147,7 +145,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
 
     if (type !== "date") return;
 
-    const formattedDate: string = convertDate(value); //new Date(value).toISOString().slice(0, 10);
+    const formattedDate: string = convertDate(value);
 
     setFormData((prev) => ({
       ...prev,
@@ -167,11 +165,10 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
   const handleImageChange = async (
     e: ChangeEvent<HTMLInputElement>
   ): Promise<void> => {
-    console.log(e.target.files);
     const file = e.target.files?.[0] || null;
+    console.log(e.target.files);
 
     if (file) {
-      // setImageFile(file);
       const imageUrl: string = (await uploadImageAsync(file)) || "";
 
       console.log(imageUrl);
@@ -179,6 +176,8 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
         setRequestError("Failed to upload the image file.");
         return;
       }
+
+      if (formData.imageUrl.length > 0) deleteImageAsync(formData.imageUrl);
 
       setFormData((prev) => ({
         ...prev,
@@ -318,7 +317,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           // value={imageFile?.name || ""}
           onChange={handleImageChange}
           accept="image/png, image/jpeg"
-          required
+          // required
         />
       </div>
       <div className="campaigns__form-buttons">

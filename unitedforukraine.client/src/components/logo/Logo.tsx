@@ -6,7 +6,7 @@ const Logo: FC = () => {
       <svg className="site-logo__svg">
         <use href={`#logo`}></use>
       </svg>
-      United For Ukraine
+      <span className="site-logo__text">United For Ukraine</span>
     </div>
   );
 };

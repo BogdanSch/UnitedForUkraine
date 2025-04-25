@@ -24,6 +24,7 @@ export type CreateCampaignRequestDto = {
 };
 
 export type UpdateCampaignRequestDto = {
+  id: number;
   title: string;
   description: string;
   goalAmount: number;
@@ -32,7 +33,7 @@ export type UpdateCampaignRequestDto = {
   // currency: Currency;
   startDate: string;
   endDate: string;
-  imageUrl: string | null;
+  imageUrl: string;
 };
 
 export type DonationDto = {
