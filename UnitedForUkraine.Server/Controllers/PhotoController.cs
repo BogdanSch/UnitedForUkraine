@@ -40,7 +40,6 @@ public class PhotoController : ControllerBase
         }
 
         string publicId = publicUrl.Split('/').Last().Split('.')[0];
-        //var deleteParams = new DeletionParams(publicId);
         DeletionResult result = await _photoService.RemovePhotoAsync(publicId);
 
         if (result.Error != null)

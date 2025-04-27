@@ -13,7 +13,6 @@
     column-gap: 12px;
     row-gap: 8px;
   }
-
   &__item {
     .card {
       position: relative;
@@ -28,8 +27,16 @@
     &:first-child {
       grid-column: span 2;
     }
+    &-buttons {
+      list-style: none;
+      padding: 0;
+      @include flex-row();
+      justify-content: space-between;
+      align-items: center;
+      column-gap: 4px;
+      flex-wrap: wrap;
+    }
   }
-
   &__paginator {
     // margin: 0 auto;
     @include flex-row();
@@ -37,12 +44,9 @@
     align-items: center;
     column-gap: 0;
   }
-  // campaigns__form-buttons
   &__form {
     &-buttons {
       @include flex-row();
-      // justify-content: center;
-      // align-items: center;
       column-gap: 8px;
     }
   }
@@ -55,6 +59,9 @@
       justify-content: center;
       align-items: flex-start;
       row-gap: 8px;
+    }
+    &__item {
+      grid-column: span 1 !important;
     }
   }
 }

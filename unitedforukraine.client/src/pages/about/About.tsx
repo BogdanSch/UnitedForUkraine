@@ -26,7 +26,7 @@ const About: FC = () => {
       <section className="goals" id="goals">
         <div className="container">
           <div className="goals__wrap">
-            <h1>Who We Help & How</h1>
+            <h2>Who We Help & How</h2>
             <p>
               United For Ukraine started as a small project born out of
               compassion and a shared sense of responsibility among university

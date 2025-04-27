@@ -9,4 +9,5 @@ export { default as CampaignActionButton } from "./campaigns/CampaignActionButto
 export { default as Timeline } from "./Timeline";
 export { default as SectionHeadline } from "./SectionHeadline";
 export { default as ErrorAlert } from "./ErrorAlert";
-export { default as ProtectedRoute } from "../routes/middleware/ProtectedRoute";
+export { default as ShareButton } from "./buttons/ShareButton";
+// export { default as ProtectedRoute } from "../routes/middleware/ProtectedRoute";

@@ -3,7 +3,12 @@ import { FC, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { CampaignDto } from "../../types";
-import { CampaignActionButton, Card, ProgressBar } from "../../components";
+import {
+  CampaignActionButton,
+  Card,
+  ProgressBar,
+  ShareButton,
+} from "../../components";
 import { API_URL } from "../../variables";
 import CampaignsPaginator from "./CampaignsPaginator";
 import { convertCampaignStatusToString } from "../../utils/campaignHelper";
@@ -69,10 +74,19 @@ const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
                   currentAmount={campaign.raisedAmount}
                   requiredAmount={campaign.goalAmount}
                 />
-                <CampaignActionButton
-                  campaignId={campaign.id}
-                  campaignStatus={campaign.status}
-                />
+                <ul className="campaigns__item-buttons">
+                  <li className="campaigns__item-button">
+                    <CampaignActionButton
+                      campaignId={campaign.id}
+                      campaignStatus={campaign.status}
+                    />
+                  </li>
+                  <li className="campaigns__item-button">
+                    <ShareButton
+                      targetUrl={`/campaigns/detail/${campaign.id}/`}
+                    />
+                  </li>
+                </ul>
               </Card>
             </li>
           ))
