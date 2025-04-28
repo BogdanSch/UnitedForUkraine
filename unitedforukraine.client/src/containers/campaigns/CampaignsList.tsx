@@ -83,7 +83,10 @@ const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
                   </li>
                   <li className="campaigns__item-button">
                     <ShareButton
-                      targetUrl={`/campaigns/detail/${campaign.id}/`}
+                      relativeUrl={`/campaigns/detail/${campaign.id}/`}
+                      campaignTitle={campaign.title}
+                      campaignGoalAmount={campaign.goalAmount}
+                      campaignRaisedAmount={campaign.raisedAmount}
                     />
                   </li>
                 </ul>

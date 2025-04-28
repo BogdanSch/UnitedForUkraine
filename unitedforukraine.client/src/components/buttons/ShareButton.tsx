@@ -1,17 +1,26 @@
 import { FC, useState } from "react";
 
 interface ShareButtonProps {
-  targetUrl: string;
+  relativeUrl: string;
+  campaignTitle: string;
+  campaignGoalAmount: number;
+  campaignRaisedAmount: number;
 }
 
-const ShareButton: FC<ShareButtonProps> = ({ targetUrl }) => {
+const ShareButton: FC<ShareButtonProps> = ({
+  relativeUrl,
+  campaignTitle,
+  campaignGoalAmount,
+  campaignRaisedAmount,
+}) => {
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const handleShare = (): void => {
-    const locationUrl: string = `${window.location.origin}${targetUrl}`;
+    const locationUrl: string = `${window.location.origin}${relativeUrl}`;
+    const campaignInfo: string = `United For Ukraine\nSupport the campaign: "${campaignTitle}"\nRaised: ${campaignRaisedAmount} / Goal: ${campaignGoalAmount}\nJoin us in making a difference!\n${locationUrl}`;
 
-    navigator.clipboard.writeText(locationUrl).then(() => {
-      console.log("URL copied to clipboard:", locationUrl);
+    navigator.clipboard.writeText(campaignInfo).then(() => {
+      console.log("URL copied to clipboard:", campaignInfo);
       setIsCopied(true);
 
       setTimeout(() => {

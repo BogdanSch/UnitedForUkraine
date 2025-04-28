@@ -1,12 +1,11 @@
-// import axios from "axios";
 import { FC, useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-// import { API_URL } from "../../variables";
 import { CampaignDto, TimelineItem } from "../../types";
 import {
   CampaignActionButton,
   Image,
   ProgressBar,
+  ShareButton,
   Timeline,
 } from "../../components";
 import { CampaignDonationsList, DeleteCampaignForm } from "../../containers/";
@@ -37,7 +36,7 @@ const CampaignsDetail: FC = () => {
     fetcher();
   }, [id]);
 
-  function getCampaignTimelines(): TimelineItem[] {
+  const getCampaignTimelines = (): TimelineItem[] => {
     if (!campaign) return [];
 
     let startDate: string = campaign ? campaign.startDate : "";
@@ -54,7 +53,7 @@ const CampaignsDetail: FC = () => {
       },
       { date: new Date(endDate).toLocaleDateString(), description: "End date" },
     ];
-  }
+  };
 
   return (
     <section className="campaigns-detail">
@@ -119,6 +118,12 @@ const CampaignsDetail: FC = () => {
                   requiredAmount={campaign?.goalAmount || 0}
                 />
               </div>
+              <ShareButton
+                relativeUrl={`/campaigns/detail/${id}`}
+                campaignTitle={campaign?.title ?? ""}
+                campaignGoalAmount={campaign?.goalAmount ?? 0}
+                campaignRaisedAmount={campaign?.raisedAmount ?? 0}
+              />
             </div>
           </div>
           <CampaignDonationsList campaignId={id} />
