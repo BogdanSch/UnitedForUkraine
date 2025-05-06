@@ -17,6 +17,10 @@ body {
   @include flex-center;
 }
 
+h1 {
+  font-weight: $fw-super-bold;
+}
+
 h1,
 h2 {
   font-family: "Montserrat", sans-serif;
@@ -66,7 +70,7 @@ section {
   }
 
   &.loaded {
-    background-image: none;
+    background-image: none !important;
     &::before {
       animation: none;
       content: none;
@@ -75,6 +79,7 @@ section {
       opacity: 1;
     }
   }
+
   & > img {
     transition: opacity 250ms ease-in-out;
     opacity: 0;
@@ -104,6 +109,15 @@ section {
     font-weight: $fw-super-bold;
     font-size: 28px;
     transition: all 0.5s ease-in-out;
+  }
+}
+
+@media screen and (max-width: 26.75rem) {
+  .site-logo {
+    &__text {
+      font-weight: $fw-bold;
+      font-size: 24px;
+    }
   }
 }
 
@@ -316,6 +330,30 @@ section {
       position: absolute;
       right: 7.5rem;
       top: 0.3125rem;
+    }
+  }
+}
+
+.carousel {
+  &-image {
+    object-fit: cover;
+    object-position: center;
+    height: 60vh;
+    overflow: hidden;
+    filter: grayscale(40%);
+  }
+  &-caption {
+    h5,
+    p {
+      color: $white;
+    }
+  }
+}
+
+@media screen and (max-width: 48rem) {
+  .carousel {
+    &-image {
+      height: 70vh;
     }
   }
 }

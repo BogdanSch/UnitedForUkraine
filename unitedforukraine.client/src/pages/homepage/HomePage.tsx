@@ -2,7 +2,12 @@ import { FC } from "react";
 import { Link } from "react-router-dom";
 
 import { CampaignsList, StatisticsList } from "../../containers";
-import { Card, Image, SectionHeadline } from "../../components";
+import {
+  CallToActionSection,
+  Card,
+  Image,
+  SectionHeadline,
+} from "../../components";
 import aboutImage from "/assets/img/aboutPreviewAbstract.webp";
 
 const HomePage: FC = () => {
@@ -60,17 +65,6 @@ const HomePage: FC = () => {
       <section className="campaigns" id="campaigns">
         <div className="container">
           <div className="campaigns__wrap">
-            {/* <div className="campaigns__headline">
-              <div className="text-group">
-                <h4 className="section-indicator">Campaigns</h4>
-                <h2 className="campaigns__title">
-                  Support Our Current Campaigns
-                </h2>
-              </div>
-              <Link className="btn btn-outline-dark" to="/campaigns">
-                View All Campaigns
-              </Link>
-            </div> */}
             <SectionHeadline
               className={`campaigns__headline`}
               title={`Support Our Current Campaigns`}
@@ -148,7 +142,8 @@ const HomePage: FC = () => {
           </div>
         </div>
       </section>
-      <section className="donate" id="donate">
+      <CallToActionSection />
+      {/* <section className="donate" id="donate">
         <div className="container">
           <div className="donate__wrap">
             <div className="text-content">
@@ -165,7 +160,7 @@ const HomePage: FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 };

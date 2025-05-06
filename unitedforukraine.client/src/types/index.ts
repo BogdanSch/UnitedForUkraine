@@ -48,6 +48,13 @@ export type DonationDto = {
   campaignId: number;
 };
 
+export type ImageDto = {
+  path: string;
+  alt: string;
+  title?: string;
+  description?: string;
+};
+
 export enum CampaignStatus {
   Upcoming,
   Ongoing,

@@ -1,0 +1,10 @@
+.impact {
+  &-stories {
+    &__list {
+      list-style: none;
+      padding: 0;
+        @include flex-col;
+        row-gap: 12px;
+    }
+  }
+}
