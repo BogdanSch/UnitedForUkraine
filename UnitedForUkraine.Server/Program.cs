@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using Stripe;
 using System.Text;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Helpers;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IAuthTokenService, AuthTokenService>();
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
@@ -104,6 +106,10 @@ app.UseCors(cors => cors
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
+
+StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:SecretKey"];
+
 app.Run();

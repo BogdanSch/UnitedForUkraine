@@ -1,9 +1,12 @@
 ﻿using ContosoUniversity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.DTOs.Donation;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
+using UnitedForUkraine.Server.Repositories;
 
 namespace UnitedForUkraine.Server.Controllers;
 
@@ -47,6 +50,26 @@ public class DonationController : ControllerBase
         List<DonationDto> donationDtos = loadedDonations.Select(d => d.ToDonationDto()).ToList();
 
         return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));
+    }
+    [HttpPost("create/")]
+    [Authorize]
+    public async Task<IActionResult> CreateDonation([FromBody] CreateDonationRequestDto createdDonationDto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            Donation newDonation = createdDonationDto.FromCreateDonationDtoToDonation();
+            await _donationRepository.AddAsync(newDonation);
+            _donationRepository.Save();
+
+            return Ok(new { createdDonationId = newDonation.Id });
+        }
+        catch (Exception)
+        {
+            return BadRequest("Error while creating the donation!");
+        }
     }
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetDontaionDataById(int id)

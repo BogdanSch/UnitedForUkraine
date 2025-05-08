@@ -29,7 +29,7 @@ public class AuthTokenService : IAuthTokenService
             ];
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        SigningCredentials creds = new(_key, SecurityAlgorithms.HmacSha512);
+        SigningCredentials creds = new(_key, SecurityAlgorithms.HmacSha512Signature);
 
         SecurityTokenDescriptor tokenDescriptor = new()
         {

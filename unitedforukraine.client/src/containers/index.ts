@@ -7,3 +7,4 @@ export { default as RegisterForm } from "./forms/RegisterForm";
 export { default as CreateCampaignsForm } from "./forms/CreateCampaignForm";
 export { default as EditCampaignForm } from "./forms/EditCampaignForm";
 export { default as DeleteCampaignForm } from "./forms/DeleteCampaignForm";
+export { default as DonateForm } from "./forms/DonateForm";

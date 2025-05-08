@@ -23,7 +23,7 @@ namespace UnitedForUkraine.Server.Mappers
                 PaymentDate = donation.PaymentDate.ToString(DateSettings.DEFAULT_DATE_FORMAT)
             };
         }
-        public static Donation FromCreateDonationDtoToCampaign(this CreateDonationRequestDto newDonation)
+        public static Donation FromCreateDonationDtoToDonation(this CreateDonationRequestDto newDonation)
         {
             return new Donation
             {

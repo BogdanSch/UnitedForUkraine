@@ -33,7 +33,7 @@ public class DonationRepository : IDonationRepository
             .Take(donationsAmount)
             .ToListAsync();
     }
-    public async Task<Donation> Add(Donation donation)
+    public async Task<Donation> AddAsync(Donation donation)
     {
         await _context.Donations.AddAsync(donation);
         Save();

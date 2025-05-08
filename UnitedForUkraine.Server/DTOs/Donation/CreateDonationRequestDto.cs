@@ -8,7 +8,7 @@ namespace UnitedForUkraine.Server.DTOs.Donation
         public string UserName { get; set; } = string.Empty;
 
         [DataType(DataType.Currency)]
-        [Range(0, 10e18)]
+        [Range(1, 10e18)]
         public decimal Amount { get; set; }
         public int Currency { get; set; }
         public int PaymentMethod { get; set; }
