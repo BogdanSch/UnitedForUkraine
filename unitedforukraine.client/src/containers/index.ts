@@ -1,10 +1,10 @@
 export { default as CampaignsList } from "./campaigns/CampaignsList";
 export { default as CampaignDonationsList } from "./campaigns/CampaignDonationsList";
 export { default as StatisticsList } from "./StatisticsList";
-export { default as SignOutForm } from "./forms/SignOutForm";
-export { default as SignInForm } from "./forms/SignInForm";
-export { default as RegisterForm } from "./forms/RegisterForm";
-export { default as CreateCampaignsForm } from "./forms/CreateCampaignForm";
-export { default as EditCampaignForm } from "./forms/EditCampaignForm";
-export { default as DeleteCampaignForm } from "./forms/DeleteCampaignForm";
-export { default as DonateForm } from "./forms/DonateForm";
+export { default as SignOutForm } from "./forms/auth/SignOutForm";
+export { default as SignInForm } from "./forms/auth/SignInForm";
+export { default as RegisterForm } from "./forms/auth/RegisterForm";
+export { default as CreateCampaignsForm } from "./forms/campaigns/CreateCampaignForm";
+export { default as EditCampaignForm } from "./forms/campaigns/EditCampaignForm";
+export { default as DeleteCampaignForm } from "./forms/campaigns/DeleteCampaignForm";
+export { default as DonateForm } from "./forms/donate/DonateForm";

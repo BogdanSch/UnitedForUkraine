@@ -1,8 +1,8 @@
 import axios from "axios";
 import { FC, FormEvent, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../contexts/AuthContext";
-import { API_URL } from "../../variables";
+import AuthContext from "../../../contexts/AuthContext";
+import { API_URL } from "../../../variables";
 
 interface IDeleteCampaignFormProps {
   id: number;

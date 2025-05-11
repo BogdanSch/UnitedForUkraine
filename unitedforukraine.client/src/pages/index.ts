@@ -9,5 +9,5 @@ export { default as CampaignDetail } from "./campaigns/CampaignsDetail";
 export { default as CampaignCreate } from "./campaigns/CampaignsCreate";
 export { default as CampaignEdit } from "./campaigns/CampaignsEdit";
 export { default as About } from "./about/About";
-export { default as Donate } from "./donate/Donate";
+export { default as Donate } from "./payment/Donate";
 // export {default as Cam}

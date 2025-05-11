@@ -1,11 +1,14 @@
+import axios, { AxiosError } from "axios";
 import { FC, useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_URL } from "../../variables";
-import axios, { AxiosError } from "axios";
+import { API_URL } from "../../../variables";
 
-import PasswordInput from "../../components/formElements/PasswordInput";
-import { ConfirmPasswordInput, Input } from "../../components";
-import { useAuthForm } from "../../hooks";
+import {
+  ConfirmPasswordInput,
+  Input,
+  PasswordInput,
+} from "../../../components";
+import { useAuthForm } from "../../../hooks";
 
 const RegisterForm: FC = () => {
   const navigate = useNavigate();
@@ -51,7 +54,7 @@ const RegisterForm: FC = () => {
     }
   };
 
-  const handleReset = (event: FormEvent<HTMLFormElement>): void => {
+  const handleReset = (): void => {
     // event.preventDefault();
     setFormData({
       userName: "",
@@ -70,7 +73,7 @@ const RegisterForm: FC = () => {
 
   return (
     <form
-      className="register__form mt-4"
+      className="form register__form mt-4"
       onSubmit={handleSubmit}
       onReset={handleReset}
       aria-labelledby="registerForm"
@@ -152,7 +155,7 @@ const RegisterForm: FC = () => {
           </div>
         )}
       </div>
-      <div className="register__form-buttons mt-2">
+      <div className="form-buttons mt-2">
         <button type="submit" className="btn btn-secondary">
           Register
         </button>

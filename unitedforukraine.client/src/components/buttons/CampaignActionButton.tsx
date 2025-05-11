@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
-import { CampaignStatus } from "../../types";
+import { CampaignStatus } from "../../types/enums";
 
 type CampaignActionButtonProps = {
   campaignId: number;

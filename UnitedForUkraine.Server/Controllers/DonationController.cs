@@ -1,12 +1,10 @@
 ﻿using ContosoUniversity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.DTOs.Donation;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.Repositories;
 
 namespace UnitedForUkraine.Server.Controllers;
 
@@ -64,7 +62,7 @@ public class DonationController : ControllerBase
             await _donationRepository.AddAsync(newDonation);
             _donationRepository.Save();
 
-            return Ok(new { createdDonationId = newDonation.Id });
+            return Ok(new { id = newDonation.Id });
         }
         catch (Exception)
         {

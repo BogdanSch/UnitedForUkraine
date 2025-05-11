@@ -1,4 +1,4 @@
-import { Currency } from "../types";
+import { Currency } from "../types/enums";
 
 export const formatMoney = (amount: number): string => {
   return new Intl.NumberFormat("en-GB").format(amount);

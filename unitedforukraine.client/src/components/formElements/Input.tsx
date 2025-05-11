@@ -1,11 +1,11 @@
 import React, { ChangeEvent } from "react";
 
 interface InputProps {
-  className: string | "";
+  className?: string;
   name: string;
   id: string;
   isRequired: boolean;
-  value: string;
+  value: any;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   [name: string]: any;
 }

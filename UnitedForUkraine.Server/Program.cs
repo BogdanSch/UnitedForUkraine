@@ -29,8 +29,12 @@ builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IAuthTokenService, AuthTokenService>();
+
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+builder.Services.Configure<FrontendSettings>(builder.Configuration.GetSection("FrontendSettings"));
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
@@ -97,7 +101,7 @@ app.UseHttpsRedirection();
 
 IConfigurationSection frontendSettings = builder.Configuration.GetSection("FrontendSettings");
 app.UseCors(cors => cors
-                  .WithOrigins(frontendSettings["Url"]!)
+                  .WithOrigins(frontendSettings["Origin"]!)
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials());
@@ -110,6 +114,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
 
-StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:SecretKey"];
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeSettings")["SecretKey"];
 
 app.Run();

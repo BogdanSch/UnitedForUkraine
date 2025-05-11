@@ -44,12 +44,6 @@
     align-items: center;
     column-gap: 0;
   }
-  &__form {
-    &-buttons {
-      @include flex-row();
-      column-gap: 8px;
-    }
-  }
 }
 
 @media screen and (max-width: 768px) {

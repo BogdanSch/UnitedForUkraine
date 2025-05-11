@@ -64,12 +64,12 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/payment",
+    path: "/donate",
     element: <MainLayout />,
     children: [
+      { path: "confirmation", element: <h1>Confirmation</h1> },
+      { path: "failed", element: <h1>Failed</h1> },
       { path: ":id", element: <Donate /> },
-      { path: "/confirmation", element: <h1>Confirmation</h1> },
-      { path: "/failed", element: <h1>Failed</h1> },
     ],
   },
 ]);

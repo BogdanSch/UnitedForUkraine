@@ -1,3 +1,5 @@
+import { CampaignStatus, Currency, PaymentMethod } from "./enums";
+
 export type CampaignDto = {
   id: number;
   title: string;
@@ -53,7 +55,6 @@ export type CreateDonationRequestDto = {
   amount: number;
   currency: Currency;
   paymentMethod: PaymentMethod;
-  status: DonationStatus;
   campaignId: number;
 };
 
@@ -63,33 +64,6 @@ export type ImageDto = {
   title?: string;
   description?: string;
 };
-
-export enum CampaignStatus {
-  Upcoming,
-  Ongoing,
-  Completed,
-  Cancelled,
-}
-
-export enum DonationStatus {
-  Pending,
-  Completed,
-  Failed,
-  Refunded,
-}
-
-export enum Currency {
-  USD,
-  EUR,
-  UAH,
-}
-
-export enum PaymentMethod {
-  CreditCard,
-  PayPal,
-  BankTransfer,
-  Crypto,
-}
 
 export type Address = {
   id: number;

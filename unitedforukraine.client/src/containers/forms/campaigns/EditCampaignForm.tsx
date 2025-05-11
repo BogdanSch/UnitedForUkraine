@@ -8,14 +8,15 @@ import {
   useContext,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../contexts/AuthContext";
-import { API_URL } from "../../variables";
-import { CampaignStatus, UpdateCampaignRequestDto } from "../../types";
-import { ErrorAlert } from "../../components/";
+import AuthContext from "../../../contexts/AuthContext";
+import { API_URL } from "../../../variables";
+import { UpdateCampaignRequestDto } from "../../../types";
+import { CampaignStatus } from "../../../types/enums";
+import { ErrorAlert } from "../../../components/";
 
-import { deleteImageAsync, uploadImageAsync } from "../../utils/imageHelper";
-import { convertDate } from "../../utils/dateConverter";
-import { fetchCampaignData } from "../../utils/campaignHelper";
+import { deleteImageAsync, uploadImageAsync } from "../../../utils/imageHelper";
+import { convertDate } from "../../../utils/dateConverter";
+import { fetchCampaignData } from "../../../utils/campaignHelper";
 
 interface EditCampaignFormProps {
   id: number;
@@ -204,7 +205,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
 
   return (
     <form
-      className="campaigns__form"
+      className="form campaigns__form"
       onSubmit={handleSubmit}
       onReset={handleReset}
     >
@@ -334,7 +335,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           // required
         />
       </div>
-      <div className="campaigns__form-buttons">
+      <div className="form-buttons">
         <button type="submit" className="btn btn-primary">
           Submit
         </button>

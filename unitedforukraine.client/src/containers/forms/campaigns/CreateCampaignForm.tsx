@@ -1,16 +1,13 @@
 import axios from "axios";
 import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../contexts/AuthContext";
-import { ErrorAlert } from "../../components/";
-import {
-  CampaignStatus,
-  CreateCampaignRequestDto,
-  Currency,
-} from "../../types";
-import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../variables";
-import { uploadImageAsync } from "../../utils/imageHelper";
-import { convertDate } from "../../utils/dateConverter";
+import AuthContext from "../../../contexts/AuthContext";
+import { ErrorAlert } from "../../../components";
+import { CreateCampaignRequestDto } from "../../../types";
+import { CampaignStatus, Currency } from "../../../types/enums";
+import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../../variables";
+import { uploadImageAsync } from "../../../utils/imageHelper";
+import { convertDate } from "../../../utils/dateConverter";
 
 const CreateCampaignForm: FC = () => {
   const [formData, setFormData] = useState<CreateCampaignRequestDto>({
@@ -178,7 +175,7 @@ const CreateCampaignForm: FC = () => {
 
   return (
     <form
-      className="campaigns__form"
+      className="form campaigns__form"
       onSubmit={handleSubmit}
       onReset={handleReset}
     >
@@ -337,7 +334,7 @@ const CreateCampaignForm: FC = () => {
           required
         />
       </div>
-      <div className="campaigns__form-buttons">
+      <div className="form-buttons">
         <button type="submit" className="btn btn-primary">
           Submit
         </button>

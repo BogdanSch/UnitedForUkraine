@@ -1,12 +1,11 @@
 import { FC, FormEvent, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_URL } from "../../variables";
+import { API_URL } from "../../../variables";
 import axios, { AxiosError } from "axios";
 
-import PasswordInput from "../../components/formElements/PasswordInput";
-import AuthContext from "../../contexts/AuthContext";
-import { useAuthForm } from "../../hooks/";
-import { Input } from "../../components";
+import AuthContext from "../../../contexts/AuthContext";
+import { useAuthForm } from "../../../hooks/";
+import { Input, PasswordInput } from "../../../components";
 
 const SignInForm: FC = () => {
   const navigate = useNavigate();
@@ -56,9 +55,7 @@ const SignInForm: FC = () => {
     }
   };
 
-  const handleReset = (event: FormEvent<HTMLFormElement>): void => {
-    // event.preventDefault();
-
+  const handleReset = (): void => {
     setFormData({
       email: "",
       password: "",
@@ -74,7 +71,7 @@ const SignInForm: FC = () => {
 
   return (
     <form
-      className="login__form mt-4"
+      className="form login__form mt-4"
       onSubmit={handleSubmit}
       onReset={handleReset}
       aria-labelledby="loginForm"
@@ -128,7 +125,7 @@ const SignInForm: FC = () => {
           Remember Me
         </label>
       </div>
-      <div className="login__form-buttons mt-2">
+      <div className="form-buttons mt-2">
         <button type="submit" className="btn btn-secondary">
           Login
         </button>

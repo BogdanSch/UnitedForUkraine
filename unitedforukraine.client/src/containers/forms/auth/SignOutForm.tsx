@@ -1,6 +1,6 @@
 // import axios from "axios";
 import { FC, FormEvent, useContext } from "react";
-import AuthContext from "../../contexts/AuthContext";
+import AuthContext from "../../../contexts/AuthContext";
 // import { API_URL } from "../../variables";
 
 const SignOutForm: FC = () => {
