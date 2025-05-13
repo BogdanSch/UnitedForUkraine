@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
 using Stripe.Events;
 using UnitedForUkraine.Server.Data.Enums;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
+using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -15,36 +18,44 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly IDonationRepository _donationRepository;
         private readonly ICampaignRepository _campaignRepository;
         private readonly ILogger<StripeWebhooksController> _logger;
-        private readonly IConfiguration _config;
+        //private readonly IConfiguration _config;
+        private readonly StripeSettings _stripeSettings;
 
         public StripeWebhooksController(
             IDonationRepository donationRepository,
             ICampaignRepository campaignRepository,
             ILogger<StripeWebhooksController> logger,
-            IConfiguration config)
+            IOptions<StripeSettings> stripeOptions)
         {
             _donationRepository = donationRepository;
             _campaignRepository = campaignRepository;
             _logger = logger;
-            _config = config;
+            _stripeSettings = stripeOptions.Value;
         }
 
-        [HttpPost]
+        [HttpPost("webhook")]
         public async Task<IActionResult> Handle()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
             try
             {
-                var secret = _config["Stripe:WebhookSecret"];
+                string secret = _stripeSettings.WebhookSecret;
                 var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], secret);
 
-                if (stripeEvent.Type == Events.CheckoutSessionCompleted)
+                if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted)
                 {
-                    var session = stripeEvent.Data.Object as Session;
-                    var userId = session.ClientReferenceId;
+                    Session? session = stripeEvent.Data.Object as Session;
 
-                    var donation = await _donationRepository.GetDonationByCheckoutSessionId(session.Id);
+                    if (session == null)
+                    {
+                        _logger.LogError("Session is null");
+                        return BadRequest();
+                    }
+
+                    string userId = session.ClientReferenceId;
+
+                    Donation? donation = await _donationRepository.GetDonationByCheckoutSessionId(session.Id);
                     if (donation != null)
                     {
                         donation.Status = DonationStatus.Completed;
@@ -57,12 +68,11 @@ namespace UnitedForUkraine.Server.Controllers
                         _donationRepository.Update(donation);
                     }
                 }
-
                 return Ok();
             }
             catch (StripeException e)
             {
-                _logger.LogError(e, "Stripe webhook error");
+                _logger.LogError(e.StripeError.Message, "Stripe webhook error");
                 return BadRequest();
             }
         }
