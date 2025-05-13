@@ -12,20 +12,14 @@ const CampaignActionButton: FC<CampaignActionButtonProps> = ({
   campaignStatus,
 }) => {
   return campaignStatus === CampaignStatus.Ongoing ? (
-    <Link
-      className="btn btn-outline-primary"
-      to={`/campaigns/detail/${campaignId}/`}
-    >
+    <Link className="btn btn-outline-primary" to={`/donate/${campaignId}/`}>
       <div className="d-flex flex-row align-items-center gap-2">
         <span>Donate Now</span>
         <i className="bi bi-cash-coin"></i>
       </div>
     </Link>
   ) : campaignStatus === CampaignStatus.Completed ? (
-    <Link
-      className="btn btn-outline-success"
-      to={`/campaigns/detail/${campaignId}/`}
-    >
+    <Link className="btn btn-outline-success" to={`/donate/${campaignId}/`}>
       <div className="d-flex flex-row align-items-center gap-2">
         <span>Completed</span>
         <i className="bi bi-check-all"></i>

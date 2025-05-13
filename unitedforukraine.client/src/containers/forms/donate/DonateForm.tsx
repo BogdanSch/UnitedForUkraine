@@ -12,8 +12,6 @@ interface IDonateFormProps {
   campaignId: number;
 }
 
-// First request creation of the donation
-// Second request stipe session
 const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
   const navigate = useNavigate();
   const { authToken, user } = useContext(AuthContext);
@@ -125,28 +123,9 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
     setValidationErrors({});
   };
 
-  // const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-  //   const target = e.target;
-
-  //   const { name, value, type, checked } = target;
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     [name]: type === "checkbox" ? checked : value,
-  //   }));
-  // };
-
-  // const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>): void => {
-  //   const { name, value } = e.target;
-
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     [name]: Number(value),
-  //   }));
-  // };
-
   return (
     <form
-      className="form donate__form card"
+      className="form donate__form card px-4 py-3"
       onSubmit={handleSubmit}
       onReset={handleReset}
     >

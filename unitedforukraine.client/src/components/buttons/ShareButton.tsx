@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, MouseEvent } from "react";
 
 interface ShareButtonProps {
   relativeUrl: string;
@@ -15,7 +15,9 @@ const ShareButton: FC<ShareButtonProps> = ({
 }) => {
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
-  const handleShare = (): void => {
+  const handleShare = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
+
     const locationUrl: string = `${window.location.origin}${relativeUrl}`;
     const campaignInfo: string = `United For Ukraine\nSupport the campaign: "${campaignTitle}"\nRaised: ${campaignRaisedAmount} / Goal: ${campaignGoalAmount}\nJoin us in making a difference!\n${locationUrl}`;
 

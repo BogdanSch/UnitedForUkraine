@@ -87,4 +87,11 @@ public class DonationRepository : IDonationRepository
            .Distinct()
            .CountAsync();
     }
+
+    public Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId)
+    {
+        return _context.Donations
+            .Include(d => d.User)
+            .FirstOrDefaultAsync(d => d.CheckoutSessionId == checkoutSessionId);
+    }
 }

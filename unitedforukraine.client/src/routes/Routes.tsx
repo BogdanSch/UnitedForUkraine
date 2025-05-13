@@ -15,6 +15,8 @@ import {
   SuccessfulRegistration,
   About,
   Donate,
+  Confirmation,
+  Failed,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -67,9 +69,16 @@ export const router = createBrowserRouter([
     path: "/donate",
     element: <MainLayout />,
     children: [
-      { path: "confirmation", element: <h1>Confirmation</h1> },
-      { path: "failed", element: <h1>Failed</h1> },
-      { path: ":id", element: <Donate /> },
+      { path: "confirmation", element: <Confirmation /> },
+      { path: "failed", element: <Failed /> },
+      {
+        path: ":id",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <Donate />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);

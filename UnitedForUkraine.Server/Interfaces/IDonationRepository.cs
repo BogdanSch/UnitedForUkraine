@@ -12,6 +12,7 @@ public interface IDonationRepository
     Task<int> GetTotalDonationsCount();
     Task<int> GetAverageDonationsAmount();
     Task<int> GetUniqueDonorsCount();
+    Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId);
     Task<Donation> AddAsync(Donation donation);
     Task<Donation> Delete(int id);
     bool Update(Donation donation);

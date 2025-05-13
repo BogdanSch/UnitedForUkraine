@@ -1,6 +1,6 @@
 ﻿import axios from "axios";
 import { FC, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { CampaignDto } from "../../types";
 import {
@@ -63,12 +63,17 @@ const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
                 imageAlt={campaign.title}
                 cardStatus={convertCampaignStatusToString(campaign.status)}
               >
-                <h3 className="card-title">{campaign.title}</h3>
-                <p className="card-text text-muted">{campaign.description}</p>
-                <p className="card-text text-muted">
-                  <strong>Goal:</strong> {formatMoney(campaign.goalAmount)}{" "}
-                  {convertCurrencyToString(campaign.currency)}
-                </p>
+                <Link
+                  to={`/campaigns/detail/${campaign.id}/`}
+                  className="campaigns__item-link"
+                >
+                  <h3 className="card-title">{campaign.title}</h3>
+                  <p className="card-text text-muted">{campaign.description}</p>
+                  <p className="card-text text-muted">
+                    <strong>Goal:</strong> {formatMoney(campaign.goalAmount)}{" "}
+                    {convertCurrencyToString(campaign.currency)}
+                  </p>
+                </Link>
                 <ProgressBar
                   className="mt-3 mb-4"
                   currentAmount={campaign.raisedAmount}

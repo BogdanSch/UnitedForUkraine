@@ -15,12 +15,6 @@
     background: rgba(0, 0, 0, 0.4);
   }
 
-  // .container {
-  //   display: flex;
-  //   align-items: center;
-  //   justify-content: center;
-  // }
-
   &__wrap {
     position: relative;
     z-index: 1;
@@ -38,6 +32,17 @@
   &__description {
     color: $white;
     font-weight: $fw-light;
-    // margin: 20px 0;
+  }
+  &__form {
+    width: 70%;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .donate {
+    &__form {
+      width: 100%;
+    }
   }
 }

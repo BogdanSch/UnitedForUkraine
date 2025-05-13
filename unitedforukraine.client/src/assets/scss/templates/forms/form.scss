@@ -1,4 +1,7 @@
 .form {
+  width: 100%;
+  margin: 0 auto;
+
   &-buttons {
     @include flex-row();
     column-gap: 8px;
