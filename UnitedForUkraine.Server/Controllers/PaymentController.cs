@@ -17,7 +17,7 @@ namespace UnitedForUkraine.Server.Controllers
     [Route("api/payments")]
     public class PaymentController : ControllerBase
     {
-        public const string DEFAULT_CURRENCY_NAME = "UAH";
+        public const string DEFAULT_STRIPE_CURRENCY = "uah";
         private readonly FrontendSettings _frontendSettings;
         private readonly UserManager<AppUser> _userManager;
         private readonly IDonationRepository _donationRepository;
@@ -43,7 +43,7 @@ namespace UnitedForUkraine.Server.Controllers
                 _ => ["card"],
             };
         }
-        private static string GetCurrencyCode(CurrencyType currencyEnum) => Enum.GetName(currencyEnum)?.ToLower() ?? DEFAULT_CURRENCY_NAME.ToLower();
+        
         [Authorize]
         [HttpPost("create/{createdDonationId:int}")]
         public async Task<IActionResult> CreateCheckoutSession(int createdDonationId)
@@ -64,12 +64,7 @@ namespace UnitedForUkraine.Server.Controllers
                 return BadRequest("Invalid user data");
 
             string requestOrigin = _frontendSettings.Origin;
-            //decimal convertedAmount = await
-            //    _currencyConverterService.ConvertCurrency(
-            //        currentDonation.Amount,
-            //    GetCurrencyCode(currentDonation.Currency),
-            //    GetCurrencyCode(targetCampaign.Currency)
-            //);
+            
 
             var options = new SessionCreateOptions
             {
@@ -81,7 +76,7 @@ namespace UnitedForUkraine.Server.Controllers
                         PriceData = new SessionLineItemPriceDataOptions
                         {
                             UnitAmount = Convert.ToInt64(currentDonation.Amount * 100) ,
-                            Currency = Enum.GetName(currentDonation.Currency)?.ToLower() ?? "eur",
+                            Currency = Enum.GetName(currentDonation.Currency)?.ToLower() ?? DEFAULT_STRIPE_CURRENCY,
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
                                 Name = currentDonation.Campaign.Title,

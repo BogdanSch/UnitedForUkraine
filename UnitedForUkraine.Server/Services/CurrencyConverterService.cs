@@ -23,7 +23,7 @@ namespace UnitedForUkraine.Server.Services
 
             string json = await response.Content.ReadAsStringAsync();
             var data = JObject.Parse(json);
-            decimal rate = (decimal)(data["rates"]?[toCurrency] ?? 1);
+            decimal rate = data["rates"]?[toCurrency]?.Value<decimal>() ?? 1m;
 
             return rate;
         }

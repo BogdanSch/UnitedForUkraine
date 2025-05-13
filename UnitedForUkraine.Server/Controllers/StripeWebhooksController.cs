@@ -8,6 +8,7 @@ using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
+using UnitedForUkraine.Server.Services;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -15,8 +16,11 @@ namespace UnitedForUkraine.Server.Controllers
     [ApiController]
     public class StripeWebhooksController : ControllerBase
     {
+        public const string DEFAULT_CURRENCY_NAME = "UAH";
+
         private readonly IDonationRepository _donationRepository;
         private readonly ICampaignRepository _campaignRepository;
+        private readonly ICurrencyConverterService _currencyConverterService;
         private readonly ILogger<StripeWebhooksController> _logger;
         //private readonly IConfiguration _config;
         private readonly StripeSettings _stripeSettings;
@@ -24,15 +28,17 @@ namespace UnitedForUkraine.Server.Controllers
         public StripeWebhooksController(
             IDonationRepository donationRepository,
             ICampaignRepository campaignRepository,
+            ICurrencyConverterService currencyConverterService,
             ILogger<StripeWebhooksController> logger,
             IOptions<StripeSettings> stripeOptions)
         {
             _donationRepository = donationRepository;
             _campaignRepository = campaignRepository;
+            _currencyConverterService = currencyConverterService;
             _logger = logger;
             _stripeSettings = stripeOptions.Value;
         }
-
+        private static string GetCurrencyCode(CurrencyType currencyEnum) => Enum.GetName(currencyEnum)?.ToUpper() ?? DEFAULT_CURRENCY_NAME;
         [HttpPost("webhook")]
         public async Task<IActionResult> Handle()
         {
@@ -62,7 +68,13 @@ namespace UnitedForUkraine.Server.Controllers
                         var campaign = await _campaignRepository.GetCampaignById(donation.CampaignId);
                         if (campaign != null)
                         {
-                            campaign.RaisedAmount += donation.Amount;
+                            decimal convertedAmount = await
+                                _currencyConverterService.ConvertCurrency(
+                                    donation.Amount,
+                                GetCurrencyCode(donation.Currency),
+                                GetCurrencyCode(campaign.Currency)
+                            );
+                            campaign.RaisedAmount += convertedAmount;
                             _campaignRepository.Update(campaign);
                         }
                         _donationRepository.Update(donation);
