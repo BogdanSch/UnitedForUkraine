@@ -17,6 +17,7 @@ import {
   Donate,
   Confirmation,
   Failed,
+  Dashboard,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -76,6 +77,20 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute requireAdmin>
             <Donate />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: <MainLayout />,
+    children: [
+      {
+        index: true,
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
           </ProtectedRoute>
         ),
       },

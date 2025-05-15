@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
-import { CampaignsList, StatisticsList } from "../../containers";
+import { CampaignsList, TotalStatisticsList } from "../../containers";
 import {
   CallToActionSection,
   Card,
@@ -138,7 +138,7 @@ const HomePage: FC = () => {
                 View Your Statistics
               </Link>
             </SectionHeadline>
-            <StatisticsList />
+            <TotalStatisticsList />
           </div>
         </div>
       </section>

@@ -1,20 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using UnitedForUkraine.Server.Data;
+using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
+using UnitedForUkraine.Server.Services;
 
 namespace UnitedForUkraine.Server.Repositories;
 
 public class DonationRepository : IDonationRepository
 {
     private readonly ApplicationDbContext _context;
-    public DonationRepository(ApplicationDbContext context)
+    private readonly ICurrencyConverterService _currencyConverterService;
+    public DonationRepository(ApplicationDbContext context, ICurrencyConverterService currencyConverterService)
     {
         _context = context;
+        _currencyConverterService = currencyConverterService;
     }
 
-    public async Task<IEnumerable<Donation>> GetAllDonations()
+    public async Task<IEnumerable<Donation>> GetAllDonationsAsync()
     {
         return await _context.Donations.Include(d => d.User).OrderByDescending(d => d.PaymentDate).ToListAsync();
     }
@@ -22,11 +26,15 @@ public class DonationRepository : IDonationRepository
     {
         return _context.Donations.Where(d => d.CampaignId == campaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
     }
-    public async Task<Donation> GetDonationById(int id)
+    public IQueryable<Donation> GetAllDonationsByUserId(string userId)
+    {
+        return _context.Donations.Where(d => d.UserId == userId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
+    }
+    public async Task<Donation?> GetDonationByIdAsync(int id)
     {
         return await _context.Donations.Include(d => d.User).FirstOrDefaultAsync(dontaion => dontaion.Id == id);
     }
-    public async Task<IEnumerable<Donation>> GetDonations(int donationsAmount)
+    public async Task<IEnumerable<Donation>> GetDonationsAsync(int donationsAmount)
     {
         return await _context.Donations
             .OrderByDescending(d => d.PaymentDate)
@@ -39,7 +47,7 @@ public class DonationRepository : IDonationRepository
         Save();
         return donation;
     }
-    public async Task<Donation> Delete(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
         Donation? donation = await _context.Donations.FindAsync(id);
 
@@ -47,9 +55,10 @@ public class DonationRepository : IDonationRepository
         {
             _context.Donations.Remove(donation);
             Save();
+            return true;
         }
 
-        return donation;
+        return false;
     }
     public bool Update(Donation donation)
     {
@@ -63,24 +72,71 @@ public class DonationRepository : IDonationRepository
         return saved > 0;
     }
 
-    public async Task<int> GetTotalDonationsCount()
+    public async Task<int> GetTotalUserDonationsCountAsync(string? userId)
     {
-        return await _context.Donations.CountAsync();
+        IQueryable<Donation> donations;
+
+        if(userId == null)
+        {
+            donations = _context.Donations.AsQueryable();
+        }
+        else
+        {
+            donations = _context.Donations.Where(d => d.UserId == userId);
+        }
+
+        return await donations.CountAsync();
     }
 
-    public decimal GetTotalDonationsAmount()
+    public async Task<decimal> GetTotalUserDonationsAmountAsync(string? userId)
     {
-        return _context.Donations.Sum(d => (decimal?)d.Amount) ?? 0m;
+        IEnumerable<Donation> donations;
+
+        if (userId == null)
+        {
+            donations = _context.Donations.AsEnumerable();
+        }
+        else
+        {
+            donations = _context.Donations.Where(d => d.UserId == userId).AsEnumerable();
+        }
+
+        var tasks = donations.Select(async donation =>
+            {
+                if (donation.Currency == CurrencyType.UAH)
+                    return donation.Amount;
+
+                string from = Enum.GetName(donation.Currency)!;
+                string to = Enum.GetName(CurrencyType.UAH)!;
+
+                return await _currencyConverterService.ConvertCurrency(donation.Amount, from, to);
+            });
+
+        var converted = await Task.WhenAll(tasks);
+
+        return converted.Sum();
     }
 
-    public async Task<int> GetAverageDonationsAmount()
+
+    public async Task<int> GetAverageUserDonationsAmountAsync(string? userId)
     {
-        int totalDonationsCount = await GetTotalDonationsCount();
-        decimal totalDonationsAmount = GetTotalDonationsAmount();
+        int totalDonationsCount = await GetTotalUserDonationsCountAsync(userId);
+        decimal totalDonationsAmount = await GetTotalUserDonationsAmountAsync(userId);
         return (int)Math.Round(totalDonationsAmount / totalDonationsCount);
     }
-
-    public async Task<int> GetUniqueDonorsCount()
+    public async Task<IEnumerable<Campaign>> GetAllUserSupportedCampaigns(string? userId)
+    {
+        return await _context.Donations.Where(d => d.UserId == userId)
+            .Select(d => d.Campaign)
+            .Distinct()
+            .ToListAsync();
+    }
+    public async Task<int> GetAllUserSupportedCampaignsCount(string? userId)
+    {
+        var campaigns = await GetAllUserSupportedCampaigns(userId);
+        return campaigns.Count();
+    }
+    public async Task<int> GetUniqueDonorsCountAsync()
     {
         return await _context.Donations
            .Select(d => d.UserId)

@@ -75,7 +75,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     removeAuthToken();
   };
 
-  const isAuthenticated = () => !!user && !!authToken;
+  const isAuthenticated = () => user != null && authToken.length > 0;
   const isAdmin = () => user?.isAdmin ?? false;
 
   const contextValue = useMemo(

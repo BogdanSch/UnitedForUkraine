@@ -1,6 +1,7 @@
 ﻿using ContosoUniversity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UnitedForUkraine.Server.Dtos.Donation;
 using UnitedForUkraine.Server.DTOs.Donation;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
@@ -22,16 +23,16 @@ public class DonationController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetDontaionsData()
     {
-        var donations = await _donationRepository.GetDonations(PAGE_ITEMS_COUNT);
+        var donations = await _donationRepository.GetDonationsAsync(PAGE_ITEMS_COUNT);
 
         if (!donations.Any()) return Ok(new List<DonationDto>());
 
-        List<DonationDto> response = donations.Select(d => d.ToDonationDto()).ToList();
+        List<DonationDto> response = [.. donations.Select(d => d.ToDonationDto())];
 
         return Ok(response);
     }
     [HttpGet("campaign/{campaignId:int}")]
-    public async Task<IActionResult> GetCampaignDonationById(int campaignId, [FromQuery] int page = 1)
+    public async Task<IActionResult> GetCampaignDonationsById(int campaignId, [FromQuery] int page = 1)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -45,7 +46,28 @@ public class DonationController : ControllerBase
 
         PaginatedList<Donation> loadedDonations = await PaginatedList<Donation>.CreateAsync(donations, page, PAGE_ITEMS_COUNT);
 
-        List<DonationDto> donationDtos = loadedDonations.Select(d => d.ToDonationDto()).ToList();
+        List<DonationDto> donationDtos = [.. loadedDonations.Select(d => d.ToDonationDto())];
+
+        return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));
+    }
+    [HttpGet("user/{userId:guid}")]
+    public async Task<IActionResult> GetUserDonations(Guid userId, [FromQuery] int page = 1)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        if (userId == Guid.Empty)
+            return BadRequest("User ID cannot be empty.");
+
+        var donations = _donationRepository.GetAllDonationsByUserId(userId.ToString());
+
+        if (!donations.Any())
+        {
+            return Ok(new PaginatedDonationsDto());
+        }
+
+        PaginatedList<Donation> loadedDonations = await PaginatedList<Donation>.CreateAsync(donations, page, PAGE_ITEMS_COUNT);
+
+        List<DonationDto> donationDtos = [.. loadedDonations.Select(d => d.ToDonationDto())];
 
         return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));
     }
@@ -72,7 +94,7 @@ public class DonationController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetDontaionDataById(int id)
     {
-        Donation targetDonation = await _donationRepository.GetDonationById(id);
+        Donation? targetDonation = await _donationRepository.GetDonationByIdAsync(id);
 
         if (targetDonation == null)
             return NotFound();
@@ -85,10 +107,27 @@ public class DonationController : ControllerBase
     {
         DonationStatisticsDto statisticsDto = new()
         {
-            DonationsCount = await _donationRepository.GetTotalDonationsCount(),
-            TotalDonationsAmount = _donationRepository.GetTotalDonationsAmount(),
-            AverageDonationsAmount = await _donationRepository.GetAverageDonationsAmount(),
-            UniqueDonorsCount = await _donationRepository.GetUniqueDonorsCount()
+            DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(null),
+            TotalDonationsAmount = await _donationRepository.GetTotalUserDonationsAmountAsync(null),
+            AverageDonationsAmount = await _donationRepository.GetAverageUserDonationsAmountAsync(null),
+            UniqueDonorsCount = await _donationRepository.GetUniqueDonorsCountAsync()
+        };
+
+        return Ok(statisticsDto);
+    }
+    [HttpGet("statistics/{userId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetUserDonationsStatistics(Guid userId)
+    {
+        if(userId == Guid.Empty)
+            return BadRequest("User ID cannot be empty.");
+
+        UserDonationsStatisticsDto statisticsDto = new()
+        {
+            DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(userId.ToString()),
+            TotalDonationsAmount = await _donationRepository.GetTotalUserDonationsAmountAsync(userId.ToString()),
+            AverageDonationsAmount = await _donationRepository.GetAverageUserDonationsAmountAsync(userId.ToString()),
+            SupportedCampaignsCount = await _donationRepository.GetAllUserSupportedCampaignsCount(userId.ToString())
         };
 
         return Ok(statisticsDto);

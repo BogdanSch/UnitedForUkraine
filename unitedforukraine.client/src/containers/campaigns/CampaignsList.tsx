@@ -20,6 +20,7 @@ type CampaignsListProps = {
 
 const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
   const [campaigns, setCampaigns] = useState<CampaignDto[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
@@ -54,6 +55,29 @@ const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
 
   return (
     <>
+      <form className="campaigns__search">
+        <div className="input-group">
+          <div className="form-outline" data-mdb-input-init>
+            <input
+              type="search"
+              id="searchInput"
+              className="form-control"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <label className="form-label" htmlFor="searchInput">
+              Search
+            </label>
+          </div>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            data-mdb-ripple-init
+          >
+            <i className="fas fa-search"></i>
+          </button>
+        </div>
+      </form>
       <ul className="campaigns__list mt-5">
         {campaigns.length > 0 ? (
           campaigns.map((campaign: CampaignDto) => (

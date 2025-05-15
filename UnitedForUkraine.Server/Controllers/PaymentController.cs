@@ -48,7 +48,7 @@ namespace UnitedForUkraine.Server.Controllers
         [HttpPost("create/{createdDonationId:int}")]
         public async Task<IActionResult> CreateCheckoutSession(int createdDonationId)
         {
-            Donation? currentDonation = await _donationRepository.GetDonationById(createdDonationId);
+            Donation? currentDonation = await _donationRepository.GetDonationByIdAsync(createdDonationId);
 
             if (currentDonation == null)
                 return BadRequest("Invalid donation data");

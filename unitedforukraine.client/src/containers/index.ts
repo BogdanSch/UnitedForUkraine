@@ -1,6 +1,5 @@
 export { default as CampaignsList } from "./campaigns/CampaignsList";
 export { default as CampaignDonationsList } from "./campaigns/CampaignDonationsList";
-export { default as StatisticsList } from "./StatisticsList";
 export { default as SignOutForm } from "./forms/auth/SignOutForm";
 export { default as SignInForm } from "./forms/auth/SignInForm";
 export { default as RegisterForm } from "./forms/auth/RegisterForm";
@@ -8,3 +7,6 @@ export { default as CreateCampaignsForm } from "./forms/campaigns/CreateCampaign
 export { default as EditCampaignForm } from "./forms/campaigns/EditCampaignForm";
 export { default as DeleteCampaignForm } from "./forms/campaigns/DeleteCampaignForm";
 export { default as DonateForm } from "./forms/donate/DonateForm";
+export { default as UserDonationsList } from "./donations/UserDonationsList";
+export { default as TotalStatisticsList } from "./donations/TotalStatisticsList";
+export { default as UserStatisticsList } from "./donations/UserStatisticsList";

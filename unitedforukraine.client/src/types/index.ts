@@ -88,6 +88,13 @@ export type Statistics = {
   uniqueDonorsCount: number;
 };
 
+export type UserStatistics = {
+  donationsCount: number;
+  totalDonationsAmount: number;
+  averageDonationsAmount: number;
+  supportedCampaignsCount: number;
+};
+
 export type TimelineItem = {
   date: string;
   description: string;

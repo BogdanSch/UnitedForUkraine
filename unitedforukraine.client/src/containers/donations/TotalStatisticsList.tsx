@@ -1,12 +1,12 @@
 import { FC, useEffect, useState } from "react";
 import axios from "axios";
-import { API_URL } from "../variables";
-import { Statistics } from "../types";
+import { API_URL } from "../../variables";
+import { Statistics } from "../../types";
 
-import { formatMoney } from "../utils/currency";
-import formatNumber from "../utils/formatNumber";
+import { formatMoney } from "../../utils/currency";
+import formatNumber from "../../utils/formatNumber";
 
-const StatisticsList: FC = () => {
+const TotalStatisticsList: FC = () => {
   const [statistics, setStatistics] = useState<Statistics>({
     donationsCount: 0,
     totalDonationsAmount: 0,
@@ -85,4 +85,4 @@ const StatisticsList: FC = () => {
   );
 };
 
-export default StatisticsList;
+export default TotalStatisticsList;
