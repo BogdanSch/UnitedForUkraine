@@ -11,7 +11,11 @@ const ProtectedRoute: FC<IProtectedRouteProps> = ({
   children,
   requireAdmin = false,
 }) => {
-  const { isAuthenticated, isAdmin } = useContext(AuthContext);
+  const { isAuthenticated, isAdmin, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!isAuthenticated()) {
     return <Navigate to="/auth/login" replace />;

@@ -5,7 +5,7 @@ using Stripe;
 using Stripe.Checkout;
 using Stripe.Events;
 using UnitedForUkraine.Server.Data.Enums;
-using UnitedForUkraine.Server.Helpers;
+using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
 using UnitedForUkraine.Server.Services;
@@ -65,7 +65,7 @@ namespace UnitedForUkraine.Server.Controllers
                     if (donation != null)
                     {
                         donation.Status = DonationStatus.Completed;
-                        var campaign = await _campaignRepository.GetCampaignById(donation.CampaignId);
+                        var campaign = await _campaignRepository.GetCampaignByIdAsync(donation.CampaignId);
                         if (campaign != null)
                         {
                             decimal convertedAmount = await
@@ -75,9 +75,9 @@ namespace UnitedForUkraine.Server.Controllers
                                 GetCurrencyCode(campaign.Currency)
                             );
                             campaign.RaisedAmount += convertedAmount;
-                            _campaignRepository.Update(campaign);
+                            await _campaignRepository.UpdateAsync(campaign);
                         }
-                        _donationRepository.Update(donation);
+                        await _donationRepository.UpdateAsync(donation);
                     }
                 }
                 return Ok();

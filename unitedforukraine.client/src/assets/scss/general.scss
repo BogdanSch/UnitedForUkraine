@@ -24,7 +24,11 @@ h1 {
 h1,
 h2 {
   font-family: "Montserrat", sans-serif;
-  // letter-spacing: -0.05rem;
+
+  & span.decoration {
+    font-weight: $fw-super-bold;
+    color: $primary;
+  }
 }
 
 .heading {

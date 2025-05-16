@@ -6,7 +6,7 @@ using Scalar.AspNetCore;
 using Stripe;
 using System.Text;
 using UnitedForUkraine.Server.Data;
-using UnitedForUkraine.Server.Helpers;
+using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
 using UnitedForUkraine.Server.Repositories;

@@ -41,11 +41,10 @@ public class DonationRepository : IDonationRepository
             .Take(donationsAmount)
             .ToListAsync();
     }
-    public async Task<Donation> AddAsync(Donation donation)
+    public async Task AddAsync(Donation donation)
     {
         await _context.Donations.AddAsync(donation);
-        Save();
-        return donation;
+        await SaveAsync();
     }
     public async Task<bool> DeleteAsync(int id)
     {
@@ -54,21 +53,21 @@ public class DonationRepository : IDonationRepository
         if (donation != null)
         {
             _context.Donations.Remove(donation);
-            Save();
+            await SaveAsync();
             return true;
         }
 
         return false;
     }
-    public bool Update(Donation donation)
+    public async Task<bool> UpdateAsync(Donation donation)
     {
         _context.Donations.Update(donation);
-        return Save();
+        return await SaveAsync();
     }
 
-    public bool Save()
+    public async Task<bool> SaveAsync()
     {
-        int saved = _context.SaveChanges();
+        int saved = await _context.SaveChangesAsync();
         return saved > 0;
     }
 

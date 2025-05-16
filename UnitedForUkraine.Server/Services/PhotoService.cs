@@ -2,7 +2,7 @@
 using CloudinaryDotNet;
 using Microsoft.Extensions.Options;
 using UnitedForUkraine.Server.Interfaces;
-using UnitedForUkraine.Server.Helpers;
+using UnitedForUkraine.Server.Helpers.Settings;
 
 namespace UnitedForUkraine.Server.Services;
 

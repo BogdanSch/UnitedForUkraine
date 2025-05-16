@@ -11,6 +11,7 @@ interface IAuthContextProps {
   logoutUser: () => void;
   isAuthenticated: () => boolean;
   isAdmin: () => boolean;
+  loading: boolean;
 }
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ const AuthContext = createContext<IAuthContextProps>({
   logoutUser: () => {},
   isAuthenticated: () => false,
   isAdmin: () => false,
+  loading: false,
 });
 
 export default AuthContext;
@@ -32,10 +34,18 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     "authToken",
     ""
   );
-  const [user, setUser] = useState<UserDto | null>(null);
+  const [user, setUser, removeUser] = useLocalStorage<UserDto | null>(
+    "user",
+    null
+  );
+  const [loading, setLoading] = useState(true);
+  // const [user, setUser] = useState<UserDto | null>(null);
 
   const fetchUserData = (authToken: string): void => {
-    if (!authToken) return;
+    if (!authToken) {
+      setLoading(false);
+      return;
+    }
 
     console.log(authToken);
 
@@ -52,6 +62,9 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       .catch((error) => {
         console.error("Error fetching user info:", error.response?.data);
         logoutUser();
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -71,8 +84,9 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       },
     });
 
-    setUser(null);
+    removeUser();
     removeAuthToken();
+    setUser(null);
   };
 
   const isAuthenticated = () => user != null && authToken.length > 0;
@@ -86,6 +100,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       logoutUser,
       isAuthenticated,
       isAdmin,
+      loading,
     }),
     [user, authToken]
   );

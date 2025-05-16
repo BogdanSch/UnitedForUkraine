@@ -16,8 +16,8 @@ public interface IDonationRepository
     Task<int> GetAllUserSupportedCampaignsCount(string? userId);
     Task<int> GetUniqueDonorsCountAsync();
     Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId);
-    Task<Donation> AddAsync(Donation donation);
+    Task AddAsync(Donation donation);
     Task<bool> DeleteAsync(int id);
-    bool Update(Donation donation);
-    bool Save();
+    Task<bool> UpdateAsync(Donation donation);
+    Task<bool> SaveAsync();
 }

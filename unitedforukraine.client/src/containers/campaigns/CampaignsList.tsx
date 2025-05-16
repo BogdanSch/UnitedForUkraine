@@ -3,16 +3,9 @@ import { FC, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { CampaignDto } from "../../types";
-import {
-  CampaignActionButton,
-  Card,
-  ProgressBar,
-  ShareButton,
-} from "../../components";
+import { CampaignItem } from "../../components";
 import { API_URL } from "../../variables";
 import CampaignsPaginator from "./CampaignsPaginator";
-import { convertCampaignStatusToString } from "../../utils/campaignHelper";
-import { convertCurrencyToString, formatMoney } from "../../utils/currency";
 
 type CampaignsListProps = {
   showPaginationButtons: boolean;
@@ -81,46 +74,7 @@ const CampaignsList: FC<CampaignsListProps> = ({ showPaginationButtons }) => {
       <ul className="campaigns__list mt-5">
         {campaigns.length > 0 ? (
           campaigns.map((campaign: CampaignDto) => (
-            <li className="campaigns__item" key={campaign.id}>
-              <Card
-                imageSrc={campaign.imageUrl}
-                imageAlt={campaign.title}
-                cardStatus={convertCampaignStatusToString(campaign.status)}
-              >
-                <Link
-                  to={`/campaigns/detail/${campaign.id}/`}
-                  className="campaigns__item-link"
-                >
-                  <h3 className="card-title">{campaign.title}</h3>
-                  <p className="card-text text-muted">{campaign.description}</p>
-                  <p className="card-text text-muted">
-                    <strong>Goal:</strong> {formatMoney(campaign.goalAmount)}{" "}
-                    {convertCurrencyToString(campaign.currency)}
-                  </p>
-                </Link>
-                <ProgressBar
-                  className="mt-3 mb-4"
-                  currentAmount={campaign.raisedAmount}
-                  requiredAmount={campaign.goalAmount}
-                />
-                <ul className="campaigns__item-buttons">
-                  <li className="campaigns__item-button">
-                    <CampaignActionButton
-                      campaignId={campaign.id}
-                      campaignStatus={campaign.status}
-                    />
-                  </li>
-                  <li className="campaigns__item-button">
-                    <ShareButton
-                      relativeUrl={`/campaigns/detail/${campaign.id}/`}
-                      campaignTitle={campaign.title}
-                      campaignGoalAmount={campaign.goalAmount}
-                      campaignRaisedAmount={campaign.raisedAmount}
-                    />
-                  </li>
-                </ul>
-              </Card>
-            </li>
+            <CampaignItem key={campaign.id} campaign={campaign} />
           ))
         ) : (
           <p className="text-center">No campaigns have been found!</p>

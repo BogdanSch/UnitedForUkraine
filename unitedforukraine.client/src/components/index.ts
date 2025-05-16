@@ -13,4 +13,5 @@ export { default as SectionHeadline } from "./sections/SectionHeadline";
 export { default as CallToActionSection } from "./sections/CallToActionSection";
 export { default as Carousel } from "./carousel/Carousel";
 export { default as Gallery } from "./gallery/Gallery";
+export { default as CampaignItem } from "./campaigns/CampaignItem";
 // export { default as ProtectedRoute } from "../routes/middleware/ProtectedRoute";

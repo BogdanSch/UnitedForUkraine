@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Models;
 using UnitedForUkraine.Server.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +9,7 @@ using Stripe.Checkout;
 using UnitedForUkraine.Server.Data.Enums;
 
 using CustomDonationMethod = UnitedForUkraine.Server.Data.Enums.PaymentMethod;
+using UnitedForUkraine.Server.Helpers.Settings;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -53,7 +53,7 @@ namespace UnitedForUkraine.Server.Controllers
             if (currentDonation == null)
                 return BadRequest("Invalid donation data");
 
-            Campaign? targetCampaign = await _campaignRepository.GetCampaignById(currentDonation.CampaignId);
+            Campaign? targetCampaign = await _campaignRepository.GetCampaignByIdAsync(currentDonation.CampaignId);
 
             if(targetCampaign == null)
                 return BadRequest("Invalid campaign data within the donation");
@@ -107,7 +107,7 @@ namespace UnitedForUkraine.Server.Controllers
 
                 currentDonation.Status = DonationStatus.Pending;
                 currentDonation.CheckoutSessionId = stripeCheckOutSession.Id;
-                _donationRepository.Update(currentDonation);
+                await _donationRepository.UpdateAsync(currentDonation);
 
                 return Ok(new { redirectUrl = stripeCheckOutSession.Url.ToString() });
             }

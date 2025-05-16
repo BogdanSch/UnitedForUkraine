@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UnitedForUkraine.Server.Dtos.Donation;
+using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.DTOs.Donation;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
@@ -31,6 +32,17 @@ public class DonationController : ControllerBase
 
         return Ok(response);
     }
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetDontaionDataById(int id)
+    {
+        Donation? targetDonation = await _donationRepository.GetDonationByIdAsync(id);
+
+        if (targetDonation == null)
+            return NotFound();
+
+        DonationDto donationDto = targetDonation.ToDonationDto();
+        return Ok(donationDto);
+    }
     [HttpGet("campaign/{campaignId:int}")]
     public async Task<IActionResult> GetCampaignDonationsById(int campaignId, [FromQuery] int page = 1)
     {
@@ -49,6 +61,23 @@ public class DonationController : ControllerBase
         List<DonationDto> donationDtos = [.. loadedDonations.Select(d => d.ToDonationDto())];
 
         return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));
+    }
+    [HttpGet("supportedCampaigns/{userId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetUserSupportedCampaigns(Guid userId)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        if (userId == Guid.Empty)
+            return BadRequest("User ID cannot be empty.");
+
+        var campaigns = await _donationRepository.GetAllUserSupportedCampaigns(userId.ToString());
+        if (!campaigns.Any())
+        {
+            return Ok(new List<CampaignDto>());
+        }
+        List<CampaignDto> campaignDtos = [.. campaigns.Select(c => c.ToCampaignDto())];
+        return Ok(new { Campaigns = campaignDtos });
     }
     [HttpGet("user/{userId:guid}")]
     public async Task<IActionResult> GetUserDonations(Guid userId, [FromQuery] int page = 1)
@@ -82,7 +111,7 @@ public class DonationController : ControllerBase
         {
             Donation newDonation = createdDonationDto.FromCreateDonationDtoToDonation();
             await _donationRepository.AddAsync(newDonation);
-            _donationRepository.Save();
+            //await _donationRepository.SaveAsync();
 
             return Ok(new { id = newDonation.Id });
         }
@@ -90,17 +119,6 @@ public class DonationController : ControllerBase
         {
             return BadRequest("Error while creating the donation!");
         }
-    }
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetDontaionDataById(int id)
-    {
-        Donation? targetDonation = await _donationRepository.GetDonationByIdAsync(id);
-
-        if (targetDonation == null)
-            return NotFound();
-
-        DonationDto donationDto = targetDonation.ToDonationDto();
-        return Ok(donationDto);
     }
     [HttpGet("statistics")]
     public async Task<IActionResult> GetTotalDontaionsNumber()

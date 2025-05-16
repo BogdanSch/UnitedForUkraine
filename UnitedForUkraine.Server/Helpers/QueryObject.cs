@@ -1,0 +1,8 @@
+﻿namespace UnitedForUkraine.Server.Helpers
+{
+    public class QueryObject
+    {
+        public int Page { get; set; } = 1;
+        public string? SearchedQuery { get; set; }
+    }
+}
