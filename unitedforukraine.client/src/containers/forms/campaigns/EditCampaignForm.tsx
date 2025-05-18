@@ -1,22 +1,13 @@
 import axios from "axios";
-import {
-  ChangeEvent,
-  FC,
-  FormEvent,
-  useState,
-  useEffect,
-  useContext,
-} from "react";
+import { FC, FormEvent, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../../contexts/AuthContext";
 import { API_URL } from "../../../variables";
 import { UpdateCampaignRequestDto } from "../../../types";
-import { CampaignStatus } from "../../../types/enums";
+import { CampaignCategory, CampaignStatus } from "../../../types/enums";
 import { ErrorAlert } from "../../../components/";
-
-import { deleteImageAsync, uploadImageAsync } from "../../../utils/imageHelper";
-import { convertDate } from "../../../utils/dateConverter";
 import { fetchCampaignData } from "../../../utils/campaignHelper";
+import { useCustomForm } from "../../../hooks";
 
 interface EditCampaignFormProps {
   id: number;
@@ -28,7 +19,8 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     title: "",
     description: "",
     goalAmount: 0,
-    status: 0,
+    status: CampaignStatus.Upcoming,
+    category: CampaignCategory.Education,
     startDate: "",
     endDate: "",
     imageUrl: "",
@@ -41,8 +33,14 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     endDate: "",
   });
   const [requestError, setRequestError] = useState<string>("");
-  const navigate = useNavigate();
   const { authToken } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const {
+    handleChange,
+    handleSelectChange,
+    handleDateChange,
+    handleImageChange,
+  } = useCustomForm(setFormData);
 
   useEffect(() => {
     const fetcher = async () => {
@@ -125,7 +123,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       description: "",
       goalAmount: 0,
       status: CampaignStatus.Upcoming,
-      // currency: Currency.UAH,
+      category: CampaignCategory.Education,
       startDate: "",
       endDate: "",
       imageUrl: "",
@@ -133,75 +131,31 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     setErrors({});
   };
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ): void => {
-    const target = e.target;
+  // const handleImageChange = async (
+  //   e: ChangeEvent<HTMLInputElement>
+  // ): Promise<void> => {
+  //   const file = e.target.files?.[0] || null;
+  //   console.log(e.target.files);
 
-    if (target instanceof HTMLInputElement) {
-      const { name, value, type, checked } = target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      }));
-    } else if (target instanceof HTMLTextAreaElement) {
-      const { name, value } = target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
+  //   if (file) {
+  //     const imageUrl: string = (await uploadImageAsync(file)) || "";
 
-  const handleDateChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const target = e.target;
+  //     console.log(imageUrl);
+  //     if (imageUrl.length === 0) {
+  //       setRequestError("Failed to upload the image file.");
+  //       return;
+  //     }
 
-    const { name, value, type } = target;
+  //     if (formData.imageUrl.length > 0) deleteImageAsync(formData.imageUrl);
 
-    if (type !== "date") return;
-
-    const formattedDate: string = convertDate(value);
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: formattedDate,
-    }));
-  };
-
-  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>): void => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: Number(value),
-    }));
-  };
-
-  const handleImageChange = async (
-    e: ChangeEvent<HTMLInputElement>
-  ): Promise<void> => {
-    const file = e.target.files?.[0] || null;
-    console.log(e.target.files);
-
-    if (file) {
-      const imageUrl: string = (await uploadImageAsync(file)) || "";
-
-      console.log(imageUrl);
-      if (imageUrl.length === 0) {
-        setRequestError("Failed to upload the image file.");
-        return;
-      }
-
-      if (formData.imageUrl.length > 0) deleteImageAsync(formData.imageUrl);
-
-      setFormData((prev) => ({
-        ...prev,
-        imageUrl: imageUrl,
-      }));
-    } else {
-      setRequestError("Failed to read the image file.");
-    }
-  };
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       imageUrl: imageUrl,
+  //     }));
+  //   } else {
+  //     setRequestError("Failed to read the image file.");
+  //   }
+  // };
 
   return (
     <form
@@ -283,9 +237,30 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
                 {key}
               </option>
             ))}
-          {/* <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option> */}
+        </select>
+      </div>
+      <div className="mb-3">
+        <label htmlFor="category" className="form-label">
+          Campaign Category
+        </label>
+        <select
+          id="category"
+          name="category"
+          className="form-select"
+          aria-label="Campaign category select"
+          value={formData.category}
+          onChange={handleSelectChange}
+        >
+          {Object.keys(CampaignCategory)
+            .filter((key) => !isNaN(Number(CampaignCategory[key as any])))
+            .map((key) => (
+              <option
+                key={key}
+                value={CampaignCategory[key as keyof typeof CampaignCategory]}
+              >
+                {key}
+              </option>
+            ))}
         </select>
       </div>
       <div className="mb-3">
@@ -330,7 +305,9 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           id="image"
           name="image"
           // value={imageFile?.name || ""}
-          onChange={handleImageChange}
+          onChange={(e) =>
+            handleImageChange(e, formData.imageUrl, setRequestError)
+          }
           accept="image/png, image/jpeg"
           // required
         />

@@ -24,12 +24,12 @@ const SignInForm: FC = () => {
     rememberMe: false,
   });
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
 
     if (validateForm()) {
-      console.log("Form validated!");
-
       const options = {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
@@ -43,7 +43,7 @@ const SignInForm: FC = () => {
         );
 
         const authToken: string = response.data;
-        authenticateUser(authToken);
+        await authenticateUser(authToken);
         navigate("/dashboard");
       } catch (error) {
         if (error instanceof AxiosError) {

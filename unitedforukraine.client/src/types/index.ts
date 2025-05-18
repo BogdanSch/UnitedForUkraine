@@ -1,4 +1,9 @@
-import { CampaignStatus, Currency, PaymentMethod } from "./enums";
+import {
+  CampaignCategory,
+  CampaignStatus,
+  Currency,
+  PaymentMethod,
+} from "./enums";
 
 export type CampaignDto = {
   id: number;
@@ -8,6 +13,7 @@ export type CampaignDto = {
   raisedAmount: number;
   status: CampaignStatus;
   currency: Currency;
+  category: CampaignCategory;
   startDate: string;
   endDate: string;
   imageUrl: string;
@@ -19,6 +25,7 @@ export type CreateCampaignRequestDto = {
   goalAmount: number;
   // raisedAmount: number;
   status: CampaignStatus;
+  category: CampaignCategory;
   currency: Currency;
   startDate: string;
   endDate: string;
@@ -32,6 +39,7 @@ export type UpdateCampaignRequestDto = {
   goalAmount: number;
   // raisedAmount: number;
   status: CampaignStatus;
+  category: CampaignCategory;
   // currency: Currency;
   startDate: string;
   endDate: string;

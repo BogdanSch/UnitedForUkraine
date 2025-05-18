@@ -10,21 +10,17 @@ import { SectionHeadline } from "../../components";
 const Dashboard: FC = () => {
   const { user } = useContext(AuthContext);
 
-  //   if (!user) return;
-
   return (
     <>
       <section className="dashboard" id="dashboard">
         <div className="container">
           <div className="dashboard__wrap">
-            <SectionHeadline
-              className={`dashboard__headline`}
-              title={`Welcome, customer`}
-              sectionIndicatorTitle={`We've missed you so much.`}
-            />
-            <h2 className="dashboard__title">
-              <span className="decoration">{user?.userName}!</span>
-            </h2>
+            <div className="text-content text-center mb-4">
+              <h2 className="dashboard__title">
+                Welcome, <span className="decoration">{user?.userName}!</span>
+              </h2>
+              <h3 className="dashboard__title">We've missed you so much!</h3>
+            </div>
             <ul className="dashboard__list card px-5 py-4">
               <li className="dashboard__item">{user?.email}</li>
               <li className="dashboard__item">
@@ -70,13 +66,11 @@ const Dashboard: FC = () => {
       >
         <div className="container">
           <div className="dashboard__wrap text-center">
-            {/* <article className="campaigns-detail__header"> */}
             <SectionHeadline
-              title={`Donations overview`}
-              sectionIndicatorTitle={``}
+              title={`Every you donation brings our victory closer`}
+              sectionIndicatorTitle={`Donations overview`}
             />
             <UserDonationsList />
-            {/* </article> */}
           </div>
         </div>
       </section>
@@ -87,8 +81,8 @@ const Dashboard: FC = () => {
         <div className="container">
           <div className="dashboard__wrap">
             <SectionHeadline
-              title={`Supported campaigns`}
-              sectionIndicatorTitle={``}
+              title={`These campaigns were supported by you. We're so grateful for your cooperation!`}
+              sectionIndicatorTitle={`Supported campaigns`}
             />
             <UserSupportedCampaignsList />
           </div>

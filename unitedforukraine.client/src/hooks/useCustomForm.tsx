@@ -1,11 +1,12 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { convertDate } from "../utils/dateConverter";
-import { uploadImageAsync } from "../utils/imageHelper";
+import { deleteImageAsync, uploadImageAsync } from "../utils/imageHelper";
 
-function useCustomForm(setFormData: React.Dispatch<React.SetStateAction<any>>) {
+function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
+    if (!setFormData) return;
     const target = e.target;
 
     if (target instanceof HTMLInputElement) {
@@ -24,6 +25,7 @@ function useCustomForm(setFormData: React.Dispatch<React.SetStateAction<any>>) {
   };
 
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    if (!setFormData) return;
     const target = e.target;
 
     const { name, value, type } = target;
@@ -39,6 +41,7 @@ function useCustomForm(setFormData: React.Dispatch<React.SetStateAction<any>>) {
   };
 
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>): void => {
+    if (!setFormData) return;
     const { name, value } = e.target;
 
     setFormData((prev: any) => ({
@@ -49,8 +52,10 @@ function useCustomForm(setFormData: React.Dispatch<React.SetStateAction<any>>) {
 
   const handleImageChange = async (
     e: ChangeEvent<HTMLInputElement>,
+    previousImageUrl: string,
     setRequestError: React.Dispatch<React.SetStateAction<string>>
   ): Promise<void> => {
+    if (!setFormData) return;
     console.log(e.target.files);
     const file = e.target.files?.[0] || null;
 
@@ -63,6 +68,8 @@ function useCustomForm(setFormData: React.Dispatch<React.SetStateAction<any>>) {
         setRequestError("Failed to upload the image file.");
         return;
       }
+
+      if (previousImageUrl.length > 0) deleteImageAsync(previousImageUrl);
 
       setFormData((prev: any) => ({
         ...prev,
@@ -80,5 +87,14 @@ function useCustomForm(setFormData: React.Dispatch<React.SetStateAction<any>>) {
     handleImageChange,
   };
 }
+
+export const handleSelectWithDataTagChange = (
+  e: ChangeEvent<HTMLSelectElement>,
+  setSelectData: Dispatch<SetStateAction<any>>
+): void => {
+  const element = e.target;
+  const data = element.dataset.value;
+  setSelectData(data);
+};
 
 export default useCustomForm;

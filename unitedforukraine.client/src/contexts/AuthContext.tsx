@@ -7,8 +7,8 @@ import { UserDto } from "../types";
 interface IAuthContextProps {
   user: UserDto | null;
   authToken: string | null;
-  authenticateUser: (authToken: string) => void;
-  logoutUser: () => void;
+  authenticateUser: (authToken: string) => Promise<void>;
+  logoutUser: () => Promise<void>;
   isAuthenticated: () => boolean;
   isAdmin: () => boolean;
   loading: boolean;
@@ -20,8 +20,8 @@ type AuthProviderProps = {
 const AuthContext = createContext<IAuthContextProps>({
   user: null,
   authToken: null,
-  authenticateUser: () => {},
-  logoutUser: () => {},
+  authenticateUser: async () => {},
+  logoutUser: async () => {},
   isAuthenticated: () => false,
   isAdmin: () => false,
   loading: false,
@@ -41,15 +41,15 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   // const [user, setUser] = useState<UserDto | null>(null);
 
-  const fetchUserData = (authToken: string): void => {
-    if (!authToken) {
+  const fetchUserData = async (authToken: string): Promise<void> => {
+    if (!authToken || authToken.trim() === "") {
       setLoading(false);
       return;
     }
 
     console.log(authToken);
 
-    axios
+    await axios
       .get(`${API_URL}/Auth/userInfo`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -60,8 +60,8 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         console.log(response.data);
       })
       .catch((error) => {
-        console.error("Error fetching user info:", error.response?.data);
         logoutUser();
+        console.log("Error fetching user info:", error.response?.data);
       })
       .finally(() => {
         setLoading(false);
@@ -72,13 +72,14 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     fetchUserData(authToken);
   }, [authToken]);
 
-  const authenticateUser = (authToken: string) => {
+  const authenticateUser = async (authToken: string): Promise<void> => {
+    setLoading(true);
     setAuthToken(authToken);
-    fetchUserData(authToken);
+    await fetchUserData(authToken);
   };
 
-  const logoutUser = () => {
-    axios.post(`${API_URL}/Auth/logout`, null, {
+  const logoutUser = async (): Promise<void> => {
+    await axios.post(`${API_URL}/Auth/logout`, null, {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -102,7 +103,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       isAdmin,
       loading,
     }),
-    [user, authToken]
+    [user, authToken, loading]
   );
 
   return (

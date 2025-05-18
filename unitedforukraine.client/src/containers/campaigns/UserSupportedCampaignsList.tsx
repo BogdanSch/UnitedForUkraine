@@ -38,7 +38,7 @@ const UserSupportedCampaignsList: FC = () => {
       <ul className="campaigns__list mt-5">
         {campaigns.length > 0 ? (
           campaigns.map((campaign: CampaignDto) => (
-            <CampaignItem campaign={campaign} />
+            <CampaignItem campaign={campaign} key={campaign.title} />
           ))
         ) : (
           <p className="text-center">No campaigns have been found!</p>

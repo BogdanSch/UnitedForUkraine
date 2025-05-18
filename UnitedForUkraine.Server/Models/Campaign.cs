@@ -21,5 +21,6 @@ namespace UnitedForUkraine.Server.Models
         public DateTime EndDate { get; set; }
         public string ImageUrl { get; set; } = "https://placehold.co/600x400/EEE/31343C";
         public CampaignStatus Status { get; set; } = CampaignStatus.Upcoming;
+        public CampaignCategory Category { get; set; } = CampaignCategory.Education;
     }
 }

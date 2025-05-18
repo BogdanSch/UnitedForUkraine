@@ -19,6 +19,7 @@ namespace UnitedForUkraine.Server.Mappers
                 RaisedAmount = campaign.RaisedAmount,
                 Status = (int)campaign.Status,
                 Currency = (int)campaign.Currency,
+                Category = (int)campaign.Category,
                 StartDate = campaign.StartDate.ToString(DateSettings.DEFAULT_DATE_FORMAT),
                 EndDate = campaign.EndDate.ToString(DateSettings.DEFAULT_DATE_FORMAT),
                 ImageUrl = campaign.ImageUrl
@@ -36,6 +37,7 @@ namespace UnitedForUkraine.Server.Mappers
                 RaisedAmount = 0,
                 Status = (CampaignStatus)newCampaign.Status,
                 Currency = (CurrencyType)newCampaign.Currency,
+                Category = (CampaignCategory)newCampaign.Category,
                 StartDate = startDate,
                 EndDate = endDate,
                 ImageUrl = newCampaign.ImageUrl

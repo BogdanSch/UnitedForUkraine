@@ -80,7 +80,7 @@ const UserStatisticsList: FC = () => {
         </li>
         <li className="statistics__item card card-border p-3">
           <div className="statistics__item-group">
-            <i className="bi bi-people"></i>
+            <i className="bi bi-envelope-check"></i>
             <h4 className="statistics__item-title">
               Supported Campaigns Count
             </h4>

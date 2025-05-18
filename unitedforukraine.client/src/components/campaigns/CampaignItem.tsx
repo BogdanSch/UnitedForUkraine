@@ -2,7 +2,10 @@ import { FC } from "react";
 import { Link } from "react-router-dom";
 import { CampaignDto } from "../../types";
 import { CampaignActionButton, Card, ProgressBar, ShareButton } from "..";
-import { convertCampaignStatusToString } from "../../utils/campaignHelper";
+import {
+  convertCampaignCategoryToString,
+  convertCampaignStatusToString,
+} from "../../utils/campaignHelper";
 import { convertCurrencyToString, formatMoney } from "../../utils/currency";
 
 interface ICampaignItemProps {
@@ -22,6 +25,11 @@ const CampaignItem: FC<ICampaignItemProps> = ({ campaign }) => {
           className="campaigns__item-link"
         >
           <h3 className="card-title">{campaign.title}</h3>
+          <ul className="card-category">
+            <li className="card-category__item">
+              {convertCampaignCategoryToString(campaign.category)}
+            </li>
+          </ul>
           <p className="card-text text-muted">{campaign.description}</p>
           <p className="card-text text-muted">
             <strong>Goal:</strong> {formatMoney(campaign.goalAmount)}{" "}

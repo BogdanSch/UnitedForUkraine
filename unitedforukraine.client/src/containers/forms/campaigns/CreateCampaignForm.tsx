@@ -1,21 +1,25 @@
 import axios from "axios";
-import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
+import { FC, FormEvent, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../../contexts/AuthContext";
 import { ErrorAlert } from "../../../components";
 import { CreateCampaignRequestDto } from "../../../types";
-import { CampaignStatus, Currency } from "../../../types/enums";
+import {
+  CampaignCategory,
+  CampaignStatus,
+  Currency,
+} from "../../../types/enums";
 import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../../variables";
-import { uploadImageAsync } from "../../../utils/imageHelper";
-import { convertDate } from "../../../utils/dateConverter";
+import { useCustomForm } from "../../../hooks";
 
 const CreateCampaignForm: FC = () => {
   const [formData, setFormData] = useState<CreateCampaignRequestDto>({
     title: "",
     description: "",
     goalAmount: 0,
-    status: 0,
-    currency: 0,
+    status: CampaignStatus.Upcoming,
+    currency: Currency.UAH,
+    category: CampaignCategory.Education,
     startDate: "",
     endDate: "",
     imageUrl: API_IMAGE_PLACEHOLDER_URL,
@@ -30,6 +34,12 @@ const CreateCampaignForm: FC = () => {
   const [requestError, setRequestError] = useState<string>("");
   const navigate = useNavigate();
   const { authToken } = useContext(AuthContext);
+  const {
+    handleChange,
+    handleSelectChange,
+    handleDateChange,
+    handleImageChange,
+  } = useCustomForm(setFormData);
 
   const isValid = (): boolean => {
     setErrors({});
@@ -97,80 +107,12 @@ const CreateCampaignForm: FC = () => {
       goalAmount: 0,
       status: CampaignStatus.Upcoming,
       currency: Currency.UAH,
+      category: CampaignCategory.Education,
       startDate: "",
       endDate: "",
       imageUrl: "",
     });
     setErrors({});
-  };
-
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ): void => {
-    const target = e.target;
-
-    if (target instanceof HTMLInputElement) {
-      const { name, value, type, checked } = target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      }));
-    } else if (target instanceof HTMLTextAreaElement) {
-      const { name, value } = target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
-
-  const handleDateChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const target = e.target;
-
-    const { name, value, type } = target;
-
-    if (type !== "date") return;
-
-    const formattedDate: string = convertDate(value); //new Date(value).toISOString().slice(0, 10);
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: formattedDate,
-    }));
-  };
-
-  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>): void => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: Number(value),
-    }));
-  };
-
-  const handleImageChange = async (
-    e: ChangeEvent<HTMLInputElement>
-  ): Promise<void> => {
-    console.log(e.target.files);
-    const file = e.target.files?.[0] || null;
-
-    if (file) {
-      // setImageFile(file);
-      const imageUrl: string = (await uploadImageAsync(file)) || "";
-
-      console.log(imageUrl);
-      if (imageUrl.length === 0) {
-        setRequestError("Failed to upload the image file.");
-        return;
-      }
-
-      setFormData((prev) => ({
-        ...prev,
-        imageUrl: imageUrl,
-      }));
-    } else {
-      setRequestError("Failed to read the image file.");
-    }
   };
 
   return (
@@ -259,14 +201,33 @@ const CreateCampaignForm: FC = () => {
         </select>
       </div>
       <div className="mb-3">
+        <label htmlFor="category" className="form-label">
+          Campaign Category
+        </label>
+        <select
+          id="category"
+          name="category"
+          className="form-select"
+          aria-label="Campaign category select"
+          value={formData.category}
+          onChange={handleSelectChange}
+        >
+          {Object.keys(CampaignCategory)
+            .filter((key) => !isNaN(Number(CampaignCategory[key as any])))
+            .map((key) => (
+              <option
+                key={key}
+                value={CampaignCategory[key as keyof typeof CampaignCategory]}
+              >
+                {key}
+              </option>
+            ))}
+        </select>
+      </div>
+      <div className="mb-3">
         <label htmlFor="currency" className="form-label">
           Campaign Currency
         </label>
-        {/* <select className="form-select" aria-label="Default select example">
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select> */}
         <select
           id="currency"
           name="currency"
@@ -329,7 +290,9 @@ const CreateCampaignForm: FC = () => {
           id="image"
           name="image"
           // value={imageFile?.name || ""}
-          onChange={handleImageChange}
+          onChange={(e) =>
+            handleImageChange(e, formData.imageUrl, setRequestError)
+          }
           accept="image/png, image/jpeg"
           required
         />

@@ -18,7 +18,10 @@ const CampaignsIndex: FC = () => {
                 communities recover and thrive. With global support, we stand
                 united for a stronger Ukraine."
           />
-          <CampaignsList showPaginationButtons={true} />
+          <CampaignsList
+            showPaginationButtons={true}
+            showQueryCriteria={true}
+          />
         </div>
       </div>
     </section>

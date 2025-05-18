@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data;
+using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
@@ -16,13 +17,36 @@ public class CampaignRepository : ICampaignRepository
 
     public IQueryable<Campaign> GetAllCampaigns(QueryObject queryObject)
     {
-        var campaigns = _context.Campaigns.AsNoTracking();//;
+        var campaigns = _context.Campaigns.AsNoTracking();
         if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
         {
             string query = queryObject.SearchedQuery;
             campaigns = campaigns.Where(c => c.Title.Contains(query) || c.Description.Contains(query));
         }
-        return campaigns.OrderByDescending(c => c.StartDate);
+        if (!string.IsNullOrWhiteSpace(queryObject.SortOrder))
+        {
+            campaigns = queryObject.SortOrder switch
+            {
+                "title_asc" => campaigns.OrderByDescending(c => c.Title),
+                "date_dsc" => campaigns.OrderByDescending(c => c.StartDate),
+                "mostFunded_dsc" => campaigns.OrderByDescending(c => c.RaisedAmount),
+                "nearGoal_dsc" => campaigns.OrderByDescending( c => (c.RaisedAmount * 100 / c.GoalAmount > 70)),
+                "nearEnd_dsc" => campaigns.OrderByDescending(c => c.EndDate),
+                _ => campaigns.OrderByDescending(c => c.StartDate),
+            };
+        }
+        else
+        {
+            campaigns = campaigns.OrderByDescending(c => c.StartDate);
+        }
+
+        CampaignCategory category = (CampaignCategory)queryObject.FilterCategory;
+        if(category != CampaignCategory.None)
+        {
+            campaigns = campaigns.Where(c => c.Category == category);
+        }
+
+        return campaigns;
     }
     public async Task<Campaign?> GetCampaignByIdAsync(int id)
     {
