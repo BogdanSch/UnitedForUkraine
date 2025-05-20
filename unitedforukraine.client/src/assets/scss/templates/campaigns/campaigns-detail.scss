@@ -18,6 +18,32 @@
       color: $text-light-gray;
       line-height: 1.6;
     }
+    // &__title {
+    //   text-transform: uppercase;
+    //   font-size: 20px;
+    //   color: $primary;
+    // }
+    &__category {
+      text-align: center;
+    }
+    &__list {
+      @include flex-row();
+      justify-content: center;
+      align-self: center;
+      flex-wrap: wrap;
+      column-gap: 36px;
+      row-gap: 16px;
+      padding: 0;
+      color: $primary;
+      // list-style: none;
+    }
+    &__item {
+      font-weight: $fw-bold;
+      font-size: 20px;
+      &::marker {
+        content: "😍";
+      }
+    }
     &__progress {
       padding: 1rem;
       text-align: center;
@@ -105,6 +131,9 @@
         padding: 4px 8px;
         border-radius: 4px;
         font-size: 1rem;
+      }
+      &__list {
+        column-gap: 24px;
       }
     }
   }

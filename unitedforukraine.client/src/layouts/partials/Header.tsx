@@ -103,11 +103,11 @@ const Header: FC = () => {
                 )}
               </ul>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <Link className="nav-link me-lg-3" to="/blog">
                 Blog
               </Link>
-            </li>
+            </li> */}
           </ul>
           <Link
             className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"

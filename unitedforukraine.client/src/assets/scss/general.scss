@@ -207,6 +207,14 @@ section {
     justify-content: center;
     margin-bottom: 1rem;
   }
+
+  &-category {
+    &__item {
+      font-weight: $fw-bold;
+      font-size: 16px;
+      color: $sky-blue;
+    }
+  }
 }
 
 .btn {

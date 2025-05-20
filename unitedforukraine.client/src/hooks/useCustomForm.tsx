@@ -92,9 +92,12 @@ export const handleSelectWithDataTagChange = (
   e: ChangeEvent<HTMLSelectElement>,
   setSelectData: Dispatch<SetStateAction<any>>
 ): void => {
-  const element = e.target;
-  const data = element.dataset.value;
-  setSelectData(data);
+  const select = e.target;
+  const selectedOption = select.options[select.selectedIndex];
+  const dataValue: string =
+    selectedOption.getAttribute("data-value") ?? select.value;
+
+  setSelectData(dataValue);
 };
 
 export default useCustomForm;

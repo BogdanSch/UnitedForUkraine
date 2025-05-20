@@ -11,6 +11,7 @@ import {
 import { CampaignDonationsList, DeleteCampaignForm } from "../../containers/";
 import AuthContext from "../../contexts/AuthContext";
 import {
+  convertCampaignCategoryToString,
   convertCampaignStatusToString,
   fetchCampaignData,
 } from "../../utils/campaignHelper";
@@ -79,6 +80,17 @@ const CampaignsDetail: FC = () => {
           <div className="campaigns-detail__info card p-5 mb-4">
             <div className="text-content">
               <h1 className="heading mb-2">{campaign?.title}</h1>
+              <div className="campaigns-detail__category">
+                {/* <h4 className="sub-heading campaigns-detail__title">
+                  Campaign's category:{" "}
+                </h4> */}
+                <ul className="campaigns-detail__list">
+                  <li className="campaigns-detail__item">
+                    {campaign?.category &&
+                      convertCampaignCategoryToString(campaign.category)}
+                  </li>
+                </ul>
+              </div>
               <p className="campaigns-detail__description">
                 {campaign?.description}
               </p>

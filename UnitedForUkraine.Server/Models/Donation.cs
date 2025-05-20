@@ -25,5 +25,4 @@ public class Donation
     public int CampaignId { get; set; }
     public Campaign Campaign { get; set; }
     public string? CheckoutSessionId { get; set; } = string.Empty;
-
 }

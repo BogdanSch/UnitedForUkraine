@@ -38,7 +38,10 @@ const CampaignsList: FC<CampaignsListProps> = ({
     setPageIndex(currentPage);
 
     const fetchData = async () => {
-      let requestUrl: string = `${API_URL}/campaigns?page=${currentPage}&searchedQuery=${searchQuery}&sortOrder=${sortOrder}&filterCategory=${filterCategory}`;
+      let requestUrl: string = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}&filterCategory=${filterCategory}`;
+      if (searchQuery.length > 0) requestUrl += `&searchedQuery=${searchQuery}`;
+
+      // console.log(requestUrl);
 
       try {
         const { data } = await axios.get(requestUrl);
@@ -58,7 +61,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
     e.preventDefault();
     const searchInput: HTMLInputElement | null = searchInputRef.current;
 
-    if (!searchInput || searchInput?.value.length < 1) return;
+    if (!searchInput) return;
 
     setSearchQuery(searchInput.value);
   };
@@ -90,11 +93,11 @@ const CampaignsList: FC<CampaignsListProps> = ({
                 className="form-select campaigns__query-filter"
                 id="sortOrder"
                 name="sortOrder"
-                value={sortOrder}
+                // value={sortOrder}
                 onChange={(e) => handleSelectWithDataTagChange(e, setSortOrder)}
               >
-                <option data-value="title_asc">Title</option>
                 <option data-value="date_dsc">Most Recent</option>
+                <option data-value="title_asc">Title</option>
                 <option data-value="mostFunded_dsc">Most Funded</option>
                 <option data-value="nearGoal_dsc">Near Goal</option>
                 <option data-value="nearEnd_dsc">Near End</option>
@@ -110,13 +113,13 @@ const CampaignsList: FC<CampaignsListProps> = ({
               >
                 {Object.keys(CampaignCategory)
                   .filter((key) => !isNaN(Number(CampaignCategory[key as any])))
-                  .map((key) => (
+                  .map((key, index) => (
                     <option
                       key={key}
                       value={
                         CampaignCategory[key as keyof typeof CampaignCategory]
                       }
-                      data-value={key}
+                      data-value={index}
                     >
                       {key}
                     </option>

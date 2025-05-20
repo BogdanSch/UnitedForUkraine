@@ -19,7 +19,10 @@ const CampaignActionButton: FC<CampaignActionButtonProps> = ({
       </div>
     </Link>
   ) : campaignStatus === CampaignStatus.Completed ? (
-    <Link className="btn btn-outline-success" to={`/donate/${campaignId}/`}>
+    <Link
+      className="btn btn-outline-success"
+      to={`/campaigns/detail/${campaignId}/`}
+    >
       <div className="d-flex flex-row align-items-center gap-2">
         <span>Completed</span>
         <i className="bi bi-check-all"></i>

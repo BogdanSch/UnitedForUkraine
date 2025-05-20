@@ -75,6 +75,10 @@
     }
     &:first-child {
       grid-column: span 2;
+
+      .card-category__item {
+        font-size: 20px;
+      }
     }
     &-buttons {
       list-style: none;

@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
-using Stripe.Events;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.Services;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -22,7 +19,6 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly ICampaignRepository _campaignRepository;
         private readonly ICurrencyConverterService _currencyConverterService;
         private readonly ILogger<StripeWebhooksController> _logger;
-        //private readonly IConfiguration _config;
         private readonly StripeSettings _stripeSettings;
 
         public StripeWebhooksController(

@@ -24,7 +24,7 @@ public class CampaignController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetCampaignsData([FromQuery] QueryObject queryObject)//int page = 1, [FromQuery] string? searchedQuery)
+    public async Task<IActionResult> GetCampaignsData([FromQuery] QueryObject queryObject)
     {
         var campaigns = _campaignRepository.GetAllCampaigns(queryObject);
 
@@ -94,6 +94,7 @@ public class CampaignController : ControllerBase
             targetCampaign.GoalAmount = updatedCampaignDto.GoalAmount;
             //targetCampaign.RaisedAmount = updatedCampaignDto.RaisedAmount;
             targetCampaign.Status = (CampaignStatus)updatedCampaignDto.Status;
+            targetCampaign.Category = (CampaignCategory)updatedCampaignDto.Category;
             //targetCampaign.Currency = newCurrencyType;
             targetCampaign.StartDate = startDate;
             targetCampaign.EndDate = endDate;
