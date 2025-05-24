@@ -88,11 +88,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       },
     };
 
-    await axios.request(options);
-
     removeUser();
     removeAuthToken();
     setUser(null);
+
+    await axios.request(options);
   };
 
   const isAuthenticated = () => user != null && authToken.trim().length > 0;

@@ -1,9 +1,23 @@
-import { FC } from "react";
-import { Outlet } from "react-router-dom";
+import { FC, useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
 import { Header, Footer } from "./partials";
 
 const MainLayout: FC = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash.trim() !== "") {
+      const id: string = location.hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
+
   return (
     <>
       <Header />

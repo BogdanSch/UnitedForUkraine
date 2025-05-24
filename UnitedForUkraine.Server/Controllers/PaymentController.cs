@@ -64,7 +64,6 @@ namespace UnitedForUkraine.Server.Controllers
                 return BadRequest("Invalid user data");
 
             string requestOrigin = _frontendSettings.Origin;
-            
 
             var options = new SessionCreateOptions
             {
