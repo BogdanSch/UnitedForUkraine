@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
-import { CampaignsList, TotalStatisticsList } from "../../containers";
+import { CampaignsList, FoundationStatisticsList } from "../../containers";
 import {
   CallToActionSection,
   Card,
@@ -16,7 +16,7 @@ const HomePage: FC = () => {
       <section className="hero" id="hero">
         <div className="container">
           <div className="hero__wrap">
-            <Card className="hero__card" imageSrc="" imageAlt="">
+            <Card className="hero__card" isLite={true}>
               <h1 className="hero__title">United for Ukraine: Stand with Us</h1>
               <p className="hero__description">
                 Providing essential aid, shelter, and opportunities for
@@ -77,6 +77,7 @@ const HomePage: FC = () => {
             <CampaignsList
               showPaginationButtons={false}
               showQueryCriteria={false}
+              showUserCampaigns={false}
             />
           </div>
         </div>
@@ -136,34 +137,19 @@ const HomePage: FC = () => {
             >
               <Link
                 className="btn btn-outline-secondary"
-                to="/dashboard#donations"
+                to={{
+                  pathname: "/dashboard",
+                  hash: "#dashboardStatistics",
+                }}
               >
                 View Your Statistics
               </Link>
             </SectionHeadline>
-            <TotalStatisticsList />
+            <FoundationStatisticsList />
           </div>
         </div>
       </section>
       <CallToActionSection />
-      {/* <section className="donate" id="donate">
-        <div className="container">
-          <div className="donate__wrap">
-            <div className="text-content">
-              <h2 className="donate__title">Make a Difference Today</h2>
-              <p className="donate__description">
-                Your contribution can help provide essential aid, shelter, and
-                opportunities for Ukrainian refugees as they rebuild their lives
-                with dignity, hope, and resilience. Donate now to make a
-                difference.
-              </p>
-              <Link className="btn btn-primary" to="/campaigns">
-                Donate Now
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section> */}
     </>
   );
 };

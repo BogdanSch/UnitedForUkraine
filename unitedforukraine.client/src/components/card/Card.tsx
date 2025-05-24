@@ -6,6 +6,7 @@ type CardProps = {
   imageSrc?: string;
   imageAlt?: string;
   cardStatus?: string;
+  isLite: boolean;
   children: ReactNode;
   [key: string]: any;
 };
@@ -15,14 +16,18 @@ const Card: FC<CardProps> = ({
   imageSrc = "",
   imageAlt = "",
   cardStatus = "",
+  isLite,
   children,
   ...rest
 }) => {
   return (
-    <div className={`card p-4 ${className}`} {...rest}>
+    <div
+      className={`card px-4 py-4 ${className} ${isLite && "card--lite"}`}
+      {...rest}
+    >
       <div className="card-image">
         {cardStatus !== "" && <div className={`card-status`}>{cardStatus}</div>}
-        {imageSrc !== "" && (
+        {!isLite && imageSrc.trim() !== "" && (
           <Image className={`card-img`} src={imageSrc} alt={imageAlt} />
         )}
       </div>

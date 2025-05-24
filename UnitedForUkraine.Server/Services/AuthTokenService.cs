@@ -1,23 +1,23 @@
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
+using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 
 namespace UnitedForUkraine.Server.Services;
 
 public class AuthTokenService : IAuthTokenService
 {
-    private readonly IConfiguration _config;
-    private readonly IConfigurationSection _jwtSettings;
+    private readonly JwtSettings _jwtSettings;
     private readonly SymmetricSecurityKey _key;
 
-    public AuthTokenService(IConfiguration config)
+    public AuthTokenService(IOptions<JwtSettings> jwtSettings)
     {
-        _config = config;
-        _jwtSettings = _config.GetSection("JwtSettings");
-        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings["SecretKey"]!));
+        _jwtSettings = jwtSettings.Value;
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Value.SecretKey));
     }
 
     public string CreateToken(AppUser user, IList<string> roles)
@@ -34,15 +34,15 @@ public class AuthTokenService : IAuthTokenService
         SecurityTokenDescriptor tokenDescriptor = new()
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddDays(7),
+            Expires = DateTime.Now.AddDays(_jwtSettings.ExpiryDays),
             SigningCredentials = creds,
-            Issuer = _jwtSettings["Issuer"]!,
-            Audience = _jwtSettings["Audience"]
+            Issuer = _jwtSettings.Issuer,
+            Audience = _jwtSettings.Audience,
         };
 
         JwtSecurityTokenHandler tokenHandler = new();
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
+        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);
     }

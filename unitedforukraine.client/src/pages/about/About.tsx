@@ -22,59 +22,66 @@ const About: FC = () => {
   const carouselImages: ImageDto[] = [
     {
       path: mission1,
-      alt: "Mission 1",
-      title: "Mission 1",
-      description: "Description for Mission 1",
+      alt: "Volunteer Glib Albovsky aiding local efforts",
+      title: "Glib Albovsky in Action",
+      description:
+        "Volunteer Glib Albovsky providing essential support on the ground as part of our mission to assist Ukrainian communities in need.",
     },
     {
       path: mission2,
-      alt: "Mission 2",
-      title: "Mission 2",
-      description: "Description for Mission 2",
+      alt: "Taras Chuiko offering humanitarian aid",
+      title: "Taras Chuiko’s Humanitarian Effort",
+      description:
+        "Captured during a relief mission, Taras Chuiko is seen delivering vital aid packages to displaced families in war-affected areas.",
     },
     {
       path: mission3,
-      alt: "Mission 3",
-      title: "Mission 3",
-      description: "Description for Mission 3",
+      alt: "UNICEF efforts in Ukraine by Ioana Moldovan",
+      title: "UNICEF Ukraine Outreach",
+      description:
+        "Photo by Ioana Moldovan showcasing UNICEF's fieldwork in Ukraine—supporting children and families with education, supplies, and care.",
     },
     {
       path: mission4,
-      alt: "Mission 4",
-      title: "Mission 4",
-      description: "Description for Mission 4",
+      alt: "Interactive map showing humanitarian aid locations across Ukraine",
+      title: "Ukraine Aid Distribution Map",
+      description:
+        "An interactive map highlighting areas in Ukraine receiving support, guiding our mission planning and showing real-time impact.",
     },
   ];
   const impactImages: ImageDto[] = [
     {
       path: impact1,
-      alt: "Impact 1",
-      title: "Impact 1",
-      description: "Description for Impact 1",
+      alt: "Volunteers handing out food supplies",
+      title: "Food Distribution Drive",
+      description:
+        "Volunteers distribute essential food supplies to civilians in need, ensuring no one is left behind during crises.",
     },
     {
       path: impact2,
-      alt: "Impact 2",
-      title: "Impact 2",
-      description: "Description for Impact 2",
+      alt: "Volunteers packing aid packages",
+      title: "Packing Relief Supplies",
+      description:
+        "Behind the scenes: our dedicated team packs food, hygiene kits, and essentials for rapid deployment to conflict zones.",
     },
     {
       path: impact3,
-      alt: "Impact 3",
-      title: "Impact 3",
-      description: "Description for Impact 3",
+      alt: "Ukrainians protesting in support of national sovereignty",
+      title: "Ukrainian Protests",
+      description:
+        "Civilians gather in peaceful protest, demonstrating resilience, unity, and support for Ukraine’s sovereignty and freedom.",
     },
     {
       path: impact4,
-      alt: "Impact 4",
-      title: "Impact 4",
-      description: "Description for Impact 4",
+      alt: "Volunteers helping an elderly woman",
+      title: "Helping the Elderly",
+      description:
+        "A touching moment where volunteers assist an elderly woman, embodying our mission of compassion and community care.",
     },
   ];
 
   return (
     <>
-      {/* Add a video? */}
       <section className="history" id="history">
         <div className="container">
           <div className="history__wrap">
@@ -245,7 +252,7 @@ const About: FC = () => {
                       aria-expanded="true"
                       aria-controls="panelsStayOpen-collapseOne"
                     >
-                      Accordion Item #1
+                      Refugee Assistance
                     </button>
                   </h2>
                   <div
@@ -268,7 +275,7 @@ const About: FC = () => {
                       aria-expanded="false"
                       aria-controls="panelsStayOpen-collapseTwo"
                     >
-                      Accordion Item #2
+                      Family Support
                     </button>
                   </h2>
                   <div
@@ -293,7 +300,7 @@ const About: FC = () => {
                       aria-expanded="false"
                       aria-controls="panelsStayOpen-collapseThree"
                     >
-                      Accordion Item #3
+                      Support for Soldiers
                     </button>
                   </h2>
                   <div
@@ -317,8 +324,9 @@ const About: FC = () => {
                     <Card
                       className="impact-stories__testimonial"
                       cardStatus="Svitlana, Refugee"
+                      isLite={true}
                     >
-                      <p>
+                      <div className="text-content">
                         "
                         <em>
                           Thanks to this incredible organization, my children
@@ -326,28 +334,46 @@ const About: FC = () => {
                           support after fleeing our home.
                         </em>
                         "
-                      </p>
+                      </div>
                     </Card>
                   </li>
                   <li className="impact-stories__item">
                     <Card
                       className="impact-stories__testimonial"
-                      cardStatus="Svitlana, Refugee"
+                      cardStatus="Andriy, Volunteer"
+                      isLite={true}
                     >
-                      <p>
+                      <div className="text-content">
                         "
                         <em>
-                          Thanks to this incredible organization, my children
-                          and I are safe. I never imagined we could find such
-                          support after fleeing our home.
+                          I joined as a volunteer to help others, but I never
+                          expected how much it would change me. Seeing the hope
+                          in people's eyes after receiving aid is something I'll
+                          never forget.
                         </em>
                         "
-                      </p>
+                      </div>
+                    </Card>
+                  </li>
+                  <li className="impact-stories__item">
+                    <Card
+                      className="impact-stories__testimonial"
+                      cardStatus="Olena, Donor"
+                      isLite={true}
+                    >
+                      <div className="text-content">
+                        "
+                        <em>
+                          Giving to this cause was the best decision I've made.
+                          Knowing that my contribution helped families survive
+                          and rebuild their lives gives me real peace of mind.
+                        </em>
+                        " card--no-image
+                      </div>
                     </Card>
                   </li>
                 </ul>
               </div>
-              {/* Gallery  */}
               <div className="impact-visuals mt-5">
                 <h3 className="impact-stories__title">Our Work in Action</h3>
                 <Gallery
@@ -355,19 +381,9 @@ const About: FC = () => {
                   id={"impactGallery"}
                   className="impact-gallery"
                 />
-                {/* <Image
-                  className="impact__image"
-                  src={impact1}
-                  alt="Impact Image 1"
-                />
-                <Image
-                  className="impact__image mt-3"
-                  src={impact2}
-                  alt="Impact Image 2"
-                /> */}
               </div>
               <div className="impact-future mt-5">
-                <Card className="impact-future__card">
+                <Card className="impact-future__card" isLite={true}>
                   <h3 className="impact-stories__title">
                     Our Goals for the Future
                   </h3>

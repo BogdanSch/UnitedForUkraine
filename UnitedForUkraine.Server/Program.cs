@@ -35,6 +35,9 @@ builder.Services.AddScoped<IAuthTokenService, AuthTokenService>();
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
 builder.Services.Configure<FrontendSettings>(builder.Configuration.GetSection("FrontendSettings"));
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeSettings")["SecretKey"];
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
@@ -52,29 +55,15 @@ builder.Services.AddAuthentication(options =>
    options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
     {
-        //options.RequireHttpsMetadata = true;
-        //options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidIssuer = jwtSettings["Issuer"],
             ValidateAudience = true,
             ValidAudience = jwtSettings["Audience"],
-            //ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(key),
-            //ClockSkew = TimeSpan.Zero,
         };
-        //options.Events = new JwtBearerEvents
-        //{
-        //    OnChallenge = context =>
-        //    {
-        //        context.HandleResponse();
-        //        context.Response.StatusCode = 401;
-        //        context.Response.ContentType = "application/json";
-        //        return context.Response.WriteAsync("{\"message\": \"Unauthorized\"}");
-        //    }
-        //};
     });
 
 builder.Services.AddAuthorization();
@@ -106,15 +95,11 @@ app.UseCors(cors => cors
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials());
-                  //.SetIsOriginAllowed(origin => true));
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
-
-StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeSettings")["SecretKey"];
 
 app.Run();

@@ -19,6 +19,7 @@ const CampaignItem: FC<ICampaignItemProps> = ({ campaign }) => {
         imageSrc={campaign.imageUrl}
         imageAlt={campaign.title}
         cardStatus={convertCampaignStatusToString(campaign.status)}
+        isLite={false}
       >
         <Link
           to={`/campaigns/detail/${campaign.id}/`}

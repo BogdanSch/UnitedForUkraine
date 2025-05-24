@@ -6,7 +6,7 @@ import { Statistics } from "../../types";
 import { formatMoney } from "../../utils/currency";
 import formatNumber from "../../utils/formatNumber";
 
-const TotalStatisticsList: FC = () => {
+const FoundationStatisticsList: FC = () => {
   const [statistics, setStatistics] = useState<Statistics>({
     donationsCount: 0,
     totalDonationsAmount: 0,
@@ -85,4 +85,4 @@ const TotalStatisticsList: FC = () => {
   );
 };
 
-export default TotalStatisticsList;
+export default FoundationStatisticsList;

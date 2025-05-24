@@ -21,6 +21,7 @@ const CampaignsIndex: FC = () => {
           <CampaignsList
             showPaginationButtons={true}
             showQueryCriteria={true}
+            showUserCampaigns={false}
           />
         </div>
       </div>

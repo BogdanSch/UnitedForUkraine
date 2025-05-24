@@ -1,22 +1,25 @@
 ﻿import axios from "axios";
-import { FC, useEffect, useState, useRef, FormEvent } from "react";
+import { FC, useEffect, useState, useRef, FormEvent, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { CampaignDto } from "../../types";
-import { CampaignItem } from "../../components";
-import { API_URL } from "../../variables";
-import CampaignsPaginator from "./CampaignsPaginator";
 import { CampaignCategory } from "../../types/enums";
+import { CampaignItem } from "../../components";
+import CampaignsPaginator from "./CampaignsPaginator";
+import AuthContext from "../../contexts/AuthContext";
+import { API_URL } from "../../variables";
 import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
 
 type CampaignsListProps = {
   showPaginationButtons: boolean;
   showQueryCriteria: boolean;
+  showUserCampaigns: boolean;
 };
 
 const CampaignsList: FC<CampaignsListProps> = ({
   showPaginationButtons,
   showQueryCriteria,
+  showUserCampaigns,
 }) => {
   const [campaigns, setCampaigns] = useState<CampaignDto[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -33,18 +36,36 @@ const CampaignsList: FC<CampaignsListProps> = ({
   const [searchParams] = useSearchParams();
   const page = searchParams.get("page");
 
+  const { user, authToken } = useContext(AuthContext);
+
   useEffect(() => {
     const currentPage: number = Number(page) > 0 ? Number(page) : 1;
     setPageIndex(currentPage);
 
     const fetchData = async () => {
-      let requestUrl: string = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}&filterCategory=${filterCategory}`;
-      if (searchQuery.length > 0) requestUrl += `&searchedQuery=${searchQuery}`;
+      let requestUrl: string;
 
-      // console.log(requestUrl);
+      if (showUserCampaigns) {
+        requestUrl = `${API_URL}/donations/supportedCampaigns/${user?.id}`;
+      } else {
+        requestUrl = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}&filterCategory=${filterCategory}`;
+        if (searchQuery.length > 0)
+          requestUrl += `&searchedQuery=${searchQuery}`;
+      }
+
+      const options: Record<string, any> = {
+        method: "GET",
+        url: requestUrl,
+      };
+
+      if (showUserCampaigns) {
+        options.headers = {
+          Authorization: `Bearer ${authToken}`,
+        };
+      }
 
       try {
-        const { data } = await axios.get(requestUrl);
+        const { data } = await axios.request(options);
 
         setCampaigns(data.campaigns || []);
         setHasPreviousPage(data.hasPreviousPage);

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Image } from "../";
+import { Card, Image } from "../";
 import { ImageDto } from "../../types";
 
 interface ICarouselProps {
@@ -42,10 +42,13 @@ const Carousel: FC<ICarouselProps> = ({ images, id, className, ...rest }) => {
               className="d-block w-100 carousel-image"
             />
             {image.title && image.description && (
-              <div className="carousel-caption d-block">
+              <Card
+                className="carousel-caption d-block card--dark-transparent"
+                isLite={true}
+              >
                 <h5>{image.title}</h5>
                 <p>{image.description}</p>
-              </div>
+              </Card>
             )}
           </div>
         ))}

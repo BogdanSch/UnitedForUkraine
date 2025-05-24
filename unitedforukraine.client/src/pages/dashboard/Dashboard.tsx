@@ -1,9 +1,9 @@
 import { FC, useContext } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import {
+  CampaignsList,
   UserDonationsList,
   UserStatisticsList,
-  UserSupportedCampaignsList,
 } from "../../containers";
 import { SectionHeadline } from "../../components";
 
@@ -84,7 +84,11 @@ const Dashboard: FC = () => {
               title={`These campaigns were supported by you. We're so grateful for your cooperation!`}
               sectionIndicatorTitle={`Supported campaigns`}
             />
-            <UserSupportedCampaignsList />
+            <CampaignsList
+              showPaginationButtons={true}
+              showQueryCriteria={false}
+              showUserCampaigns={true}
+            />
           </div>
         </div>
       </section>

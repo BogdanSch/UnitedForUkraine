@@ -39,7 +39,6 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     null
   );
   const [loading, setLoading] = useState(true);
-  // const [user, setUser] = useState<UserDto | null>(null);
 
   const fetchUserData = async (authToken: string): Promise<void> => {
     if (!authToken || authToken.trim() === "") {
@@ -47,29 +46,31 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       return;
     }
 
-    console.log(authToken);
+    const options = {
+      method: "GET",
+      url: `${API_URL}/Auth/userInfo`,
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    };
 
-    await axios
-      .get(`${API_URL}/Auth/userInfo`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      })
-      .then((response) => {
-        setUser(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        logoutUser();
-        console.log("Error fetching user info:", error.response?.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const { data } = await axios.request(options);
+      setUser(data);
+      console.log("Fetched user info: ");
+      console.log(data);
+    } catch (error) {
+      await logoutUser();
+      console.log("Error while fetching user info: " + error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchUserData(authToken);
+    (async () => {
+      await fetchUserData(authToken);
+    })();
   }, [authToken]);
 
   const authenticateUser = async (authToken: string): Promise<void> => {
@@ -79,18 +80,22 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logoutUser = async (): Promise<void> => {
-    await axios.post(`${API_URL}/Auth/logout`, null, {
+    const options = {
+      method: "POST",
+      url: `${API_URL}/Auth/logout`,
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
-    });
+    };
+
+    await axios.request(options);
 
     removeUser();
     removeAuthToken();
     setUser(null);
   };
 
-  const isAuthenticated = () => user != null && authToken.length > 0;
+  const isAuthenticated = () => user != null && authToken.trim().length > 0;
   const isAdmin = () => user?.isAdmin ?? false;
 
   const contextValue = useMemo(
