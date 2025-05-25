@@ -1,6 +1,7 @@
 ﻿using ContosoUniversity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.Helpers;
@@ -8,6 +9,7 @@ using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
+using UnitedForUkraine.Server.Repositories;
 
 namespace UnitedForUkraine.Server.Controllers;
 
@@ -16,7 +18,7 @@ namespace UnitedForUkraine.Server.Controllers;
 public class CampaignController : ControllerBase
 {
     private readonly ICampaignRepository _campaignRepository;
-    private const int NUMBER_OF_ITEMS_PER_PAGE = 6;
+    private const int NUMBER_OF_CAMPAIGNS_PER_PAGE = 6;
 
     public CampaignController(ICampaignRepository campaignRepository)
     {
@@ -24,23 +26,15 @@ public class CampaignController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetCampaignsData([FromQuery] QueryObject queryObject)
+    public async Task<IActionResult> GetPaginatedCampaignsData([FromQuery] QueryObject queryObject)
     {
-        var campaigns = _campaignRepository.GetAllCampaigns(queryObject);
-
-        if (!campaigns.Any())
-        {
-            return Ok(new PaginatedCampaignsDto());
-        }
-
-        PaginatedList<Campaign> paginatedCampaigns = await PaginatedList<Campaign>.CreateAsync(campaigns, queryObject.Page, NUMBER_OF_ITEMS_PER_PAGE);
-
+        var paginatedCampaigns = await _campaignRepository.GetPaginatedCampaigns(queryObject, NUMBER_OF_CAMPAIGNS_PER_PAGE);
         List<CampaignDto> campainsList = [.. paginatedCampaigns.Select(c => c.ToCampaignDto())];
 
         return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
     }
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetCampaignsDataById([FromRoute] int id)
+    public async Task<IActionResult> GetCampaignDataById([FromRoute] int id)
     {
         Campaign? targetCampaign = await _campaignRepository.GetCampaignByIdAsync(id);
 
@@ -50,6 +44,20 @@ public class CampaignController : ControllerBase
         CampaignDto campaignDto = targetCampaign.ToCampaignDto();
 
         return Ok(campaignDto);
+    }
+    [HttpGet("supported-by/{userId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetUserSupportedCampaigns(Guid userId)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        if (userId == Guid.Empty)
+            return BadRequest("User ID cannot be empty.");
+
+        var campaigns = await _campaignRepository.GetAllUserSupportedCampaigns(userId.ToString()).ToListAsync();
+        List<CampaignDto> campaignDtos = [.. campaigns.Select(c => c.ToCampaignDto())];
+
+        return Ok(new { Campaigns = campaignDtos });
     }
     [HttpPost("create/")]
     [Authorize(Roles = "admin")]
@@ -63,7 +71,7 @@ public class CampaignController : ControllerBase
             Campaign newCampaign = createdCampaignDto.FromCreateCampaignDtoToCampaign();
             await _campaignRepository.AddAsync(newCampaign);
 
-            return CreatedAtAction(nameof(GetCampaignsDataById), new { id = newCampaign.Id }, newCampaign.ToCampaignDto());
+            return CreatedAtAction(nameof(GetCampaignDataById), new { id = newCampaign.Id }, newCampaign.ToCampaignDto());
         }
         catch (Exception)
         {

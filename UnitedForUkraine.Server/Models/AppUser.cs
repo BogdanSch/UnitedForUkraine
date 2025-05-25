@@ -7,6 +7,5 @@ public class AppUser : IdentityUser
 {
     [ForeignKey(nameof(Address))]
     public int? AddressId { get; set; }
-    public Address? Address { get; set; }   
-    public ICollection<Donation> Donations { get; set; } = [];
+    public Address? Address { get; set; }
 }

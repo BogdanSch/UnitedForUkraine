@@ -40,26 +40,33 @@ const CampaignDonationsList: FC = () => {
   return (
     <div className="campaigns-detail__donations">
       <ul className="campaigns-detail__donations-list">
-        {donations.map((donation: DonationDto) => (
-          <li
-            className="campaigns-detail__donations-item card p-3"
-            key={`donations-${donation.id}`}
-          >
-            <div className="campaigns-detail__donations-item-userInfo">
-              <span className="campaigns-detail__donations-item-date">
-                {donation.paymentDate}
-              </span>
-              <strong className="ms-2">{donation.userName}</strong>
-            </div>
-            <div className="campaigns-detail__donations-item-amount">
-              <span>
-                +{donation.amount}
-                {` `}
-                {convertDonationCurrencyToString(donation.currency)}
-              </span>
-            </div>
-          </li>
-        ))}
+        {donations.length > 0 ? (
+          donations.map((donation: DonationDto) => (
+            <li
+              className="campaigns-detail__donations-item card p-3"
+              key={`donations-${donation.id}`}
+            >
+              <div className="campaigns-detail__donations-item-userInfo">
+                <span className="campaigns-detail__donations-item-date">
+                  {donation.paymentDate}
+                </span>
+                <strong className="ms-2">{donation.userName}</strong>
+              </div>
+              <div className="campaigns-detail__donations-item-amount">
+                <span>
+                  +{donation.amount}
+                  {` `}
+                  {convertDonationCurrencyToString(donation.currency)}
+                </span>
+              </div>
+            </li>
+          ))
+        ) : (
+          <p className="text-center">
+            There are no donations yet. But you can change this situation by
+            supporting one of our campaigns!
+          </p>
+        )}
       </ul>
       {donations.length > 0 && (
         <button

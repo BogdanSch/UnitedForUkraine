@@ -1,19 +1,18 @@
-﻿using UnitedForUkraine.Server.Models;
+﻿using ContosoUniversity;
+using UnitedForUkraine.Server.Helpers;
+using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Interfaces;
 
 public interface IDonationRepository
 {
-    Task<IEnumerable<Donation>> GetAllDonationsAsync();
-    IQueryable<Donation> GetAllDonationsByCampaignId(int campaignId);
-    IQueryable<Donation> GetAllDonationsByUserId(string userId);
-    Task<IEnumerable<Donation>> GetDonationsAsync(int donationsAmount);
+    Task<PaginatedList<Donation>> GetPaginatedDonationsAsync(QueryObject queryObject, int itemsPerPageCount);
+    Task<PaginatedList<Donation>> GetPaginatedDonationsByCampaignId(int campaignId, int page, int itemsPerPageCount);
+    Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, int page, int itemsPerPageCount);
     Task<Donation?> GetDonationByIdAsync(int id);
     Task<int> GetTotalUserDonationsCountAsync(string? userId);
     Task<decimal> GetTotalUserDonationsAmountAsync(string? userId);
     Task<int> GetAverageUserDonationsAmountAsync(string? userId);
-    Task<IEnumerable<Campaign>> GetAllUserSupportedCampaigns(string? userId);
-    Task<int> GetAllUserSupportedCampaignsCount(string? userId);
     Task<int> GetUniqueDonorsCountAsync();
     Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId);
     Task AddAsync(Donation donation);

@@ -11,7 +11,8 @@ const ProgressBar: FC<ProgressBarProps> = ({
   currentAmount,
   requiredAmount,
 }) => {
-  const percentage: number = (currentAmount / requiredAmount) * 100;
+  let percentage: number = (currentAmount / requiredAmount) * 100;
+  if (percentage > 100) percentage = 100;
 
   return (
     <div className={`progress ${className}`}>

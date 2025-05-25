@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+﻿using ContosoUniversity;
+using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.Services;
 
 namespace UnitedForUkraine.Server.Repositories;
 
@@ -18,28 +18,24 @@ public class DonationRepository : IDonationRepository
         _currencyConverterService = currencyConverterService;
     }
 
-    public async Task<IEnumerable<Donation>> GetAllDonationsAsync()
+    public async Task<PaginatedList<Donation>> GetPaginatedDonationsAsync(QueryObject queryObject, int itemsPerPageCount)
     {
-        return await _context.Donations.Include(d => d.User).OrderByDescending(d => d.PaymentDate).ToListAsync();
+        var donations = _context.Donations.Include(d => d.User).OrderByDescending(d => d.PaymentDate);
+        return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
-    public IQueryable<Donation> GetAllDonationsByCampaignId(int campaignId)
+    public async Task<PaginatedList<Donation>> GetPaginatedDonationsByCampaignId(int campaignId, int page, int itemsPerPageCount)
     {
-        return _context.Donations.Where(d => d.CampaignId == campaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
+        var donations = _context.Donations.Where(d => d.CampaignId == campaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
+        return await PaginatedList<Donation>.CreateAsync(donations, page, itemsPerPageCount);
     }
-    public IQueryable<Donation> GetAllDonationsByUserId(string userId)
+    public async Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, int page, int itemsPerPageCount)
     {
-        return _context.Donations.Where(d => d.UserId == userId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
+        var donations = _context.Donations.Where(d => d.UserId == userId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
+        return await PaginatedList<Donation>.CreateAsync(donations, page, itemsPerPageCount);
     }
     public async Task<Donation?> GetDonationByIdAsync(int id)
     {
         return await _context.Donations.Include(d => d.User).FirstOrDefaultAsync(dontaion => dontaion.Id == id);
-    }
-    public async Task<IEnumerable<Donation>> GetDonationsAsync(int donationsAmount)
-    {
-        return await _context.Donations
-            .OrderByDescending(d => d.PaymentDate)
-            .Take(donationsAmount)
-            .ToListAsync();
     }
     public async Task AddAsync(Donation donation)
     {
@@ -64,13 +60,11 @@ public class DonationRepository : IDonationRepository
         _context.Donations.Update(donation);
         return await SaveAsync();
     }
-
     public async Task<bool> SaveAsync()
     {
         int saved = await _context.SaveChangesAsync();
         return saved > 0;
     }
-
     public async Task<int> GetTotalUserDonationsCountAsync(string? userId)
     {
         IQueryable<Donation> donations;
@@ -86,21 +80,22 @@ public class DonationRepository : IDonationRepository
 
         return await donations.CountAsync();
     }
-
     public async Task<decimal> GetTotalUserDonationsAmountAsync(string? userId)
     {
-        IEnumerable<Donation> donations;
+        IQueryable<Donation> donations;
 
         if (userId == null)
         {
-            donations = _context.Donations.AsEnumerable();
+            donations = _context.Donations;
         }
         else
         {
-            donations = _context.Donations.Where(d => d.UserId == userId).AsEnumerable();
+            donations = _context.Donations.Where(d => d.UserId == userId);
         }
 
-        var tasks = donations.Select(async donation =>
+        var temp = donations.Select(d => new { d.Amount, d.Currency }).ToList();
+
+        var tasks = temp.Select(async donation =>
             {
                 if (donation.Currency == CurrencyType.UAH)
                     return donation.Amount;
@@ -111,29 +106,18 @@ public class DonationRepository : IDonationRepository
                 return await _currencyConverterService.ConvertCurrency(donation.Amount, from, to);
             });
 
-        var converted = await Task.WhenAll(tasks);
+        decimal[] converted = await Task.WhenAll(tasks);
 
         return converted.Sum();
     }
-
-
     public async Task<int> GetAverageUserDonationsAmountAsync(string? userId)
     {
         int totalDonationsCount = await GetTotalUserDonationsCountAsync(userId);
         decimal totalDonationsAmount = await GetTotalUserDonationsAmountAsync(userId);
+
+        if (totalDonationsCount == 0) return 0;
+
         return (int)Math.Round(totalDonationsAmount / totalDonationsCount);
-    }
-    public async Task<IEnumerable<Campaign>> GetAllUserSupportedCampaigns(string? userId)
-    {
-        return await _context.Donations.Where(d => d.UserId == userId)
-            .Select(d => d.Campaign)
-            .Distinct()
-            .ToListAsync();
-    }
-    public async Task<int> GetAllUserSupportedCampaignsCount(string? userId)
-    {
-        var campaigns = await GetAllUserSupportedCampaigns(userId);
-        return campaigns.Count();
     }
     public async Task<int> GetUniqueDonorsCountAsync()
     {
@@ -142,7 +126,6 @@ public class DonationRepository : IDonationRepository
            .Distinct()
            .CountAsync();
     }
-
     public Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId)
     {
         return _context.Donations

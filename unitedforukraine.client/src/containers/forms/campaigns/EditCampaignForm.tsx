@@ -314,7 +314,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       </div>
       <div className="form-buttons">
         <button type="submit" className="btn btn-primary">
-          Submit
+          Save Changes
         </button>
         <button type="reset" className="btn btn-outline-danger">
           Reset

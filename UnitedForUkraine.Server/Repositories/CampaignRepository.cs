@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ContosoUniversity;
+using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
@@ -15,9 +16,10 @@ public class CampaignRepository : ICampaignRepository
         _context = context;
     }
 
-    public IQueryable<Campaign> GetAllCampaigns(QueryObject queryObject)
+    public async Task<PaginatedList<Campaign>> GetPaginatedCampaigns(QueryObject queryObject, int itemsPerPageCount)
     {
         var campaigns = _context.Campaigns.AsNoTracking();
+
         if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
         {
             string query = queryObject.SearchedQuery;
@@ -46,18 +48,11 @@ public class CampaignRepository : ICampaignRepository
             campaigns = campaigns.Where(c => c.Category == category);
         }
 
-        return campaigns;
+        return await PaginatedList<Campaign>.CreateAsync(campaigns, queryObject.Page, itemsPerPageCount);
     }
     public async Task<Campaign?> GetCampaignByIdAsync(int id)
     {
         return await _context.Campaigns.FirstOrDefaultAsync(campaign => campaign.Id == id);
-    }
-    public async Task<IEnumerable<Campaign>> GetCampaignsAsync(int campaignsAmount)
-    {
-        return await _context.Campaigns
-            .OrderByDescending(c => c.StartDate)
-            .Take(campaignsAmount)
-            .ToListAsync(); 
     }
     public async Task AddAsync(Campaign campaign)
     {
@@ -89,5 +84,15 @@ public class CampaignRepository : ICampaignRepository
     {
         int saved = await _context.SaveChangesAsync();
         return saved > 0;
+    }
+    public IQueryable<Campaign> GetAllUserSupportedCampaigns(string? userId)
+    {
+        return _context.Donations.Where(d => d.UserId == userId)
+            .Select(d => d.Campaign)
+            .Distinct();
+    }
+    public async Task<int> GetAllUserSupportedCampaignsCount(string? userId)
+    {
+        return await GetAllUserSupportedCampaigns(userId).CountAsync();
     }
 }
