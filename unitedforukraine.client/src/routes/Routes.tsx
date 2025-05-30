@@ -75,7 +75,7 @@ export const router = createBrowserRouter([
       {
         path: ":id",
         element: (
-          <ProtectedRoute requireAdmin>
+          <ProtectedRoute>
             <Donate />
           </ProtectedRoute>
         ),

@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { FC, useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../../variables";
@@ -41,9 +41,9 @@ const RegisterForm: FC = () => {
 
       try {
         await axios.post(`${API_URL}/Auth/register`, formData, options);
-        navigate("/registered");
+        navigate("/auth/registered");
       } catch (error) {
-        if (error instanceof AxiosError) {
+        if (axios.isAxiosError(error)) {
           setRequestError(
             error.response?.data.message || "An error has occurred"
           );

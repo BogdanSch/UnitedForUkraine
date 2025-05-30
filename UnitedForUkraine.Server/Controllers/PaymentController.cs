@@ -55,8 +55,11 @@ namespace UnitedForUkraine.Server.Controllers
 
             Campaign? targetCampaign = await _campaignRepository.GetCampaignByIdAsync(currentDonation.CampaignId);
 
-            if(targetCampaign == null)
+            if (targetCampaign == null)
                 return BadRequest("Invalid campaign data within the donation");
+
+            if(targetCampaign.Status != CampaignStatus.Ongoing)
+                return BadRequest("Campaign is not active for donations");
 
             AppUser? contributor = await _userManager.FindByIdAsync(currentDonation.UserId);
 

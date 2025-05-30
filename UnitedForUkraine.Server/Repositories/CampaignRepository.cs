@@ -15,7 +15,6 @@ public class CampaignRepository : ICampaignRepository
     {
         _context = context;
     }
-
     public async Task<PaginatedList<Campaign>> GetPaginatedCampaigns(QueryObject queryObject, int itemsPerPageCount)
     {
         var campaigns = _context.Campaigns.AsNoTracking();

@@ -27,6 +27,11 @@ namespace UnitedForUkraine.Server.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginDto)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             AppUser? user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null)
                 return Unauthorized(new { message = "Invalid email!" });
@@ -44,6 +49,11 @@ namespace UnitedForUkraine.Server.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (registerDto.Password != registerDto.ConfirmPassword)
             {
                 return BadRequest(new { message = "Passwords don't match" });

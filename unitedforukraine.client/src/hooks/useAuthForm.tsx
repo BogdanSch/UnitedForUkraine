@@ -20,7 +20,7 @@ export default function useAuthForm(initialState: Record<string, any>) {
   };
 
   const validateForm = (isRegisterPage = false): boolean => {
-    let newErrors: Record<string, string> = {};
+    const newErrors: Record<string, string> = {};
 
     if (!formData.email.match(emailValidation)) {
       newErrors.email = "Invalid email format!";

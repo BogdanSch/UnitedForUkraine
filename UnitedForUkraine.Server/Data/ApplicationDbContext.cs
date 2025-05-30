@@ -11,6 +11,5 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public DbSet<Campaign> Campaigns { get; set; }
     public DbSet<Donation> Donations { get; set; }
     public DbSet<Address> Addresses { get; set; }
-    public DbSet<NewsUpdate> NewsUpdates { get; set; }
 
 }

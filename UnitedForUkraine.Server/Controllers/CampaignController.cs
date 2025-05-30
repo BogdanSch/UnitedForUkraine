@@ -11,7 +11,7 @@ using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
 using UnitedForUkraine.Server.Repositories;
 
-namespace UnitedForUkraine.Server.Controllers;
+namespace UnitedForUkraine.Server.Controllers; 
 
 [ApiController]
 [Route("api/campaigns")]

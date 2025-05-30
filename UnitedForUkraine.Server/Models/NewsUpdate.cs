@@ -15,6 +15,6 @@ public class NewsUpdate
     public required string ImageUrl { get; set; }
 
     [ForeignKey(nameof(AppUser))]
-    public string UserId { get; set; }
+    public required string UserId { get; set; }
     public AppUser User { get; set; }
 }
