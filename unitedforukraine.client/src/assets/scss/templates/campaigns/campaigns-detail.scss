@@ -18,11 +18,6 @@
       color: $text-light-gray;
       line-height: 1.6;
     }
-    // &__title {
-    //   text-transform: uppercase;
-    //   font-size: 20px;
-    //   color: $primary;
-    // }
     &__category {
       text-align: center;
     }
@@ -95,29 +90,6 @@
       font-weight: $fw-bold;
       font-size: 1.2rem;
       color: $text-dark-gray;
-    }
-    &__donations-list {
-      @include flex-col();
-      align-items: center;
-      row-gap: 4px;
-      padding: 0;
-    }
-    &__donations-item {
-      width: clamp(300px, 70%, 100%);
-      @include flex-row();
-      justify-content: space-between;
-      align-items: center;
-
-      &-date {
-        color: $sky-blue;
-        font-weight: $fw-bold;
-      }
-      &-amount {
-        span {
-          color: $green-light;
-          font-weight: $fw-super-bold;
-        }
-      }
     }
   }
 }

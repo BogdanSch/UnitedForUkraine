@@ -13,6 +13,7 @@ public class AuthTokenService : IAuthTokenService
 {
     private readonly JwtSettings _jwtSettings;
     private readonly SymmetricSecurityKey _key;
+    public const int DEFAULT_EXPIRY_MINUTES = 180;
 
     public AuthTokenService(IOptions<JwtSettings> jwtSettings)
     {
@@ -20,7 +21,7 @@ public class AuthTokenService : IAuthTokenService
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Value.SecretKey));
     }
 
-    public string CreateToken(AppUser user, IList<string> roles)
+    public string CreateToken(AppUser user, IList<string> roles, bool rememberUser)
     {
         List<Claim> claims =
             [
@@ -31,14 +32,17 @@ public class AuthTokenService : IAuthTokenService
 
         SigningCredentials creds = new(_key, SecurityAlgorithms.HmacSha512Signature);
 
+        DateTime currentTime = DateTime.Now;
+
         SecurityTokenDescriptor tokenDescriptor = new()
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddDays(_jwtSettings.ExpiryDays),
+            Expires = rememberUser ? currentTime.AddDays(_jwtSettings.ExpiryDays) : currentTime.AddMinutes(DEFAULT_EXPIRY_MINUTES),
             SigningCredentials = creds,
             Issuer = _jwtSettings.Issuer,
             Audience = _jwtSettings.Audience,
         };
+
 
         JwtSecurityTokenHandler tokenHandler = new();
 
@@ -46,5 +50,4 @@ public class AuthTokenService : IAuthTokenService
 
         return tokenHandler.WriteToken(token);
     }
-
 }

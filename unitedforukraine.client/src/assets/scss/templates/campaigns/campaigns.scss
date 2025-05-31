@@ -99,7 +99,7 @@
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
   .campaigns {
     &__headline {
       @include flex-col();

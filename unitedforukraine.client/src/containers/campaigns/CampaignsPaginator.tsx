@@ -5,14 +5,12 @@ type CampaignsPaginatorProps = {
   currentPageIndex: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-  // setNewPageIndex: (pageIndex: number) => void;
 };
 
 const CampaignsPaginator: FC<CampaignsPaginatorProps> = ({
   currentPageIndex,
   hasNextPage,
   hasPreviousPage,
-  // setNewPageIndex,
 }) => {
   return (
     <nav
@@ -23,7 +21,6 @@ const CampaignsPaginator: FC<CampaignsPaginatorProps> = ({
         <li className="page-item">
           <Link
             className={`page-link ${hasPreviousPage ? "" : "disabled"}`}
-            // onClick={() => setNewPageIndex(currentPageIndex - 1)}
             to={{
               pathname: "/campaigns",
               search: `?page=${currentPageIndex - 1}`,
@@ -35,7 +32,6 @@ const CampaignsPaginator: FC<CampaignsPaginatorProps> = ({
         <li className="page-item">
           <Link
             className={`page-link ${hasNextPage ? "" : "disabled"}`}
-            // onClick={() => setNewPageIndex(currentPageIndex + 1)}
             to={{
               pathname: "/campaigns",
               search: `?page=${currentPageIndex + 1}`,

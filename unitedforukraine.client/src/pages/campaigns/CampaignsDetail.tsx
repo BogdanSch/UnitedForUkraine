@@ -8,7 +8,7 @@ import {
   ShareButton,
   Timeline,
 } from "../../components";
-import { CampaignDonationsList, DeleteCampaignForm } from "../../containers/";
+import { DeleteCampaignForm } from "../../containers/";
 import AuthContext from "../../contexts/AuthContext";
 import {
   convertCampaignCategoryToString,
@@ -16,6 +16,7 @@ import {
   fetchCampaignData,
 } from "../../utils/campaignHelper";
 import { convertCurrencyToString } from "../../utils/currency";
+import DonationsList from "../../containers/donations/DonationsList";
 
 const CampaignsDetail: FC = () => {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
@@ -138,7 +139,11 @@ const CampaignsDetail: FC = () => {
               />
             </div>
           </div>
-          <CampaignDonationsList campaignId={id} />
+          <DonationsList
+            campaignId={Number(id)}
+            showUserDonations={false}
+            showQueryCriteria={false}
+          />
         </article>
       </div>
     </section>

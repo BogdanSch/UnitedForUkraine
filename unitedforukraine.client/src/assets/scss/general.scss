@@ -31,6 +31,12 @@ h2 {
   }
 }
 
+h3,
+h4,
+h5 {
+  font-weight: $fw-bold;
+}
+
 .heading {
   font-size: 2.5rem;
   font-weight: $fw-bold;

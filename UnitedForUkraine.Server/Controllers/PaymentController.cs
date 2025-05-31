@@ -22,7 +22,6 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IDonationRepository _donationRepository;
         private readonly ICampaignRepository _campaignRepository;
-        private readonly ICurrencyConverterService _currencyConverterService;
 
         public PaymentController(IOptions<FrontendSettings> frontendSettings, UserManager<AppUser> userManager, IDonationRepository donationRepository, ICampaignRepository campaignRepository, ICurrencyConverterService currencyConverterService)
         {
@@ -30,7 +29,6 @@ namespace UnitedForUkraine.Server.Controllers
             _donationRepository = donationRepository;
             _campaignRepository = campaignRepository;
             _userManager = userManager;
-            _currencyConverterService = currencyConverterService;
         }
         private static List<string> GetStripePaymentMethod(CustomDonationMethod paymentMethod)
         {
@@ -100,13 +98,6 @@ namespace UnitedForUkraine.Server.Controllers
                 SessionService stripeSessionService = new();
                 Session stripeCheckOutSession = await stripeSessionService.CreateAsync(options);
 
-                //stripeCheckOutSession.Id
-                //stripeCheckOutSession.Conf.s\
-                //Stripe.COnfirmCards
-
-                //targetCampaign.RaisedAmount += convertedAmount;
-                //_campaignRepository.Update(targetCampaign);
-
                 currentDonation.Status = DonationStatus.Pending;
                 currentDonation.CheckoutSessionId = stripeCheckOutSession.Id;
                 await _donationRepository.UpdateAsync(currentDonation);
@@ -115,12 +106,6 @@ namespace UnitedForUkraine.Server.Controllers
             }
             catch (StripeException e)
             {
-                //targetCampaign.RaisedAmount -= convertedAmount;
-                //_campaignRepository.Update(targetCampaign);
-
-                //await _donationRepository.Delete(currentDonation.Id);
-                //_donationRepository.Save();
-
                 return BadRequest(new { error = e.Message });
             }
         }

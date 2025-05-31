@@ -13,8 +13,6 @@ namespace UnitedForUkraine.Server.Controllers
     [ApiController]
     public class StripeWebhooksController : ControllerBase
     {
-        public const string DEFAULT_CURRENCY_NAME = "UAH";
-
         private readonly IDonationRepository _donationRepository;
         private readonly ICampaignRepository _campaignRepository;
         private readonly ICurrencyConverterService _currencyConverterService;
@@ -34,7 +32,6 @@ namespace UnitedForUkraine.Server.Controllers
             _logger = logger;
             _stripeSettings = stripeOptions.Value;
         }
-        private static string GetCurrencyCode(CurrencyType currencyEnum) => Enum.GetName(currencyEnum)?.ToUpper() ?? DEFAULT_CURRENCY_NAME;
         [HttpPost("webhook")]
         public async Task<IActionResult> Handle()
         {
@@ -67,8 +64,8 @@ namespace UnitedForUkraine.Server.Controllers
                             decimal convertedAmount = await
                                 _currencyConverterService.ConvertCurrency(
                                     donation.Amount,
-                                GetCurrencyCode(donation.Currency),
-                                GetCurrencyCode(campaign.Currency)
+                                StripeSettings.GetCurrencyCode(donation.Currency),
+                                StripeSettings.GetCurrencyCode(campaign.Currency)
                             );
                             campaign.RaisedAmount += convertedAmount;
                             await _campaignRepository.UpdateAsync(campaign);

@@ -23,15 +23,14 @@ public class DonationController : ControllerBase
         _campaignRepository = campaignRepository;
     }
     [HttpGet]
-    public async Task<IActionResult> GetDontaionsData([FromQuery] QueryObject queryObject)
+    public async Task<IActionResult> GetPaginatedDontaionsData([FromQuery] QueryObject queryObject)
     {
-        var donations = await _donationRepository.GetPaginatedDonationsAsync(queryObject, NUMBER_OF_DONATIONs_PER_PAGE);
+        var paginatedDonations = await _donationRepository.GetPaginatedDonationsAsync(queryObject, NUMBER_OF_DONATIONs_PER_PAGE);
 
-        if (!donations.Any()) return Ok(new List<DonationDto>());
+        if (!paginatedDonations.Any()) return Ok(new List<DonationDto>());
+        List<DonationDto> donationDtos = [.. paginatedDonations.Select(d => d.ToDonationDto())];
 
-        List<DonationDto> response = [.. donations.Select(d => d.ToDonationDto())];
-
-        return Ok(response);
+        return Ok(new PaginatedDonationsDto(donationDtos, paginatedDonations.HasNextPage));
     }
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetDontaionDataById(int id)
@@ -57,14 +56,14 @@ public class DonationController : ControllerBase
     }
     [HttpGet("user/{userId:guid}")]
     [Authorize]
-    public async Task<IActionResult> GetPaginatedUserDonations(Guid userId, [FromQuery] int page = 1)
+    public async Task<IActionResult> GetPaginatedUserDonations(Guid userId, [FromQuery] QueryObject queryObject)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         if (userId == Guid.Empty)
             return BadRequest("User ID cannot be empty.");
 
-        PaginatedList<Donation> loadedDonations = await _donationRepository.GetPaginatedDonationsByUserId(userId.ToString(), page, NUMBER_OF_DONATIONs_PER_PAGE);
+        PaginatedList<Donation> loadedDonations = await _donationRepository.GetPaginatedDonationsByUserId(userId.ToString(), queryObject, NUMBER_OF_DONATIONs_PER_PAGE);
         List<DonationDto> donationDtos = [.. loadedDonations.Select(d => d.ToDonationDto())];
 
         return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));

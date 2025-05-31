@@ -1,14 +1,14 @@
 import { FC, useContext } from "react";
 import AuthContext from "../../contexts/AuthContext";
 import {
+  DonationsList,
   CampaignsList,
-  UserDonationsList,
   UserStatisticsList,
 } from "../../containers";
 import { SectionHeadline } from "../../components";
 
 const Dashboard: FC = () => {
-  const { user } = useContext(AuthContext);
+  const { user, isAdmin } = useContext(AuthContext);
 
   return (
     <>
@@ -17,9 +17,13 @@ const Dashboard: FC = () => {
           <div className="dashboard__wrap">
             <div className="text-content text-center mb-4">
               <h2 className="dashboard__title">
-                Welcome, <span className="decoration">{user?.userName}!</span>
+                Welcome<span className="decoration">, {user?.userName}!</span>
               </h2>
-              <h3 className="dashboard__title">We've missed you so much!</h3>
+              <p className="dashboard__description">
+                We're glad to have you back! Here you can view your profile
+                details, track your donations, and explore the campaigns you've
+                supported.
+              </p>
             </div>
             <ul className="dashboard__list card px-5 py-4">
               <li className="dashboard__item">{user?.email}</li>
@@ -28,7 +32,7 @@ const Dashboard: FC = () => {
                 <strong>{user?.phoneNumber ?? "None"}</strong>
               </li>
               <li className="dashboard__item">
-                Your location:
+                Your location:{" "}
                 {user?.address ? (
                   <ul className="dashboard__sub-list">
                     <li className="dashboard__sub-item">
@@ -60,17 +64,17 @@ const Dashboard: FC = () => {
           </div>
         </div>
       </section>
-      <section
-        className="dashboard campaigns-detail dashboard--overview"
-        id="dashboardOverview"
-      >
+      <section className="dashboard dashboard--overview" id="dashboardOverview">
         <div className="container">
           <div className="dashboard__wrap text-center">
             <SectionHeadline
-              title={`Every you donation brings our victory closer`}
+              title={`Each donation of yours brings our victory closer`}
               sectionIndicatorTitle={`Donations overview`}
             />
-            <UserDonationsList />
+            <DonationsList
+              showUserDonations={!isAdmin()}
+              showQueryCriteria={true}
+            />
           </div>
         </div>
       </section>

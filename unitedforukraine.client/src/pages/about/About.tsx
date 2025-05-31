@@ -32,7 +32,7 @@ const About: FC = () => {
       alt: "Taras Chuiko offering humanitarian aid",
       title: "Taras Chuiko’s Humanitarian Effort",
       description:
-        "Captured during a relief mission, Taras Chuiko is seen delivering vital aid packages to displaced families in war-affected areas.",
+        "Taras Chuyko provides help in evacuating families in the vicinity of the fighting.",
     },
     {
       path: mission3,
@@ -368,7 +368,7 @@ const About: FC = () => {
                           Knowing that my contribution helped families survive
                           and rebuild their lives gives me real peace of mind.
                         </em>
-                        " card--no-image
+                        "
                       </div>
                     </Card>
                   </li>

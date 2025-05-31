@@ -42,7 +42,7 @@ namespace UnitedForUkraine.Server.Controllers
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
 
-            string token = _authTokenService.CreateToken(user, roles);
+            string token = _authTokenService.CreateToken(user, roles, loginDto.RememberMe);
 
             return Ok(token);
         }

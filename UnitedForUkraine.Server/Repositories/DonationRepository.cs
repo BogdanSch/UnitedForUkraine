@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
+using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
+using UnitedForUkraine.Server.Services;
 
 namespace UnitedForUkraine.Server.Repositories;
 
@@ -18,9 +20,32 @@ public class DonationRepository : IDonationRepository
         _currencyConverterService = currencyConverterService;
     }
 
+    public IQueryable<Donation> HandleDonationsFiltering(QueryObject queryObject, IQueryable<Donation> donations)
+    {
+        if (!string.IsNullOrWhiteSpace(queryObject.SortOrder))
+        {
+            donations = queryObject.SortOrder switch
+            {
+                "date_dsc" => donations.OrderByDescending(d => d.PaymentDate),
+                "amount_dsc" => donations.OrderByDescending(d => d.Amount),
+                "amount_asc" => donations.OrderBy(d => d.Amount),
+                "userName_asc" => donations.OrderBy(d => d.User.UserName),
+                _ => donations.OrderByDescending(c => c.PaymentDate),
+            };
+        }
+        else
+        {
+            donations = donations.OrderByDescending(d => d.PaymentDate);
+        }
+
+        return donations;
+    }
+
     public async Task<PaginatedList<Donation>> GetPaginatedDonationsAsync(QueryObject queryObject, int itemsPerPageCount)
     {
-        var donations = _context.Donations.Include(d => d.User).OrderByDescending(d => d.PaymentDate);
+        IQueryable<Donation> donations = _context.Donations.Include(d => d.User);
+        donations = HandleDonationsFiltering(queryObject, donations);
+
         return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
     public async Task<PaginatedList<Donation>> GetPaginatedDonationsByCampaignId(int campaignId, int page, int itemsPerPageCount)
@@ -28,10 +53,12 @@ public class DonationRepository : IDonationRepository
         var donations = _context.Donations.Where(d => d.CampaignId == campaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
         return await PaginatedList<Donation>.CreateAsync(donations, page, itemsPerPageCount);
     }
-    public async Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, int page, int itemsPerPageCount)
+    public async Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, QueryObject queryObject, int itemsPerPageCount)
     {
-        var donations = _context.Donations.Where(d => d.UserId == userId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
-        return await PaginatedList<Donation>.CreateAsync(donations, page, itemsPerPageCount);
+        IQueryable<Donation> donations = _context.Donations.Where(d => d.UserId == userId).Include(d => d.User);
+        donations = HandleDonationsFiltering(queryObject, donations);
+
+        return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
     public async Task<Donation?> GetDonationByIdAsync(int id)
     {
