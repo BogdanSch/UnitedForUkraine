@@ -48,7 +48,7 @@ namespace UnitedForUkraine.Server.Controllers
 
                     if (session == null)
                     {
-                        _logger.LogError("Session is null");
+                        _logger.LogError("Session is empty!");
                         return BadRequest();
                     }
 

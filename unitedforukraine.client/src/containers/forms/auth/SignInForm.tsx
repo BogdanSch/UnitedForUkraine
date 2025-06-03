@@ -1,7 +1,7 @@
-import { FC, FormEvent, useContext } from "react";
+import { FC, FormEvent, useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../../variables";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 import AuthContext from "../../../contexts/AuthContext";
 import { useAuthForm } from "../../../hooks/";
@@ -9,6 +9,7 @@ import { Input, PasswordInput } from "../../../components";
 
 const SignInForm: FC = () => {
   const navigate = useNavigate();
+  const [requestError, setRequestError] = useState("");
   const { authenticateUser } = useContext(AuthContext);
 
   const {
@@ -46,10 +47,13 @@ const SignInForm: FC = () => {
         await authenticateUser(authToken);
         navigate("/dashboard");
       } catch (error) {
-        if (error instanceof AxiosError) {
-          console.error(error.response?.data.message || "An error occurred");
+        if (axios.isAxiosError(error)) {
+          setRequestError(
+            error.response?.data.message ||
+              "An error has occurred while logging in. Please try again later!"
+          );
         } else {
-          console.error("Unexpected error:", error);
+          console.error(`Unexpected error: ${error}`);
         }
       }
     }
@@ -76,6 +80,11 @@ const SignInForm: FC = () => {
       onReset={handleReset}
       aria-labelledby="loginForm"
     >
+      {requestError && (
+        <div className="alert alert-danger" role="alert">
+          {requestError}
+        </div>
+      )}
       <div className="mb-3">
         <label htmlFor="email" className="form-label">
           Email*
@@ -103,8 +112,9 @@ const SignInForm: FC = () => {
         </label>
         <PasswordInput value={formData.password} onChange={handleChange} />
         <div id="passwordHelpBlock" className="form-text">
-          Your password must be 7 or more characters long, contain letters and
-          numbers, and must not contain emoji.
+          Your password must be at least 7 characters long, contain both letters
+          and numbers, include at least one uppercase letter, and must not
+          contain emojis.
         </div>
         {errors.password && (
           <div className="alert alert-danger mt-1" role="alert">

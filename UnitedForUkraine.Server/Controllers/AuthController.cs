@@ -70,6 +70,7 @@ namespace UnitedForUkraine.Server.Controllers
             {
                 UserName = registerDto.UserName,
                 Email = registerDto.Email,
+                PhoneNumber = registerDto.PhoneNumber
             };
 
             IdentityResult result = await _userManager.CreateAsync(newUser, registerDto.Password);
@@ -100,8 +101,7 @@ namespace UnitedForUkraine.Server.Controllers
                 Id = appUser.Id,
                 Email = appUser.Email!,
                 UserName = appUser.UserName!,
-                PhoneNumber = appUser.PhoneNumber,
-                Address = appUser.Address,
+                PhoneNumber = appUser.PhoneNumber ?? string.Empty,
                 IsAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin)
             };
             return Ok(userDto);

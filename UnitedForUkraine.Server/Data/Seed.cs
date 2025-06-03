@@ -108,12 +108,7 @@ public class Seed
                     UserName = "teddysmithdev",
                     Email = adminUserEmail,
                     EmailConfirmed = true,
-                    Address = new Address()
-                    {
-                        Street = "Herojiv Kharkova 12",
-                        City = "Kharkiv",
-                        Country = "Ukraine"
-                    }
+                    PhoneNumber = "+380123456789",
                 };
                 await userManager.CreateAsync(newAdminUser, "Coding@1234?");
                 await userManager.AddToRoleAsync(newAdminUser, UserRoles.Admin);
@@ -129,12 +124,7 @@ public class Seed
                     UserName = "app-user",
                     Email = appUserEmail,
                     EmailConfirmed = true,
-                    Address = new Address()
-                    {
-                        Street = "123 Main St",
-                        City = "Charlotte",
-                        Country = "The US"
-                    }
+                    PhoneNumber = "+380123456789",
                 };
                 await userManager.CreateAsync(newAppUser, "Coding@1234?");
                 await userManager.AddToRoleAsync(newAppUser, UserRoles.User);

@@ -26,14 +26,13 @@ const RegisterForm: FC = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    phoneNumber: "",
   });
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (validateForm(true)) {
-      console.log("Form validated!");
-
       const options = {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
@@ -45,29 +44,30 @@ const RegisterForm: FC = () => {
       } catch (error) {
         if (axios.isAxiosError(error)) {
           setRequestError(
-            error.response?.data.message || "An error has occurred"
+            error.response?.data.message ||
+              "An error has occurred while registering. Please try again later!"
           );
         } else {
-          console.error("Unexpected error:", error);
+          console.error(`Unexpected error: ${error}`);
         }
       }
     }
   };
 
   const handleReset = (): void => {
-    // event.preventDefault();
     setFormData({
       userName: "",
       email: "",
       password: "",
       confirmPassword: "",
+      phoneNumber: "",
     });
-
     setErrors({
       userName: "",
       email: "",
       password: "",
       confirmPassword: "",
+      phoneNumber: "",
     });
   };
 
@@ -93,7 +93,7 @@ const RegisterForm: FC = () => {
           name="userName"
           className="form-control"
           value={formData.userName}
-          placeholder="Enter user name"
+          placeholder="Enter user name: "
           onChange={handleChange}
           autoComplete="username"
           isRequired={false}
@@ -112,12 +112,11 @@ const RegisterForm: FC = () => {
           type="email"
           id="email"
           name="email"
+          placeholder="Enter email address: "
           className="form-control"
           value={formData.email}
-          placeholder="Enter email"
           onChange={handleChange}
           autoComplete="email"
-          required={true}
           isRequired={false}
         />
         {errors.email && (
@@ -127,13 +126,40 @@ const RegisterForm: FC = () => {
         )}
       </div>
       <div className="mb-3">
+        <label htmlFor="email" className="form-label">
+          Phone number*
+        </label>
+        <Input
+          type="tel"
+          id="phoneNumber"
+          name="phoneNumber"
+          placeholder="Enter phone number: "
+          className="form-control"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          autoComplete="tel"
+          isRequired={true}
+        />
+        {errors.phoneNumber ? (
+          <div className="alert alert-danger mt-1" role="alert">
+            {errors.phoneNumber}
+          </div>
+        ) : (
+          <div id="phoneNumberHelp" className="form-text">
+            Phone number must be between 7 and 40 characters long. Include
+            country code, e.g., +380931234567.
+          </div>
+        )}
+      </div>
+      <div className="mb-3">
         <label htmlFor="password" className="form-label">
           Password*
         </label>
         <PasswordInput value={formData.password} onChange={handleChange} />
         <div id="passwordHelpBlock" className="form-text">
-          Your password must be 7 or more characters long, contain letters and
-          numbers, and must not contain emoji.
+          Your password must be at least 7 characters long, contain both letters
+          and numbers, include at least one uppercase letter, and must not
+          contain emojis.
         </div>
         {errors.password && (
           <div className="alert alert-danger mt-1" role="alert">

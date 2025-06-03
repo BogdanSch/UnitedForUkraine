@@ -61,7 +61,7 @@ public class DonationController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         if (userId == Guid.Empty)
-            return BadRequest("User ID cannot be empty.");
+            return BadRequest(new { message = "User's ID cannot be empty." });
 
         PaginatedList<Donation> loadedDonations = await _donationRepository.GetPaginatedDonationsByUserId(userId.ToString(), queryObject, NUMBER_OF_DONATIONs_PER_PAGE);
         List<DonationDto> donationDtos = [.. loadedDonations.Select(d => d.ToDonationDto())];
@@ -79,13 +79,12 @@ public class DonationController : ControllerBase
         {
             Donation newDonation = createdDonationDto.FromCreateDonationDtoToDonation();
             await _donationRepository.AddAsync(newDonation);
-            //await _donationRepository.SaveAsync();
 
             return Ok(new { id = newDonation.Id });
         }
         catch (Exception)
         {
-            return BadRequest("Error while creating the donation!");
+            return BadRequest();
         }
     }
     [HttpGet("statistics")]

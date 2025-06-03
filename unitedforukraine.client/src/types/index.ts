@@ -23,7 +23,6 @@ export type CreateCampaignRequestDto = {
   title: string;
   description: string;
   goalAmount: number;
-  // raisedAmount: number;
   status: CampaignStatus;
   category: CampaignCategory;
   currency: Currency;
@@ -37,10 +36,8 @@ export type UpdateCampaignRequestDto = {
   title: string;
   description: string;
   goalAmount: number;
-  // raisedAmount: number;
   status: CampaignStatus;
   category: CampaignCategory;
-  // currency: Currency;
   startDate: string;
   endDate: string;
   imageUrl: string;
@@ -84,8 +81,7 @@ export type UserDto = {
   id: string;
   userName: string;
   email: string;
-  address: Address;
-  phoneNumber?: string;
+  phoneNumber: string;
   isAdmin: boolean;
 };
 

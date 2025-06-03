@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.DTOs.User
 {
@@ -8,11 +7,10 @@ namespace UnitedForUkraine.Server.DTOs.User
         public required string Id { get; set; }
         [DataType(DataType.Text)]
         public required string UserName { get; set; }
-
         [DataType(DataType.EmailAddress)]
         public required string Email { get; set; }
-        public Address? Address { get; set; }
-        public string? PhoneNumber { get; set; }
+        [DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; } = string.Empty;
         public bool IsAdmin { get; set; } = false;
     }
 }

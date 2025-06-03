@@ -43,9 +43,7 @@ public class AuthTokenService : IAuthTokenService
             Audience = _jwtSettings.Audience,
         };
 
-
         JwtSecurityTokenHandler tokenHandler = new();
-
         SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);

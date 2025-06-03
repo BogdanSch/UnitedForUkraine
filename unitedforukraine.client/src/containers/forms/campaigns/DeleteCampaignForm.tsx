@@ -24,7 +24,7 @@ const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
       });
       navigate(`/campaigns`);
     } catch (error) {
-      console.error("Error creating campaign:", error);
+      console.error(`Error deleting campaign: ${error}`);
     }
   };
 

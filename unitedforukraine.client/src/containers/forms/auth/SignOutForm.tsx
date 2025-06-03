@@ -11,10 +11,9 @@ const SignOutForm: FC = () => {
 
     if (!isAuthenticated()) return;
     try {
-      // await axios.post(`${API_URL}/Auth/logout`);
       logoutUser();
     } catch (error) {
-      console.error("Error: Couldn't logout the user! " + error);
+      console.error(`Error: Couldn't logout the user! ${error}`);
     }
   };
 

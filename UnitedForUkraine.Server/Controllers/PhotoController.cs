@@ -20,14 +20,14 @@ public class PhotoController : ControllerBase
     {
         if (imageFile == null || imageFile.Length <= 0)
         {
-            BadRequest("Image is null!");
+            BadRequest(new { message = "Image is empty!" });
         }
 
         ImageUploadResult result = await _photoService.AddPhotoAsync(imageFile!);
 
         if(result.Error != null)
         {
-            return BadRequest(result.Error.Message);
+            return BadRequest(new { message = result.Error.Message });
         }
         return Ok(result.SecureUrl.ToString());
     }
@@ -36,7 +36,7 @@ public class PhotoController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(publicUrl))
         {
-            BadRequest("Image url is null!");
+            BadRequest(new { message = "Image url is empty!" });
         }
 
         string publicId = publicUrl.Split('/').Last().Split('.')[0];
@@ -44,7 +44,7 @@ public class PhotoController : ControllerBase
 
         if (result.Error != null)
         {
-            return BadRequest(result.Error.Message);
+            return BadRequest(new { message = result.Error.Message });
         }
 
         return NoContent();

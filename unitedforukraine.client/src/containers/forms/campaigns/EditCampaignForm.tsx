@@ -111,8 +111,15 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
 
       navigate(`/campaigns/detail/${formData.id}`);
     } catch (error) {
-      setRequestError("Failed to update the campaign. Please try again later!");
-      console.error("Error updating campaign:", error);
+      if (axios.isAxiosError(error)) {
+        setRequestError(
+          error.response?.data.message ||
+            "Failed to update the campaign. Please try again later!"
+        );
+        console.error(`Error updating campaign: ${error}`);
+      } else {
+        console.error(`Error creating payment session: ${error}`);
+      }
     }
   };
 
@@ -130,32 +137,6 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     });
     setErrors({});
   };
-
-  // const handleImageChange = async (
-  //   e: ChangeEvent<HTMLInputElement>
-  // ): Promise<void> => {
-  //   const file = e.target.files?.[0] || null;
-  //   console.log(e.target.files);
-
-  //   if (file) {
-  //     const imageUrl: string = (await uploadImageAsync(file)) || "";
-
-  //     console.log(imageUrl);
-  //     if (imageUrl.length === 0) {
-  //       setRequestError("Failed to upload the image file.");
-  //       return;
-  //     }
-
-  //     if (formData.imageUrl.length > 0) deleteImageAsync(formData.imageUrl);
-
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       imageUrl: imageUrl,
-  //     }));
-  //   } else {
-  //     setRequestError("Failed to read the image file.");
-  //   }
-  // };
 
   return (
     <form
@@ -304,12 +285,10 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           type="file"
           id="image"
           name="image"
-          // value={imageFile?.name || ""}
           onChange={(e) =>
             handleImageChange(e, formData.imageUrl, setRequestError)
           }
           accept="image/png, image/jpeg"
-          // required
         />
       </div>
       <div className="form-buttons">

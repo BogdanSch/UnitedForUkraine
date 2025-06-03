@@ -96,7 +96,7 @@ const CreateCampaignForm: FC = () => {
       navigate(`/campaigns/detail/${data.id}`);
     } catch (error) {
       setRequestError("Failed to create campaign. Please try again later!");
-      console.error("Error creating campaign:", error);
+      console.error(`Error creating campaign: ${error}`);
     }
   };
 

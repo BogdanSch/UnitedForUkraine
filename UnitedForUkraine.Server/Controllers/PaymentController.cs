@@ -35,9 +35,7 @@ namespace UnitedForUkraine.Server.Controllers
             return paymentMethod switch
             {
                 CustomDonationMethod.CreditCard => ["card"],
-                //CustomDonationMethod.PayPal => ["paypal"],// Not supported directly by Stripe Checkout
-                CustomDonationMethod.BankTransfer => ["bancontact"],
-                //CustomDonationMethod.Crypto => ["bitcoin"],// Only available via special Stripe partners
+                //CustomDonationMethod.BankTransfer => ["bancontact"],
                 _ => ["card"],
             };
         }
@@ -49,20 +47,20 @@ namespace UnitedForUkraine.Server.Controllers
             Donation? currentDonation = await _donationRepository.GetDonationByIdAsync(createdDonationId);
 
             if (currentDonation == null)
-                return BadRequest("Invalid donation data");
+                return BadRequest(new { message = "Invalid donation data" });
 
             Campaign? targetCampaign = await _campaignRepository.GetCampaignByIdAsync(currentDonation.CampaignId);
 
             if (targetCampaign == null)
-                return BadRequest("Invalid campaign data within the donation");
+                return BadRequest(new { message = "Invalid campaign data within the donation" });
 
             if(targetCampaign.Status != CampaignStatus.Ongoing)
-                return BadRequest("Campaign is not active for donations");
+                return BadRequest(new { message = "Campaign is not active for donations" } );
 
             AppUser? contributor = await _userManager.FindByIdAsync(currentDonation.UserId);
 
             if(contributor == null)
-                return BadRequest("Invalid user data");
+                return BadRequest(new { message = "Invalid user data" });
 
             string requestOrigin = _frontendSettings.Origin;
 
@@ -106,7 +104,7 @@ namespace UnitedForUkraine.Server.Controllers
             }
             catch (StripeException e)
             {
-                return BadRequest(new { error = e.Message });
+                return BadRequest(new { message = e.Message });
             }
         }
     }

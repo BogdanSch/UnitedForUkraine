@@ -26,28 +26,12 @@ const Dashboard: FC = () => {
               </p>
             </div>
             <ul className="dashboard__list card px-5 py-4">
-              <li className="dashboard__item">{user?.email}</li>
+              <li className="dashboard__item">
+                Your email address: <strong>{user?.email}</strong>
+              </li>
               <li className="dashboard__item">
                 Your contact number:{" "}
                 <strong>{user?.phoneNumber ?? "None"}</strong>
-              </li>
-              <li className="dashboard__item">
-                Your location:{" "}
-                {user?.address ? (
-                  <ul className="dashboard__sub-list">
-                    <li className="dashboard__sub-item">
-                      {user?.address?.country}
-                    </li>
-                    <li className="dashboard__sub-item">
-                      {user?.address?.city}
-                    </li>
-                    <li className="dashboard__sub-item">
-                      {user?.address?.street}
-                    </li>
-                  </ul>
-                ) : (
-                  <strong>None</strong>
-                )}
               </li>
             </ul>
           </div>

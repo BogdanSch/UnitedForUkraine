@@ -77,10 +77,14 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
 
       window.location.href = data.redirectUrl;
     } catch (error) {
-      setRequestError(
-        "Failed to create payment session. Please try again later!"
-      );
-      console.error("Error creating payment session:", error);
+      if (axios.isAxiosError(error)) {
+        setRequestError(
+          error.response?.data.message ||
+            "Failed to create payment session. Please try again later!"
+        );
+      } else {
+        console.error(`Error creating payment session: ${error}`);
+      }
     }
   };
 

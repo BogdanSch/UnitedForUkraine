@@ -1,4 +1,5 @@
-import { useState, ChangeEvent } from "react";
+import { useState } from "react";
+import useCustomForm from "./useCustomForm";
 
 const MIN_PASSWORD_LENGTH = 7;
 
@@ -11,20 +12,21 @@ export default function useAuthForm(initialState: Record<string, any>) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [requestError, setRequestError] = useState("");
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  const { handleChange } = useCustomForm(setFormData);
+
+  // const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  //   const { name, value, type, checked } = e.target;
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: type === "checkbox" ? checked : value,
+  //   }));
+  // };
 
   const validateForm = (isRegisterPage = false): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.email.match(emailValidation)) {
+    if (!formData.email.match(emailValidation))
       newErrors.email = "Invalid email format!";
-    }
 
     if (formData.password.length < MIN_PASSWORD_LENGTH) {
       newErrors.password = `Password should be at least ${MIN_PASSWORD_LENGTH} characters long!`;
@@ -38,6 +40,9 @@ export default function useAuthForm(initialState: Record<string, any>) {
     if (isRegisterPage && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords should be identical!";
     }
+    if (isRegisterPage && formData.phoneNumber.length < 7)
+      newErrors.phoneNumber =
+        "Phone number should be at least 7 characters long!";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

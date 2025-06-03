@@ -1,5 +1,4 @@
-﻿using ContosoUniversity;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data.Enums;
@@ -9,7 +8,6 @@ using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.Repositories;
 
 namespace UnitedForUkraine.Server.Controllers; 
 
@@ -52,7 +50,7 @@ public class CampaignController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         if (userId == Guid.Empty)
-            return BadRequest("User ID cannot be empty.");
+            return BadRequest(new { message = "User's ID cannot be empty." });
 
         var campaigns = await _campaignRepository.GetAllUserSupportedCampaigns(userId.ToString()).ToListAsync();
         List<CampaignDto> campaignDtos = [.. campaigns.Select(c => c.ToCampaignDto())];
@@ -86,7 +84,7 @@ public class CampaignController : ControllerBase
             return BadRequest(ModelState);
 
         if (id != updatedCampaignDto.Id)
-            return BadRequest("Id doesn't match!");
+            return BadRequest(new { message = "IDs of the campaigns don't match!" });
 
         Campaign? targetCampaign = await _campaignRepository.GetCampaignByIdAsync(id);
 
@@ -100,10 +98,8 @@ public class CampaignController : ControllerBase
             targetCampaign.Title = updatedCampaignDto.Title;
             targetCampaign.Description = updatedCampaignDto.Description;
             targetCampaign.GoalAmount = updatedCampaignDto.GoalAmount;
-            //targetCampaign.RaisedAmount = updatedCampaignDto.RaisedAmount;
             targetCampaign.Status = (CampaignStatus)updatedCampaignDto.Status;
             targetCampaign.Category = (CampaignCategory)updatedCampaignDto.Category;
-            //targetCampaign.Currency = newCurrencyType;
             targetCampaign.StartDate = startDate;
             targetCampaign.EndDate = endDate;
 
