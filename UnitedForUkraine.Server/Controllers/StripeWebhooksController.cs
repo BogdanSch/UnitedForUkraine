@@ -44,17 +44,14 @@ namespace UnitedForUkraine.Server.Controllers
 
                 if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted)
                 {
-                    Session? session = stripeEvent.Data.Object as Session;
-
-                    if (session == null)
+                    if (stripeEvent.Data.Object is not Session session)
                     {
                         _logger.LogError("Session is empty!");
                         return BadRequest();
                     }
 
-                    string userId = session.ClientReferenceId;
-
                     Donation? donation = await _donationRepository.GetDonationByCheckoutSessionId(session.Id);
+
                     if (donation != null)
                     {
                         donation.Status = DonationStatus.Completed;
@@ -72,8 +69,27 @@ namespace UnitedForUkraine.Server.Controllers
                         }
                         await _donationRepository.UpdateAsync(donation);
                     }
+                    return Ok();
                 }
-                return Ok();
+                else if(stripeEvent.Type == EventTypes.CheckoutSessionAsyncPaymentFailed ||
+                    stripeEvent.Type == EventTypes.CheckoutSessionExpired)
+                {
+                    if (stripeEvent.Data.Object is not Session session)
+                    {
+                        _logger.LogWarning("Stripe event '{EventType}' received, but session was null or invalid.", stripeEvent.Type);
+                        return BadRequest();
+                    }
+
+                    Donation? donation = await _donationRepository.GetDonationByCheckoutSessionId(session.Id);
+
+                    if (donation != null && donation.Status == DonationStatus.Pending)
+                    {
+                        await _donationRepository.DeleteAsync(donation.Id);
+                    }
+                    return Ok(new { message = "An error has occured during check-out!" });
+                }
+
+                return Ok(new { message = "Event processed successfully" });
             }
             catch (StripeException e)
             {

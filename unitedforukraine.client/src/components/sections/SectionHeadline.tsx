@@ -20,8 +20,12 @@ const SectionHeadline: FC<SectionHeadlineProps> = ({
   return (
     <div className={`headline ${className ?? ""}`}>
       <div className="text-group">
-        <h4 className="section-indicator">{sectionIndicatorTitle}</h4>
-        <h2 className={`heading ${headingClassName ?? ""}`}>{title}</h2>
+        {sectionIndicatorTitle.trim() !== "" && (
+          <h4 className="section-indicator">{sectionIndicatorTitle}</h4>
+        )}
+        {title.trim() !== "" && (
+          <h2 className={`heading ${headingClassName ?? ""}`}>{title}</h2>
+        )}
         <p className="headline__description">{description}</p>
       </div>
       {children}

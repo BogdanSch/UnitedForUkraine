@@ -43,9 +43,9 @@ public class CampaignController : ControllerBase
 
         return Ok(campaignDto);
     }
-    [HttpGet("supported-by/{userId:guid}")]
+    [HttpGet("users/{userId:guid}/supports")]
     [Authorize]
-    public async Task<IActionResult> GetUserSupportedCampaigns(Guid userId)
+    public async Task<IActionResult> GetUserSupportedCampaigns([FromRoute] Guid userId)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -57,7 +57,7 @@ public class CampaignController : ControllerBase
 
         return Ok(new { Campaigns = campaignDtos });
     }
-    [HttpPost("create/")]
+    [HttpPost]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateCampaign([FromBody] CreateCampaignRequestDto createdCampaignDto)
     {

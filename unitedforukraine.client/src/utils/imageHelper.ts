@@ -6,30 +6,29 @@ export const uploadImageAsync = async (file: File): Promise<string | null> => {
   formData.append("imageFile", file);
 
   try {
-    const { data } = await axios.post(`${API_URL}/Photo/upload`, formData, {
+    const { data } = await axios.post(`${API_URL}/photos`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    // console.log(response);
     if (!data) throw new Error("Image upload failed");
     return data;
   } catch (error) {
-    console.error("Error uploading image:", error);
+    console.error("Error uploading image: " + error);
     return null;
   }
 };
 
 export const deleteImageAsync = async (imageUrl: string): Promise<boolean> => {
-  const formData = new FormData();
-  formData.append("publicUrl", imageUrl);
-
   try {
-    await axios.post(`${API_URL}/Photo/delete`, formData);
+    const publicId = imageUrl.split("/").pop()?.split(".")[0];
+    if (!publicId) throw new Error("Invalid image URL");
+
+    await axios.delete(`${API_URL}/photos/${publicId}`);
     return true;
   } catch (error) {
-    console.error("Error uploading image:", error);
+    console.error("Error while uploading image: " + error);
     return false;
   }
 };

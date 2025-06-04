@@ -68,7 +68,7 @@ public class DonationController : ControllerBase
 
         return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));
     }
-    [HttpPost("create/")]
+    [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateDonation([FromBody] CreateDonationRequestDto createdDonationDto)
     {
@@ -102,7 +102,7 @@ public class DonationController : ControllerBase
     }
     [HttpGet("statistics/{userId:guid}")]
     [Authorize]
-    public async Task<IActionResult> GetUserStatistics(Guid userId)
+    public async Task<IActionResult> GetUserStatistics([FromRoute] Guid userId)
     {
         if(userId == Guid.Empty)
             return BadRequest("User ID cannot be empty.");

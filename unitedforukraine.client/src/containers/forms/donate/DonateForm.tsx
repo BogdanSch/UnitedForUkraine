@@ -93,15 +93,11 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
     if (!isValid()) return;
 
     try {
-      const { data } = await axios.post(
-        `${API_URL}/donations/create/`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
+      const { data } = await axios.post(`${API_URL}/donations/`, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
 
       console.log(data);
 

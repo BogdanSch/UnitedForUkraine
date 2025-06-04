@@ -77,15 +77,11 @@ const CreateCampaignForm: FC = () => {
     if (!isValid()) return;
 
     try {
-      const { data } = await axios.post(
-        `${API_URL}/campaigns/create`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
+      const { data } = await axios.post(`${API_URL}/campaigns`, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
 
       console.log(data);
 

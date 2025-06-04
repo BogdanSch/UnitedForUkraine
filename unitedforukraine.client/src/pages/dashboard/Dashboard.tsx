@@ -50,15 +50,29 @@ const Dashboard: FC = () => {
       </section>
       <section className="dashboard dashboard--overview" id="dashboardOverview">
         <div className="container">
-          <div className="dashboard__wrap text-center">
+          <div className="dashboard__wrap">
             <SectionHeadline
-              title={`Each donation of yours brings our victory closer`}
-              sectionIndicatorTitle={`Donations overview`}
+              title={``}
+              sectionIndicatorTitle={`Each donation of yours brings our victory closer`}
             />
-            <DonationsList
-              showUserDonations={!isAdmin()}
-              showQueryCriteria={true}
-            />
+            {isAdmin() && (
+              <div className="mt-5 text-center">
+                <h2 className="dashboard__title">
+                  Overview of all foundation donations
+                </h2>
+                <DonationsList
+                  showUserDonations={false}
+                  showQueryCriteria={true}
+                />
+              </div>
+            )}
+            <div className="mt-5 text-center">
+              <h2 className="dashboard__title">Your donations overview</h2>
+              <DonationsList
+                showUserDonations={!isAdmin()}
+                showQueryCriteria={true}
+              />
+            </div>
           </div>
         </div>
       </section>

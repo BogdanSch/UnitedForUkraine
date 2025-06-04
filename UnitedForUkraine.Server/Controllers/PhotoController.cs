@@ -5,7 +5,7 @@ using UnitedForUkraine.Server.Interfaces;
 namespace UnitedForUkraine.Server.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/photos")]
 public class PhotoController : ControllerBase
 {
     private readonly IPhotoService _photoService;
@@ -14,8 +14,8 @@ public class PhotoController : ControllerBase
     {
         _photoService = photoService;
     }
+    [HttpPost]
 
-    [HttpPost("upload")]
     public async Task<IActionResult> UploadPhotoAsync([FromForm] IFormFile imageFile)
     {
         if (imageFile == null || imageFile.Length <= 0)
@@ -26,26 +26,20 @@ public class PhotoController : ControllerBase
         ImageUploadResult result = await _photoService.AddPhotoAsync(imageFile!);
 
         if(result.Error != null)
-        {
             return BadRequest(new { message = result.Error.Message });
-        }
+
         return Ok(result.SecureUrl.ToString());
     }
-    [HttpPost("delete")]
-    public async Task<IActionResult> DeletePhotoAsync([FromForm] string publicUrl)
+    [HttpDelete("{publicId}")]
+    public async Task<IActionResult> DeletePhotoAsync([FromRoute] string publicId)
     {
-        if (string.IsNullOrWhiteSpace(publicUrl))
-        {
-            BadRequest(new { message = "Image url is empty!" });
-        }
+        if (string.IsNullOrWhiteSpace(publicId))
+            BadRequest(new { message = "Image's public id is empty!" });
 
-        string publicId = publicUrl.Split('/').Last().Split('.')[0];
         DeletionResult result = await _photoService.RemovePhotoAsync(publicId);
 
         if (result.Error != null)
-        {
             return BadRequest(new { message = result.Error.Message });
-        }
 
         return NoContent();
     }
