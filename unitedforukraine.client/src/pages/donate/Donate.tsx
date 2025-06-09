@@ -10,9 +10,6 @@ const Donate: FC = () => {
     <section className="donate" id="donate">
       <div className="container">
         <div className="donate__wrap">
-          <h2 className="donate__title">
-            Help Ukraine means <strong>Save a life!</strong>
-          </h2>
           <DonateForm campaignId={id} />
         </div>
       </div>

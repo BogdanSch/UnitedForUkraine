@@ -1,6 +1,9 @@
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { convertDate } from "../utils/dateConverter";
-import { deleteImageAsync, uploadImageAsync } from "../utils/imageHelper";
+import {
+  deleteImageAsync,
+  uploadImageAsync,
+} from "../utils/helpers/imageHelper";
 
 function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
   const handleChange = (
@@ -13,7 +16,12 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
       const { name, value, type, checked } = target;
       setFormData((prev: any) => ({
         ...prev,
-        [name]: type === "checkbox" ? checked : value,
+        [name]:
+          type === "checkbox"
+            ? checked
+            : type === "number"
+            ? Number(value)
+            : value,
       }));
     } else if (target instanceof HTMLTextAreaElement) {
       const { name, value } = target;

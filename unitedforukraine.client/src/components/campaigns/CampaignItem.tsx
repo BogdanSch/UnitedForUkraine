@@ -5,8 +5,11 @@ import { CampaignActionButton, Card, ProgressBar, ShareButton } from "..";
 import {
   convertCampaignCategoryToString,
   convertCampaignStatusToString,
-} from "../../utils/campaignHelper";
-import { convertCurrencyToString, formatMoney } from "../../utils/currency";
+} from "../../utils/helpers/campaignHelper";
+import {
+  convertCurrencyToString,
+  formatMoney,
+} from "../../utils/helpers/currencyHelper";
 
 interface ICampaignItemProps {
   campaign: CampaignDto;

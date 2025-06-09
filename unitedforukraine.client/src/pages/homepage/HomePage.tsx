@@ -55,7 +55,7 @@ const HomePage: FC = () => {
               </Link>
             </div>
             <Image
-              className="about__image"
+              imageClassName="about__image"
               src={aboutImage}
               alt="Abstract decoration element for about section"
             />

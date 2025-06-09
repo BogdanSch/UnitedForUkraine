@@ -10,7 +10,7 @@ const LoginPage: FC = () => {
       <div className="container">
         <div className="login__wrap auth__wrap card p-3">
           <Image
-            className="login-image"
+            imageClassName="login-image"
             src={loginImage}
             alt={`Login page, featuring a cartoon character holding a tablet and sitting on a coach.`}
           />

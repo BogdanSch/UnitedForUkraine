@@ -4,8 +4,7 @@ import { useSearchParams } from "react-router-dom";
 
 import { CampaignDto } from "../../types";
 import { CampaignCategory } from "../../types/enums";
-import { CampaignItem } from "../../components";
-import CampaignsPaginator from "./CampaignsPaginator";
+import { CampaignItem, CampaignsPaginator } from "../../components";
 import AuthContext from "../../contexts/AuthContext";
 import { API_URL } from "../../variables";
 import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";

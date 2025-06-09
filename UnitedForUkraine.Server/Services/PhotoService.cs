@@ -22,15 +22,14 @@ public class PhotoService : IPhotoService
 
         if (file.Length > 0)
         {
-            using (Stream stream = file.OpenReadStream())
+            using Stream stream = file.OpenReadStream();
+
+            ImageUploadParams uploadParams = new()
             {
-                ImageUploadParams uploadParams = new ImageUploadParams()
-                {
-                    File = new FileDescription(file.FileName, stream),
-                    Transformation = new Transformation().Height(PHOTO_HEIGHT).Width(PHOTO_WIDTH).Crop("fill").Gravity("face")
-                };
-                uploadResult = await _cloudinary.UploadAsync(uploadParams);
-            }
+                File = new FileDescription(file.FileName, stream),
+                Transformation = new Transformation().Height(PHOTO_HEIGHT).Width(PHOTO_WIDTH).Crop("fill").Gravity("face")
+            };
+            uploadResult = await _cloudinary.UploadAsync(uploadParams);
         }
         return uploadResult;
     }

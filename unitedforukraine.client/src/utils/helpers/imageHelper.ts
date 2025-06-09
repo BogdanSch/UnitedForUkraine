@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../variables";
+import { API_URL } from "../../variables";
 
 export const uploadImageAsync = async (file: File): Promise<string | null> => {
   const formData = new FormData();

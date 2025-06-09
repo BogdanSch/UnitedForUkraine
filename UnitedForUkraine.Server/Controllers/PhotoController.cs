@@ -15,8 +15,7 @@ public class PhotoController : ControllerBase
         _photoService = photoService;
     }
     [HttpPost]
-
-    public async Task<IActionResult> UploadPhotoAsync([FromForm] IFormFile imageFile)
+    public async Task<IActionResult> UploadPhoto([FromForm] IFormFile imageFile)
     {
         if (imageFile == null || imageFile.Length <= 0)
         {
@@ -31,7 +30,7 @@ public class PhotoController : ControllerBase
         return Ok(result.SecureUrl.ToString());
     }
     [HttpDelete("{publicId}")]
-    public async Task<IActionResult> DeletePhotoAsync([FromRoute] string publicId)
+    public async Task<IActionResult> DeletePhotoById([FromRoute] string publicId)
     {
         if (string.IsNullOrWhiteSpace(publicId))
             BadRequest(new { message = "Image's public id is empty!" });

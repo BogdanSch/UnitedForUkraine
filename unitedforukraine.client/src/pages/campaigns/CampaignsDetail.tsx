@@ -8,15 +8,14 @@ import {
   ShareButton,
   Timeline,
 } from "../../components";
-import { DeleteCampaignForm } from "../../containers/";
+import { DeleteCampaignForm, DonationsList } from "../../containers/";
 import AuthContext from "../../contexts/AuthContext";
 import {
   convertCampaignCategoryToString,
   convertCampaignStatusToString,
   fetchCampaignData,
-} from "../../utils/campaignHelper";
-import { convertCurrencyToString } from "../../utils/currency";
-import DonationsList from "../../containers/donations/DonationsList";
+} from "../../utils/helpers/campaignHelper";
+import { convertCurrencyToString } from "../../utils/helpers/currencyHelper";
 
 const CampaignsDetail: FC = () => {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
@@ -74,7 +73,7 @@ const CampaignsDetail: FC = () => {
             </ul>
           )}
           <Image
-            className="campaigns-detail__image"
+            imageClassName="campaigns-detail__image"
             src={campaign?.imageUrl!}
             alt={campaign?.title!}
           />

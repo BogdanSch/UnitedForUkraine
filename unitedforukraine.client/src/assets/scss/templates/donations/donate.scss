@@ -21,21 +21,30 @@
     @include flex-col;
     justify-content: center;
     align-items: center;
-    text-align: center;
     height: 100%;
     min-height: 400px;
   }
   &__title {
-    color: $pale-blue;
+    color: $text-light-gray;
     font-weight: $fw-super-bold;
+    margin: 0;
   }
   &__description {
     color: $white;
+    font-size: 2rem;
     font-weight: $fw-light;
+    margin: 0;
   }
   &__form {
-    width: 70%;
+    width: 50%;
     margin: 0 auto;
+  }
+  &__list {
+    list-style: none;
+    padding: 0;
+    @include flex-row();
+    flex-wrap: wrap;
+    gap: 0.25rem;
   }
 }
 

@@ -3,10 +3,15 @@ import { FC, useState, useEffect, useContext, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreateDonationRequestDto } from "../../../types";
 import { PaymentMethod, Currency } from "../../../types/enums";
-import { API_URL } from "../../../variables";
+import {
+  API_URL,
+  donatinsTemplatesOtherCurrencies,
+  donatinsTemplatesUAH,
+} from "../../../variables";
 import { ErrorAlert, Input } from "../../../components";
 import { useCustomForm } from "../../../hooks";
 import AuthContext from "../../../contexts/AuthContext";
+import { convertCurrencyToSymbol } from "../../../utils/helpers/currencyHelper";
 
 interface IDonateFormProps {
   campaignId: number;
@@ -31,11 +36,13 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
     }));
   }, [user]);
 
-  const [validationErrors, setValidationErrors] = useState<
-    Record<string, string>
-  >({
-    amount: "",
-  });
+  const [validationErrors, setValidationErrors] = useState<Record<string, any>>(
+    {
+      amount: "",
+    }
+  );
+
+  debugger;
 
   const [requestError, setRequestError] = useState<string>("");
   const { handleChange, handleSelectChange } = useCustomForm(setFormData);
@@ -47,10 +54,11 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
       newErrors.amount = "Amount must be greater than 0";
     }
     if (formData.amount > 10e12) {
-      newErrors.currency = "Amount must be smaller than one trillion!";
+      newErrors.amount = "Amount must be smaller than one trillion!";
     }
     if (formData.userId.length === 0) {
       navigate("/auth/login");
+      return false;
     }
 
     setValidationErrors(newErrors);
@@ -60,7 +68,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
   const createPaymentSession = async (donationId: number): Promise<void> => {
     try {
       const { data } = await axios.post(
-        `${API_URL}/payments/create/${donationId}`,
+        `${API_URL}/payments/${donationId}`,
         {},
         {
           headers: {
@@ -120,15 +128,35 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
       paymentMethod: PaymentMethod.CreditCard,
       campaignId: campaignId,
     });
-    setValidationErrors({});
+    setValidationErrors({ amount: "" });
+  };
+
+  const incrementAmount = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    amount: number
+  ): void => {
+    event.preventDefault();
+    setFormData((prev) => ({
+      ...prev,
+      amount: prev.amount + amount,
+    }));
   };
 
   return (
     <form
-      className="form donate__form card px-4 py-3"
+      className="form px-4 py-3 card donate__form"
       onSubmit={handleSubmit}
       onReset={handleReset}
     >
+      <div className="text-center mt-3 mb-3">
+        <h2 className="donate__title">
+          Help Ukraine means <strong>Save a life!</strong>
+        </h2>
+        <p className="donate__subtitle">
+          Your donation will help us to provide humanitarian aid to people in
+          need.
+        </p>
+      </div>
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="amount" className="form-label">
@@ -142,11 +170,25 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
           onChange={handleChange}
           min={1}
           max={10e12}
-          placeholder="Donation amount"
           isRequired={true}
         />
-        {validationErrors.title && (
-          <ErrorAlert errorMessage={validationErrors.title} />
+        <ul className="donate__list mt-3">
+          {(formData.currency === Currency.UAH
+            ? donatinsTemplatesUAH
+            : donatinsTemplatesOtherCurrencies
+          ).map((amount: number) => (
+            <li className="donate__list-item" key={amount}>
+              <button
+                className="btn btn-lg btn-light"
+                onClick={(event) => incrementAmount(event, amount)}
+              >
+                {`+${amount}${convertCurrencyToSymbol(formData.currency)}`}
+              </button>
+            </li>
+          ))}
+        </ul>
+        {validationErrors.amount && (
+          <ErrorAlert errorMessage={validationErrors.amount} />
         )}
       </div>
       <div className="mb-3">

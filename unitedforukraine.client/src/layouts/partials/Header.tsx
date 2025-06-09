@@ -24,8 +24,6 @@ const Header: FC = () => {
   useEffect(() => {
     const currentPathName: string = location.pathname;
 
-    console.log(currentPathName);
-
     const navLinks: HTMLLIElement[] = Array.from(
       document.querySelectorAll<HTMLLIElement>(".nav-link")
     );

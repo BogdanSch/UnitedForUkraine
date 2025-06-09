@@ -3,8 +3,22 @@
     &__list {
       list-style: none;
       padding: 0;
-        @include flex-col;
-        row-gap: 12px;
+      @include flex-col;
+      row-gap: 12px;
+    }
+  }
+  &-gallery {
+    &__container {
+      overflow: hidden !important;
+      border-radius: 8px;
+    }
+    &__image {
+      object-fit: cover;
+      transition: transform 0.4s ease-in-out !important;
+
+      &:hover {
+        transform: scale(0.95);
+      }
     }
   }
 }

@@ -39,9 +39,8 @@ namespace UnitedForUkraine.Server.Controllers
                 _ => ["card"],
             };
         }
-        
+        [HttpPost("{createdDonationId:int}")]
         [Authorize]
-        [HttpPost("create/{createdDonationId:int}")]
         public async Task<IActionResult> CreateCheckoutSession(int createdDonationId)
         {
             Donation? currentDonation = await _donationRepository.GetDonationByIdAsync(createdDonationId);

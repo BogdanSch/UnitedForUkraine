@@ -35,7 +35,8 @@ const Gallery: FC<IGalleryProps> = ({
             <Image
               key={subIndex}
               image={image}
-              className="w-100 shadow-1-strong mb-4"
+              containerClassName={`${className}__container`}
+              imageClassName={`w-100 shadow-1-strong mb-4 ${className}__image`}
               alt={image.alt}
               src={image.path}
             />

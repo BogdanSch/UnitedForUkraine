@@ -1,14 +1,21 @@
 import { FC, useEffect, useRef } from "react";
 
 interface ImageProps {
-  className?: string;
+  imageClassName?: string;
+  containerClassName?: string;
   id?: string;
   src: string;
   alt: string;
   [key: string]: any;
 }
 
-const Image: FC<ImageProps> = ({ className, id, src, alt }) => {
+const Image: FC<ImageProps> = ({
+  imageClassName,
+  containerClassName,
+  id,
+  src,
+  alt,
+}) => {
   const blurDivRef = useRef(null);
 
   useEffect(() => {
@@ -33,9 +40,16 @@ const Image: FC<ImageProps> = ({ className, id, src, alt }) => {
   }, [blurDivRef]);
 
   return (
-    <div className={`blur-load ${className}__container`} ref={blurDivRef}>
+    <div
+      className={`blur-load${
+        containerClassName && containerClassName !== ""
+          ? ` ${containerClassName}`
+          : ""
+      }`}
+      ref={blurDivRef}
+    >
       <img
-        className={`image ${className}`}
+        className={`image ${imageClassName}`}
         id={id}
         src={src}
         alt={alt}

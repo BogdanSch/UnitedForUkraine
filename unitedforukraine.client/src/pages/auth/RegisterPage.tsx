@@ -19,7 +19,7 @@ const RegisterPage: FC = () => {
             <RegisterForm />
           </div>
           <Image
-            className="register-image"
+            imageClassName="register-image"
             src={registerImage}
             alt={`Register page, featuring a cartoon character holding a tablet and sitting on a coach.`}
           />

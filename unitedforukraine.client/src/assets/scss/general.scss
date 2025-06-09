@@ -40,6 +40,9 @@ h5 {
 .heading {
   font-size: 2.5rem;
   font-weight: $fw-bold;
+  &--light {
+    color: $white;
+  }
 }
 
 .sub-heading {
@@ -47,6 +50,9 @@ h5 {
   font-weight: $fw-bold;
   line-height: 1.1;
   letter-spacing: -0.3px;
+  &--light {
+    color: $white;
+  }
 }
 
 p {
@@ -258,7 +264,6 @@ section {
     transform: scale(1.05);
     border-top-left-radius: 16px;
     border-bottom-right-radius: 16px;
-    // border-left-radius: 16px;
   }
 
   &-primary {
@@ -295,6 +300,14 @@ section {
     &:hover {
       background-color: $sky-blue;
       color: $white;
+    }
+  }
+  &-light {
+    border-color: var(--bs-btn-hover-border-color);
+    background-color: $bg-light-gray !important;
+
+    &:hover {
+      transform: scale(0.9);
     }
   }
 }

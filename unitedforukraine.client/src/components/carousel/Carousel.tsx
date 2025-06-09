@@ -39,7 +39,7 @@ const Carousel: FC<ICarouselProps> = ({ images, id, className, ...rest }) => {
             <Image
               src={image.path}
               alt={image.alt}
-              className="d-block w-100 carousel-image"
+              imageClassName="d-block w-100 carousel-image"
             />
             {image.title && image.description && (
               <Card

@@ -3,7 +3,7 @@ import { ChangeEvent, FC, useContext, useEffect, useState } from "react";
 import { API_URL } from "../../variables";
 import AuthContext from "../../contexts/AuthContext";
 import { DonationDto } from "../../types";
-import { convertDonationCurrencyToString } from "../../utils/donationHelper";
+import { convertDonationCurrencyToString } from "../../utils/helpers/donationHelper";
 import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
 
 interface IDonationListProps {
