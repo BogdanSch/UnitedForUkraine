@@ -63,8 +63,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
 
     if (formData.title.length < 10) {
       newErrors.title = "The title must be at least 10 characters long";
-    }
-    if (formData.title.length > 265) {
+    } else if (formData.title.length > 265) {
       newErrors.title = "The title must be at most 265 characters long";
     }
     if (formData.description.length < 20) {
@@ -74,13 +73,9 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     if (formData.goalAmount <= 0) {
       newErrors.goalAmount = "The goal amount must be greater than 0";
     }
-    // if (new Date(formData.startDate) < new Date()) {
-    //   newErrors.startDate = "The start date must be in the future or today";
-    // }
     if (new Date(formData.endDate) <= new Date()) {
-      newErrors.endDate = "The end date must be in the future or today";
-    }
-    if (new Date(formData.startDate) >= new Date(formData.endDate)) {
+      newErrors.endDate = "The end date must be in the future";
+    } else if (new Date(formData.startDate) >= new Date(formData.endDate)) {
       newErrors.endDate = "The end date must be after the start date";
     }
 

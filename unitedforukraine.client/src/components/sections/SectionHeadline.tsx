@@ -26,7 +26,9 @@ const SectionHeadline: FC<SectionHeadlineProps> = ({
         {title.trim() !== "" && (
           <h2 className={`heading ${headingClassName ?? ""}`}>{title}</h2>
         )}
-        <p className="headline__description">{description}</p>
+        {description != null && (
+          <p className="headline__description">{description}</p>
+        )}
       </div>
       {children}
     </div>

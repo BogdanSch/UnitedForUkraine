@@ -75,9 +75,9 @@ export const router = createBrowserRouter([
       {
         path: ":id",
         element: (
-          // <ProtectedRoute>
-          <Donate />
-          // </ProtectedRoute>
+          <ProtectedRoute>
+            <Donate />
+          </ProtectedRoute>
         ),
       },
     ],

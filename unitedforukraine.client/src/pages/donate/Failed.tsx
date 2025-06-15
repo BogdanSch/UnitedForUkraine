@@ -4,8 +4,8 @@ const Failed: FC = () => {
   return (
     <section className="donate" id="donate">
       <div className="container">
-        <div className="donate__wrap">
-          <h2 className="donate__title">
+        <div className="donate__wrap text-center">
+          <h2 className="heading heading--light">
             Weird, something has happened during check-out!
           </h2>
           <p className="donate__description">

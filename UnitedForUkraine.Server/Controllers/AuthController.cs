@@ -16,14 +16,12 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IAuthTokenService _authTokenService;
-
         public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _authTokenService = authTokenService;
         }
-
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginDto)
         {
