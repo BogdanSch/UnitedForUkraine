@@ -9,7 +9,8 @@ const Confirmation: FC = () => {
             Thank you for your donation!
           </h2>
           <p className="donate__description">
-            Your support makes a great difference.
+            Your support makes a great difference. We appreciate your generosity
+            and commitment to our cause.
           </p>
         </div>
       </div>

@@ -1,9 +1,19 @@
-.successful-registration {
+.registration {
+  &--success {
+    .registration__icon {
+      color: $green;
+    }
+  }
+  &--error {
+    .registration__icon {
+      color: $accent;
+    }
+  }
   &__wrap {
     max-width: 600px;
     margin: 0 auto;
     border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: $dark-shadow;
     padding: 40px;
     text-align: center;
     @include flex-col();
@@ -12,20 +22,19 @@
     row-gap: 8px;
   }
   &__icon {
-    color: $green-light;
+    color: $primary;
     width: 68px;
     height: 68px;
   }
   &__title {
+    color: $dark-navy;
     font-size: 2rem;
-    font-weight: 600;
-    color: #4a90e2;
+    font-weight: $fw-bold;
     margin-bottom: 20px;
   }
-
   &__message {
     font-size: 1rem;
-    color: #555555;
-    margin-bottom: 30px;
+    color: $text-light-gray;
+    margin-bottom: 28px;
   }
 }

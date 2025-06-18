@@ -4,19 +4,18 @@ import { Card } from "../../components";
 
 const SuccessfulRegistration: FC = () => {
   return (
-    <section className="successful-registration">
+    <section className="registration registration--success">
       <div className="container">
-        <Card isLite={true} className="successful-registration__wrap p-4">
-          <svg className="successful-registration__icon">
+        <Card isLite={true} className="registration__wrap p-4">
+          <svg className="registration__icon">
             <use xlinkHref="#successIcon"></use>
           </svg>
-          <div className="successful-registration__body">
-            <h2 className="successful-registration__title">
-              Registration Successful
-            </h2>
-            <p className="successful-registration__message">
-              Thank you for registering! Your account has been successfully
-              created. You can now log in to your account!
+          <div className="registration__body">
+            <h2 className="registration__title">Registration Successful</h2>
+            <p className="registration__message">
+              Thank you for registering! We need to verify your email address
+              before you can log in. We've sent a verification email to the
+              address you provided during registration.
             </p>
             <Link className="btn btn-outline-sky" to={`/auth/login`}>
               Go to Login Page

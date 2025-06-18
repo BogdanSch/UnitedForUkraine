@@ -5,12 +5,14 @@ import { API_URL } from "../../../variables";
 
 import {
   ConfirmPasswordInput,
+  ErrorAlert,
   Input,
   PasswordInput,
 } from "../../../components";
 import { useAuthForm } from "../../../hooks";
 
 const RegisterForm: FC = () => {
+  const clientUri: string = `${window.location.origin}/auth/verifyRegistration`;
   const navigate = useNavigate();
 
   const [requestError, setRequestError] = useState("");
@@ -27,6 +29,7 @@ const RegisterForm: FC = () => {
     password: "",
     confirmPassword: "",
     phoneNumber: "",
+    confirmEmailClientUri: clientUri,
   });
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -61,6 +64,7 @@ const RegisterForm: FC = () => {
       password: "",
       confirmPassword: "",
       phoneNumber: "",
+      confirmEmailClientUri: clientUri,
     });
     setErrors({
       userName: "",
@@ -79,9 +83,7 @@ const RegisterForm: FC = () => {
       aria-labelledby="registerForm"
     >
       {requestError && (
-        <div className="alert alert-danger" role="alert">
-          {requestError}
-        </div>
+        <ErrorAlert className="mb-2" errorMessage={requestError} />
       )}
       <div className="mb-3">
         <label htmlFor="email" className="form-label">

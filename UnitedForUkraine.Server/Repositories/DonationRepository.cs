@@ -10,16 +10,10 @@ using UnitedForUkraine.Server.Services;
 
 namespace UnitedForUkraine.Server.Repositories;
 
-public class DonationRepository : IDonationRepository
+public class DonationRepository(ApplicationDbContext context, ICurrencyConverterService currencyConverterService) : IDonationRepository
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ICurrencyConverterService _currencyConverterService;
-    public DonationRepository(ApplicationDbContext context, ICurrencyConverterService currencyConverterService)
-    {
-        _context = context;
-        _currencyConverterService = currencyConverterService;
-    }
-
+    private readonly ApplicationDbContext _context = context;
+    private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
     public IQueryable<Donation> HandleDonationsFiltering(QueryObject queryObject, IQueryable<Donation> donations)
     {
         if (!string.IsNullOrWhiteSpace(queryObject.SortOrder))
@@ -40,7 +34,6 @@ public class DonationRepository : IDonationRepository
 
         return donations;
     }
-
     public async Task<PaginatedList<Donation>> GetPaginatedDonationsAsync(QueryObject queryObject, int itemsPerPageCount)
     {
         IQueryable<Donation> donations = _context.Donations.Include(d => d.User);

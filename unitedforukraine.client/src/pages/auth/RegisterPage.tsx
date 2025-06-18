@@ -13,7 +13,7 @@ const RegisterPage: FC = () => {
             <div className="text-content">
               <h2 className="auth__title">Register</h2>
               <p className="auth__description">
-                Are you new here? Let's exchange some information!
+                Are you new here? Let's create a new account for you!
               </p>
             </div>
             <RegisterForm />

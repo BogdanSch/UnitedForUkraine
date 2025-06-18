@@ -13,7 +13,6 @@ namespace UnitedForUkraine.Server.Models
         public required string Description { get; set; }
         [Precision(18, 2)]
         public decimal GoalAmount { get; set; }
-
         [Precision(18, 2)]
         public decimal RaisedAmount { get; set; }
         public CurrencyType Currency { get; set; } = CurrencyType.UAH;

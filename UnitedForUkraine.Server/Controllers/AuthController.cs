@@ -6,22 +6,19 @@ using UnitedForUkraine.Server.DTOs.User;
 using Microsoft.AspNetCore.Authorization;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Interfaces;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace UnitedForUkraine.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService, IEmailService emailService) : ControllerBase
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly IAuthTokenService _authTokenService;
-        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _authTokenService = authTokenService;
-        }
+        private readonly UserManager<AppUser> _userManager = userManager;
+        private readonly SignInManager<AppUser> _signInManager = signInManager;
+        private readonly IAuthTokenService _authTokenService = authTokenService;
+        private readonly IEmailService _emailService = emailService;
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginDto)
         {
@@ -31,12 +28,15 @@ namespace UnitedForUkraine.Server.Controllers
             }
 
             AppUser? user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null)
-                return Unauthorized(new { message = "Invalid email!" });
-           
+            if (user is null)
+                return BadRequest(new { message = "Invalid email" });
+
+            if(!await _userManager.IsEmailConfirmedAsync(user))
+                return Unauthorized(new { message = "Email is not confirmed. Please, check your inbox" });
+
             var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, loginDto.RememberMe, false);
             if (!result.Succeeded)
-                return Unauthorized(new { message = "Invalid password!" });
+                return Unauthorized(new { message = "Invalid password" });
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
 
@@ -48,21 +48,14 @@ namespace UnitedForUkraine.Server.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerDto)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
-
             if (registerDto.Password != registerDto.ConfirmPassword)
-            {
                 return BadRequest(new { message = "Passwords don't match" });
-            }
 
             AppUser? user = await _userManager.FindByEmailAsync(registerDto.Email);
 
-            if (user != null)
-            {
+            if (user is not null)
                 return BadRequest(new { message = "Email address already in use. Please, try again" });
-            }
 
             AppUser newUser = new()
             {
@@ -73,13 +66,43 @@ namespace UnitedForUkraine.Server.Controllers
 
             IdentityResult result = await _userManager.CreateAsync(newUser, registerDto.Password);
 
-            if (result.Succeeded)
+            if(!result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(newUser, UserRoles.User);
-                return Ok(new { message = "Registration successful! Now, please, log in!" });
+                string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
+                return BadRequest(new { message = $"An error has occurred during registration: {errorMessage}" });
             }
 
-            return BadRequest(new { message = "An error has occured during registration. Try again later!" });
+            await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+
+            string emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+            string encodedToken = WebEncoders.Base64UrlEncode(System.Text.Encoding.UTF8.GetBytes(emailConfirmationToken));
+
+            Dictionary<string, string?> parameters = new()
+            {
+                { "email", newUser.Email },
+                { "token", encodedToken }
+            };
+            string callback = QueryHelpers.AddQueryString(registerDto.ConfirmEmailClientUri ?? string.Empty, parameters);
+
+            EmailMetadata emailMetadata = new(newUser.Email, "Confirm your email address");
+            await _emailService.SendEmailConfirmationAsync(emailMetadata, callback);
+
+            return Ok(new { message = "Registration successful! We've sent you a verification token via email! Now, please, confirm your email!" });
+        }
+        [HttpGet("emailConfirmation")]
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
+        {
+            AppUser? user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+                return BadRequest(new { message = "Invalid email address" });
+
+            string decodedToken = System.Text.Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+            IdentityResult confirmationResult = await _userManager.ConfirmEmailAsync(user, decodedToken);
+
+            if (!confirmationResult.Succeeded)
+                return BadRequest(new { message = $"Invalid email confirmation request" });
+
+            return NoContent();
         }
         [HttpGet("userInfo")]
         [Authorize]

@@ -4,8 +4,6 @@ namespace UnitedForUkraine.Server.DTOs.User;
 
 public class LoginUserDto
 {
-
-    //[DataType(DataType.EmailAddress)]
     [EmailAddress]
     public required string Email { get; set; }
     [DataType(DataType.Password)]

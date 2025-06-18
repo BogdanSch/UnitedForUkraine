@@ -18,6 +18,7 @@ import {
   Confirmation,
   Failed,
   Dashboard,
+  VerifyRegistration,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -64,6 +65,7 @@ export const router = createBrowserRouter([
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
       { path: "registered", element: <SuccessfulRegistration /> },
+      { path: "verifyRegistration", element: <VerifyRegistration /> },
     ],
   },
   {

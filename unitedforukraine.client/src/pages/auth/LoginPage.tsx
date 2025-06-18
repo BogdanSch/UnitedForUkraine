@@ -1,10 +1,14 @@
 import { FC } from "react";
+import { useLocation } from "react-router-dom";
+import { SignInForm } from "../../containers/";
 import { Image } from "../../components";
 
 import loginImage from "/assets/img/loginImage.png";
-import { SignInForm } from "../../containers/";
 
 const LoginPage: FC = () => {
+  const location = useLocation();
+  const message: string = location.state?.message || "";
+
   return (
     <section className="auth login">
       <div className="container">
@@ -18,7 +22,7 @@ const LoginPage: FC = () => {
             <div className="text-content">
               <h2 className="auth__title">Welcome back!</h2>
               <p className="auth__description">
-                We have been missing you so much!
+                {message || "We have been missing you so much!"}
               </p>
             </div>
             <SignInForm />

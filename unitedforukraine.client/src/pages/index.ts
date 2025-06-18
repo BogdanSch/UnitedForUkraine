@@ -4,6 +4,7 @@ export { default as NotAuthorized } from "./error/NotAuthorized";
 export { default as LoginPage } from "./auth/LoginPage";
 export { default as RegisterPage } from "./auth/RegisterPage";
 export { default as SuccessfulRegistration } from "./auth/SuccessfulRegistration";
+export { default as VerifyRegistration } from "./auth/VerifyRegistration";
 export { default as CampaignIndex } from "./campaigns/CampaignsIndex";
 export { default as CampaignDetail } from "./campaigns/CampaignsDetail";
 export { default as CampaignCreate } from "./campaigns/CampaignsCreate";

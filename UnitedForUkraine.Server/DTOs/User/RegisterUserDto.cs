@@ -14,4 +14,5 @@ public class RegisterUserDto
     [StringLength(40, ErrorMessage = "The phone number must be between 7 and 40 characters long.", MinimumLength = 7)]
     [DataType(DataType.PhoneNumber)]
     public required string PhoneNumber { get; set; }
+    public string? ConfirmEmailClientUri { get; set; } = string.Empty;
 }

@@ -8,13 +8,10 @@ using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Repositories;
 
-public class CampaignRepository : ICampaignRepository
+public class CampaignRepository(ApplicationDbContext context) : ICampaignRepository
 {
-    private readonly ApplicationDbContext _context;
-    public CampaignRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
+
     public async Task<PaginatedList<Campaign>> GetPaginatedCampaigns(QueryObject queryObject, int itemsPerPageCount)
     {
         var campaigns = _context.Campaigns.AsNoTracking();

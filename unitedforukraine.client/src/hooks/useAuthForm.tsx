@@ -14,14 +14,6 @@ export default function useAuthForm(initialState: Record<string, any>) {
 
   const { handleChange } = useCustomForm(setFormData);
 
-  // const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-  //   const { name, value, type, checked } = e.target;
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     [name]: type === "checkbox" ? checked : value,
-  //   }));
-  // };
-
   const validateForm = (isRegisterPage = false): boolean => {
     const newErrors: Record<string, string> = {};
 

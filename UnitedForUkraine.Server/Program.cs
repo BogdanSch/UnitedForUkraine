@@ -1,36 +1,35 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
-using Stripe;
-using System.Text;
 using UnitedForUkraine.Server.Data;
+using UnitedForUkraine.Server.Extensions;
 using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
 using UnitedForUkraine.Server.Repositories;
 using UnitedForUkraine.Server.Services;
+using Stripe;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-
+builder.Services.AddFluentEmail(builder.Configuration);
 builder.Services.AddHttpClient<ICurrencyConverterService, CurrencyConverterService>();
 
 builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IAuthTokenService, AuthTokenService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
@@ -42,31 +41,9 @@ StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeSettings")[
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
-IConfigurationSection jwtSettings = builder.Configuration.GetSection("JwtSettings");
-byte[] key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme =
-   options.DefaultChallengeScheme =
-   options.DefaultForbidScheme =
-   options.DefaultScheme =
-   options.DefaultSignInScheme =
-   options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidateAudience = true,
-            ValidAudience = jwtSettings["Audience"],
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-        };
-    });
-
+builder.Services.AddAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
+
 builder.Services.AddOpenApi();
 
 WebApplication app = builder.Build();
