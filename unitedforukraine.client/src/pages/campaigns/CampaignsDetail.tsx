@@ -64,7 +64,7 @@ const CampaignsDetail: FC = () => {
             <ul className="campaigns-detail__buttons-list">
               <li className="campaigns-detail__buttons-item">
                 <Link className="btn btn-primary" to={`/campaigns/edit/${id}`}>
-                  Edit Campaign
+                  Edit this Campaign
                 </Link>
               </li>
               <li className="campaigns-detail__button-item">
@@ -81,9 +81,6 @@ const CampaignsDetail: FC = () => {
             <div className="text-content">
               <h1 className="heading mb-2">{campaign?.title}</h1>
               <div className="campaigns-detail__category">
-                {/* <h4 className="sub-heading campaigns-detail__title">
-                  Campaign's category:{" "}
-                </h4> */}
                 <ul className="campaigns-detail__list">
                   <li className="campaigns-detail__item">
                     {campaign?.category &&

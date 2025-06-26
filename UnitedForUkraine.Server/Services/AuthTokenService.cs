@@ -9,17 +9,11 @@ using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Services;
 
-public class AuthTokenService : IAuthTokenService
+public class AuthTokenService(IOptions<JwtSettings> jwtSettings) : IAuthTokenService
 {
-    private readonly JwtSettings _jwtSettings;
-    private readonly SymmetricSecurityKey _key;
+    private readonly JwtSettings _jwtSettings = jwtSettings.Value;
+    private readonly SymmetricSecurityKey _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Value.SecretKey));
     public const int DEFAULT_EXPIRY_MINUTES = 180;
-
-    public AuthTokenService(IOptions<JwtSettings> jwtSettings)
-    {
-        _jwtSettings = jwtSettings.Value;
-        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Value.SecretKey));
-    }
 
     public string CreateToken(AppUser user, IList<string> roles, bool rememberUser)
     {

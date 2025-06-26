@@ -13,23 +13,22 @@
     padding-left: 0;
   }
   &__item {
-    // &.card {
-    //   border: 2px solid $primary-transparent;
-    // }
-
-    &:first-child {
+    .card {
+      height: 100%;
+    }
+    &:first-child > .card {
       background-color: $text-dark-gray !important;
       color: $white;
 
-      & > p {
+      p {
         color: $pale-blue;
       }
     }
-    &:last-child {
-      background-color: $dark-navy !important;
+    &:last-child > .card {
+      background-color: $text-light-gray !important;
       color: $white;
 
-      & > p {
+      p {
         color: $pale-blue;
       }
     }

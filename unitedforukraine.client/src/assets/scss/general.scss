@@ -5,7 +5,6 @@ body {
 .wrapper {
   @include flex-col;
   min-height: 100vh;
-  // overflow: hidden;
   background: $pale-blue;
   color: $text-dark-gray;
 }
@@ -50,6 +49,7 @@ h5 {
   font-weight: $fw-bold;
   line-height: 1.1;
   letter-spacing: -0.3px;
+
   &--light {
     color: $white;
   }
@@ -125,6 +125,10 @@ section {
     font-weight: $fw-super-bold;
     font-size: 28px;
     transition: all 0.5s ease-in-out;
+
+    &:hover {
+      color: $primary !important;
+    }
   }
 }
 
@@ -176,16 +180,13 @@ section {
   &-border {
     border: 2px solid $primary-transparent;
   }
-
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   }
-
   &-image {
     position: relative;
   }
-
   &-status {
     position: absolute;
     top: 6px;
@@ -200,17 +201,14 @@ section {
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
     text-transform: uppercase;
   }
-
   &-title {
     font-weight: 600;
     margin-bottom: 0.75rem;
   }
-
   &-body {
     padding: 0;
     padding-top: 8px;
   }
-
   .icon-wrapper {
     width: 60px;
     height: 60px;
@@ -220,7 +218,6 @@ section {
     justify-content: center;
     margin-bottom: 1rem;
   }
-
   &-category {
     &__item {
       font-weight: $fw-bold;
@@ -228,9 +225,11 @@ section {
       color: $sky-blue;
     }
   }
-
-  &--dark-transparent {
-    background-color: $dark-navy-transparent;
+  &--dark {
+    background-color: $dark-navy;
+    &-transparent {
+      background-color: $dark-navy-transparent !important;
+    }
   }
   &--lite {
     &:hover {
@@ -413,4 +412,13 @@ section {
       height: 70vh;
     }
   }
+}
+
+.page-link {
+  color: $white !important;
+  background-color: $dark-navy-transparent !important;
+  padding: 8px 16px;
+  font-weight: $fw-bold;
+  box-shadow: $light-shadow !important;
+  border: 1px solid $primary !important;
 }

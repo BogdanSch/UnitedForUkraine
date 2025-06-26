@@ -6,14 +6,10 @@ namespace UnitedForUkraine.Server.Controllers;
 
 [ApiController]
 [Route("api/photos")]
-public class PhotoController : ControllerBase
+public class PhotoController(IPhotoService photoService) : ControllerBase
 {
-    private readonly IPhotoService _photoService;
+    private readonly IPhotoService _photoService = photoService;
 
-    public PhotoController(IPhotoService photoService)
-    {
-        _photoService = photoService;
-    }
     [HttpPost]
     public async Task<IActionResult> UploadPhoto([FromForm] IFormFile imageFile)
     {

@@ -58,6 +58,10 @@
     color: $dark-navy;
     font-weight: $fw-super-bold;
   }
+  &__description {
+    color: $text-light-gray;
+    font-weight: $fw-normal;
+  }
 }
 
 @media screen and (max-width: 61.25rem) {

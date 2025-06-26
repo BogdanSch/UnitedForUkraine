@@ -11,27 +11,19 @@ namespace UnitedForUkraine.Server.Controllers
 {
     [Route("api/payments/webhooks")]
     [ApiController]
-    public class StripeWebhooksController : ControllerBase
+    public class StripeWebhooksController(
+        IDonationRepository donationRepository,
+        ICampaignRepository campaignRepository,
+        ICurrencyConverterService currencyConverterService,
+        ILogger<StripeWebhooksController> logger,
+        IOptions<StripeSettings> stripeOptions) : ControllerBase
     {
-        private readonly IDonationRepository _donationRepository;
-        private readonly ICampaignRepository _campaignRepository;
-        private readonly ICurrencyConverterService _currencyConverterService;
-        private readonly ILogger<StripeWebhooksController> _logger;
-        private readonly StripeSettings _stripeSettings;
+        private readonly IDonationRepository _donationRepository = donationRepository;
+        private readonly ICampaignRepository _campaignRepository = campaignRepository;
+        private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
+        private readonly ILogger<StripeWebhooksController> _logger = logger;
+        private readonly StripeSettings _stripeSettings = stripeOptions.Value;
 
-        public StripeWebhooksController(
-            IDonationRepository donationRepository,
-            ICampaignRepository campaignRepository,
-            ICurrencyConverterService currencyConverterService,
-            ILogger<StripeWebhooksController> logger,
-            IOptions<StripeSettings> stripeOptions)
-        {
-            _donationRepository = donationRepository;
-            _campaignRepository = campaignRepository;
-            _currencyConverterService = currencyConverterService;
-            _logger = logger;
-            _stripeSettings = stripeOptions.Value;
-        }
         [HttpPost("webhook")]
         public async Task<IActionResult> Handle()
         {

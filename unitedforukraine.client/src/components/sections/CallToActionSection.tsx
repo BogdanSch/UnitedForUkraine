@@ -8,7 +8,7 @@ const CallToActionSection: FC = () => {
         <div className="donate__wrap">
           <div className="text-content">
             <h2 className="heading heading--light">Make a Difference Today</h2>
-            <p className="donate__description">
+            <p className="donate__description mb-2">
               Your contribution can help provide essential aid, shelter, and
               opportunities for Ukrainian refugees as they rebuild their lives
               with dignity, hope, and resilience. Donate now to make a

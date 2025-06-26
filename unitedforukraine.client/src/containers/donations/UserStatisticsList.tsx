@@ -1,10 +1,11 @@
-import { FC, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { FC, useContext, useEffect, useState } from "react";
 import { API_URL } from "../../variables";
 import { UserStatistics } from "../../types";
 import AuthContext from "../../contexts/AuthContext";
 import { formatMoney } from "../../utils/helpers/currencyHelper";
 import formatNumber from "../../utils/formatNumber";
+import { Card } from "../../components";
 
 const UserStatisticsList: FC = () => {
   const { user, authToken } = useContext(AuthContext);
@@ -49,45 +50,59 @@ const UserStatisticsList: FC = () => {
   return (
     <>
       <ul className="statistics__list mt-4">
-        <li className="statistics__item card card-border p-3">
-          <div className="statistics__item-group">
-            <i className="bi bi-currency-exchange"></i>
-            <h4 className="statistics__item-title">Total Donations Received</h4>
-          </div>
-          <p className="statistics__item-amount">
-            {formatMoney(statistics.totalDonationsAmount)}{" "}
-            <span className="currency">UAH</span>
-          </p>
+        <li className="statistics__item">
+          <Card className="card-border p-3" isLite={false}>
+            <div className="statistics__item-group">
+              <i className="bi bi-currency-exchange"></i>
+              <h4 className="sub-heading statistics__item-title">
+                Total Donations Received
+              </h4>
+            </div>
+            <p className="statistics__item-amount">
+              {formatMoney(statistics.totalDonationsAmount)}{" "}
+              <span className="currency">UAH</span>
+            </p>
+          </Card>
         </li>
-        <li className="statistics__item card card-border p-3">
-          <div className="statistics__item-group">
-            <i className="bi bi-card-checklist"></i>
-            <h4 className="statistics__item-title">Total Donations Number</h4>
-          </div>
-          <p className="statistics__item-amount">
-            {formatNumber(statistics.donationsCount)}+
-          </p>
+        <li className="statistics__item">
+          <Card className="card-border p-3" isLite={false}>
+            <div className="statistics__item-group">
+              <i className="bi bi-card-checklist"></i>
+              <h4 className="sub-heading statistics__item-title">
+                Total Donations Number
+              </h4>
+            </div>
+            <p className="statistics__item-amount">
+              {formatNumber(statistics.donationsCount)}+
+            </p>
+          </Card>
         </li>
-        <li className="statistics__item card card-border p-3">
-          <div className="statistics__item-group">
-            <i className="bi bi-arrow-left-right"></i>
-            <h4 className="statistics__item-title">Average Donation</h4>
-          </div>
-          <p className="statistics__item-amount">
-            {formatMoney(statistics.averageDonationsAmount)}{" "}
-            <span className="currency">UAH</span>
-          </p>
+        <li className="statistics__item">
+          <Card className="card-border p-3" isLite={false}>
+            <div className="statistics__item-group">
+              <i className="bi bi-arrow-left-right"></i>
+              <h4 className="sub-heading statistics__item-title">
+                Average Donation
+              </h4>
+            </div>
+            <p className="statistics__item-amount">
+              {formatMoney(statistics.averageDonationsAmount)}{" "}
+              <span className="currency">UAH</span>
+            </p>
+          </Card>
         </li>
-        <li className="statistics__item card card-border p-3">
-          <div className="statistics__item-group">
-            <i className="bi bi-envelope-check"></i>
-            <h4 className="statistics__item-title">
-              Supported Campaigns Count
-            </h4>
-          </div>
-          <p className="statistics__item-amount">
-            {formatNumber(statistics.supportedCampaignsCount)}+
-          </p>
+        <li className="statistics__item">
+          <Card className="card-border p-3" isLite={false}>
+            <div className="statistics__item-group">
+              <i className="bi bi-envelope-check"></i>
+              <h4 className="sub-heading statistics__item-title">
+                Supported Campaigns Count
+              </h4>
+            </div>
+            <p className="statistics__item-amount">
+              {formatNumber(statistics.supportedCampaignsCount)}+
+            </p>
+          </Card>
         </li>
       </ul>
     </>

@@ -13,15 +13,10 @@ namespace UnitedForUkraine.Server.Controllers;
 
 [ApiController]
 [Route("api/campaigns")]
-public class CampaignController : ControllerBase
+public class CampaignController(ICampaignRepository campaignRepository) : ControllerBase
 {
-    private readonly ICampaignRepository _campaignRepository;
+    private readonly ICampaignRepository _campaignRepository = campaignRepository;
     private const int NUMBER_OF_CAMPAIGNS_PER_PAGE = 6;
-
-    public CampaignController(ICampaignRepository campaignRepository)
-    {
-        _campaignRepository = campaignRepository;
-    }
 
     [HttpGet]
     public async Task<IActionResult> GetPaginatedCampaignsData([FromQuery] QueryObject queryObject)

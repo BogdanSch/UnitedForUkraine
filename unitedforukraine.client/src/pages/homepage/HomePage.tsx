@@ -17,7 +17,9 @@ const HomePage: FC = () => {
         <div className="container">
           <div className="hero__wrap">
             <Card className="hero__card" isLite={true}>
-              <h1 className="hero__title">United for Ukraine: Stand with Us</h1>
+              <h1 className="heading hero__title">
+                United for Ukraine: Stand with Us
+              </h1>
               <p className="hero__description">
                 Providing essential aid, shelter, and opportunities for
                 Ukrainian refugees as they rebuild their lives with dignity,
@@ -91,41 +93,52 @@ const HomePage: FC = () => {
               sectionIndicatorTitle={`Features`}
             />
             <ul className="features__list mt-5">
-              <li className="features__item card card-border p-4">
-                <div className="features__item-body">
-                  <h3 className="features__item-title">Transparency</h3>
-                  <p className="features__item-description">
-                    We are committed to maintaining transparency in all our
-                    operations and financial transactions.
-                  </p>
-                </div>
-                <i className="features__item-svg bi bi-hourglass"></i>
+              <li className="features__item">
+                <Card className="card-border p-3" isLite={false}>
+                  <div className="features__item-body">
+                    <h3 className="sub-heading features__item-title">
+                      Transparency
+                    </h3>
+                    <p className="features__item-description">
+                      We are committed to maintaining transparency in all our
+                      operations and financial transactions.
+                    </p>
+                  </div>
+                  <i className="features__item-svg bi bi-hourglass"></i>
+                </Card>
               </li>
-              <li className="features__item card card-border p-4">
-                <div className="features__item-body">
-                  <h3 className="features__item-title">Integrity</h3>
-                  <p className="features__item-description">
-                    We uphold the highest ethical standards in everything we do,
-                    ensuring honesty and fairness in our actions.
-                  </p>
-                </div>
-                <i className="features__item-svg bi bi-shield-lock"></i>
+              <li className="features__item">
+                <Card className="card-border p-3" isLite={false}>
+                  <div className="features__item-body">
+                    <h3 className="sub-heading features__item-title">
+                      Integrity
+                    </h3>
+                    <p className="features__item-description">
+                      We uphold the highest ethical standards in everything we
+                      do, ensuring honesty and fairness in our actions.
+                    </p>
+                  </div>
+                  <i className="features__item-svg bi bi-shield-lock"></i>
+                </Card>
               </li>
-              <li className="features__item card card-border p-4">
-                <div className="features__item-body">
-                  <h3 className="features__item-title">Collaboration</h3>
-                  <p className="features__item-description">
-                    We believe in the power of teamwork and actively foster an
-                    inclusive and supportive environment.
-                  </p>
-                </div>
-                <i className="features__item-svg bi bi-people"></i>
+              <li className="features__item">
+                <Card className="card-border p-3" isLite={false}>
+                  <div className="features__item-body">
+                    <h3 className="sub-heading features__item-title">
+                      Collaboration
+                    </h3>
+                    <p className="features__item-description">
+                      We believe in the power of teamwork and actively foster an
+                      inclusive and supportive environment.
+                    </p>
+                  </div>
+                  <i className="features__item-svg bi bi-people"></i>
+                </Card>
               </li>
             </ul>
           </div>
         </div>
       </section>
-      {/* Hard coded */}
       <section className="statistics" id="statistics">
         <div className="container">
           <div className="statistics__wrap">

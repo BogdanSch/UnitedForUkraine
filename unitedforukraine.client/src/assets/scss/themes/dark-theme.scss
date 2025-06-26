@@ -1,0 +1,116 @@
+.dark-theme {
+  $pale-blue: #30495c;
+  $text-light-gray: #c0c0c0;
+
+  .wrapper {
+    background: $pale-blue;
+  }
+  .header {
+    background-color: $dark-navy !important;
+    &__theme {
+      &-svg {
+        color: $white;
+        fill: $bg-light-gray !important;
+      }
+    }
+    .site-logo {
+      &__text {
+        color: $white;
+      }
+    }
+  }
+  .nav {
+    &-link {
+      color: $white !important;
+      &:hover {
+        color: $text-light-gray !important;
+      }
+      &.active {
+        color: $sky-blue !important;
+      }
+    }
+  }
+  .dropdown {
+    &-menu {
+      background-color: $dark-navy-transparent;
+    }
+    &-item {
+      color: $white;
+      &:hover,
+      &:focus {
+        background-color: $primary-transparent;
+      }
+    }
+  }
+  .heading,
+  .sub-heading {
+    color: $white;
+  }
+  p,
+  li {
+    color: $bg-light-gray;
+  }
+  p {
+    strong {
+      color: $text-light-gray !important;
+    }
+  }
+  .section-indicator {
+    color: $sky-blue;
+  }
+  .btn {
+    color: $bg-light-gray;
+
+    &-outline-dark {
+      border: 2px solid $bg-light-gray;
+    }
+    &-outline-secondary {
+      border-width: 2px;
+
+      &:hover {
+        color: $white;
+      }
+    }
+    &-outline-primary {
+      border-width: 2px;
+    }
+  }
+  .card {
+    background-color: $dark-navy;
+    box-shadow: $light-shadow !important;
+    &-title {
+      color: $white;
+    }
+    em {
+      color: $text-light-gray;
+    }
+  }
+  .form {
+    &-control {
+      @include form-control-dark();
+
+      &::placeholder {
+        color: $text-light-gray;
+      }
+    }
+    &-select {
+      @include form-control-dark();
+    }
+    &-label {
+      color: $bg-light-gray;
+    }
+  }
+  .accordion {
+    &-item {
+      background-color: $dark-navy-transparent !important;
+      border: none !important;
+    }
+    &-button {
+      color: $white;
+      background-color: $darker-gray-transparent;
+      &:not(.collapsed) {
+        box-shadow: $light-shadow !important;
+      }
+    }
+  }
+}

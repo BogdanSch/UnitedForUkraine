@@ -22,7 +22,7 @@ const Card: FC<CardProps> = ({
 }) => {
   return (
     <div
-      className={`card px-4 py-4 ${className} ${isLite && "card--lite"}`}
+      className={`card px-4 py-4 ${className}${isLite ? " card--lite" : ""}`}
       {...rest}
     >
       <div className="card-image">

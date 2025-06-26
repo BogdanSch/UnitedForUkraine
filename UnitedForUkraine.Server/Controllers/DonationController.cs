@@ -12,16 +12,12 @@ namespace UnitedForUkraine.Server.Controllers;
 
 [ApiController]
 [Route("api/donations")]
-public class DonationController : ControllerBase
+public class DonationController(IDonationRepository donationRepository, ICampaignRepository campaignRepository) : ControllerBase
 {
-    private readonly IDonationRepository _donationRepository;
-    private readonly ICampaignRepository _campaignRepository;
+    private readonly IDonationRepository _donationRepository = donationRepository;
+    private readonly ICampaignRepository _campaignRepository = campaignRepository;
     private const int NUMBER_OF_DONATIONs_PER_PAGE = 12;
-    public DonationController(IDonationRepository donationRepository, ICampaignRepository campaignRepository)
-    {
-        _donationRepository = donationRepository;
-        _campaignRepository = campaignRepository;
-    }
+
     [HttpGet]
     public async Task<IActionResult> GetPaginatedDontaionsData([FromQuery] QueryObject queryObject)
     {

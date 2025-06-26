@@ -4,14 +4,11 @@ using UnitedForUkraine.Server.Interfaces;
 
 namespace UnitedForUkraine.Server.Services
 {
-    public class CurrencyConverterService : ICurrencyConverterService
+    public class CurrencyConverterService(HttpClient httpClient) : ICurrencyConverterService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = httpClient;
         private const string ApiUrl = "https://api.exchangerate-api.com/v4/latest/";
-        public CurrencyConverterService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
+
         public async Task<decimal> GetCurrencyRate(string fromCurrency, string toCurrency)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(ApiUrl + fromCurrency);

@@ -28,7 +28,22 @@
     column-gap: 4px;
     margin-left: 12px;
   }
+  &__theme {
+    &-button {
+      padding: 12px 24px;
+      border: none;
 
+      &:focus-visible {
+        outline: 2px solid $primary !important;
+        outline-offset: 0.1rem !important;
+      }
+    }
+    &-svg {
+      width: 44px;
+      height: 44px;
+      fill: $dark-navy;
+    }
+  }
   .dropdown {
     &-menu {
       padding: 8px 12px;

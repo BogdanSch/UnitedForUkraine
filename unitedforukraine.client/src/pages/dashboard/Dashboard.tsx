@@ -5,7 +5,7 @@ import {
   CampaignsList,
   UserStatisticsList,
 } from "../../containers";
-import { SectionHeadline } from "../../components";
+import { Card, SectionHeadline } from "../../components";
 
 const Dashboard: FC = () => {
   const { user, isAdmin } = useContext(AuthContext);
@@ -16,7 +16,7 @@ const Dashboard: FC = () => {
         <div className="container">
           <div className="dashboard__wrap">
             <div className="text-content text-center mb-4">
-              <h2 className="dashboard__title">
+              <h2 className="heading dashboard__title">
                 Welcome<span className="decoration">, {user?.userName}!</span>
               </h2>
               <p className="dashboard__description">
@@ -25,15 +25,17 @@ const Dashboard: FC = () => {
                 supported.
               </p>
             </div>
-            <ul className="dashboard__list card px-5 py-4">
-              <li className="dashboard__item">
-                Your email address: <strong>{user?.email}</strong>
-              </li>
-              <li className="dashboard__item">
-                Your contact number:{" "}
-                <strong>{user?.phoneNumber ?? "None"}</strong>
-              </li>
-            </ul>
+            <Card className="px-5 py-4" isLite={false}>
+              <ul className="dashboard__list">
+                <li className="dashboard__item">
+                  Your email address: <strong>{user?.email}</strong>
+                </li>
+                <li className="dashboard__item">
+                  Your contact number:{" "}
+                  <strong>{user?.phoneNumber ?? "None"}</strong>
+                </li>
+              </ul>
+            </Card>
           </div>
         </div>
       </section>
@@ -51,13 +53,9 @@ const Dashboard: FC = () => {
       <section className="dashboard dashboard--overview" id="dashboardOverview">
         <div className="container">
           <div className="dashboard__wrap">
-            <SectionHeadline
-              title={``}
-              sectionIndicatorTitle={`Each donation of yours brings our victory closer`}
-            />
             {isAdmin() && (
               <div className="mt-5 text-center">
-                <h2 className="dashboard__title">
+                <h2 className="sub-heading dashboard__title">
                   Overview of all foundation donations
                 </h2>
                 <DonationsList
@@ -67,7 +65,13 @@ const Dashboard: FC = () => {
               </div>
             )}
             <div className="mt-5 text-center">
-              <h2 className="dashboard__title">Your donations overview</h2>
+              <h2 className="sub-heading dashboard__title">
+                Your donations overview
+              </h2>
+              <p className="dashboard__description">
+                Each donation of yours makes a great contribution into our
+                victory
+              </p>
               <DonationsList
                 showUserDonations={!isAdmin()}
                 showQueryCriteria={true}

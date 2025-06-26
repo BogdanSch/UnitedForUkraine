@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Logo } from "../../components";
 import { SignOutForm } from "../../containers";
 import AuthContext from "../../contexts/AuthContext";
+import ThemeSwitchButton from "../../components/buttons/ThemeSwitchButton";
 
 const Header: FC = () => {
   const location = useLocation();
@@ -63,7 +64,7 @@ const Header: FC = () => {
           <i className="bi-list"></i>
         </button>
         <nav
-          className="header__navbart collapse navbar-collapse"
+          className="header__navbar collapse navbar-collapse"
           id="responsiveNavbar"
         >
           <ul className="header__list navbar-nav ms-auto me-4 my-3 my-lg-0">
@@ -150,6 +151,9 @@ const Header: FC = () => {
               </Link>
             </div>
           )}
+          <div className="header__theme">
+            <ThemeSwitchButton />
+          </div>
         </nav>
       </div>
     </header>

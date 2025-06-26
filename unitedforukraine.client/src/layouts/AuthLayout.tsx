@@ -1,7 +1,15 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import { DARK_THEME_CLASS_NAME } from "../variables";
 
 const AuthLayout: FC = () => {
+  useEffect(() => {
+    const body = document.body;
+
+    if (body.classList.contains(DARK_THEME_CLASS_NAME))
+      body.classList.remove(DARK_THEME_CLASS_NAME);
+  }, []);
+
   return (
     <>
       <main className="main">

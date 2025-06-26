@@ -20,7 +20,7 @@ const LoginPage: FC = () => {
           />
           <div className="auth__hero-content">
             <div className="text-content">
-              <h2 className="auth__title">Welcome back!</h2>
+              <h2 className="auth__title">Welcome back, mate!</h2>
               <p className="auth__description">
                 {message || "We have been missing you so much!"}
               </p>

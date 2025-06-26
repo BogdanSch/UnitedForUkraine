@@ -15,21 +15,14 @@ namespace UnitedForUkraine.Server.Controllers
 {
     [ApiController]
     [Route("api/payments")]
-    public class PaymentController : ControllerBase
+    public class PaymentController(IOptions<FrontendSettings> frontendSettings, UserManager<AppUser> userManager, IDonationRepository donationRepository, ICampaignRepository campaignRepository, ICurrencyConverterService currencyConverterService) : ControllerBase
     {
         public const string DEFAULT_STRIPE_CURRENCY = "uah";
-        private readonly FrontendSettings _frontendSettings;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly IDonationRepository _donationRepository;
-        private readonly ICampaignRepository _campaignRepository;
+        private readonly FrontendSettings _frontendSettings = frontendSettings.Value;
+        private readonly UserManager<AppUser> _userManager = userManager;
+        private readonly IDonationRepository _donationRepository = donationRepository;
+        private readonly ICampaignRepository _campaignRepository = campaignRepository;
 
-        public PaymentController(IOptions<FrontendSettings> frontendSettings, UserManager<AppUser> userManager, IDonationRepository donationRepository, ICampaignRepository campaignRepository, ICurrencyConverterService currencyConverterService)
-        {
-            _frontendSettings = frontendSettings.Value;
-            _donationRepository = donationRepository;
-            _campaignRepository = campaignRepository;
-            _userManager = userManager;
-        }
         private static List<string> GetStripePaymentMethod(CustomDonationMethod paymentMethod)
         {
             return paymentMethod switch

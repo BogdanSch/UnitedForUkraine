@@ -7,11 +7,17 @@
     padding-left: 0;
   }
   &__item {
-    @include flex-row;
-    @include flex-center;
-    column-gap: 8px;
     min-height: 200px;
 
+    .card {
+      height: 100%;
+
+      &-body {
+        @include flex-row;
+        @include flex-center;
+        column-gap: 8px;
+      }
+    }
     &-svg {
       color: $sky-blue;
       font-size: 3rem;

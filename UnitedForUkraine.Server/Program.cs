@@ -13,7 +13,6 @@ using Stripe;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

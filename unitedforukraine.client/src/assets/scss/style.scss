@@ -17,6 +17,12 @@
   align-items: center;
 }
 
+@mixin form-control-dark {
+  color: $pale-blue;
+  background-color: $dark-navy;
+  border-color: $primary;
+}
+
 $primary: #005bbb;
 $primary-transparent: #005abb66;
 $secondary: #ffd700;
@@ -34,14 +40,16 @@ $white: #f9f9f9;
 $bg-light-gray: #f5f5f5;
 
 $dark-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+$light-shadow: #aeaeae33 0px 2px 8px 0px;
 
 $fw-light: 400;
 $fw-normal: 500;
 $fw-bold: 700;
 $fw-super-bold: 900;
 
-@import "./animations.scss";
+@import "./themes/dark-theme.scss";
 @import "./general.scss";
+@import "./animations.scss";
 @import "./templates/partials/header.scss";
 @import "./templates/partials/footer.scss";
 @import "./templates/errors/error.scss";

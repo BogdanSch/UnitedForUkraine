@@ -5,7 +5,7 @@ const Footer: FC = () => {
     <footer className="footer text-center py-5">
       <div className="container">
         <div className="footer__wrap">
-          <div className="mb-2">
+          <div className="footer__copyright">
             &copy; United For Ukraine 2025. All Rights Reserved.
           </div>
           <nav className="navbar footer__list">
