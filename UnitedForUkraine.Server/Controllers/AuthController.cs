@@ -7,25 +7,25 @@ using Microsoft.AspNetCore.Authorization;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
+using UnitedForUkraine.Server.Dtos.User;
 
 namespace UnitedForUkraine.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService, IEmailService emailService) : ControllerBase
+    public class AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService, IEmailService emailService, ILogger<AuthController> logger) : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly SignInManager<AppUser> _signInManager = signInManager;
         private readonly IAuthTokenService _authTokenService = authTokenService;
         private readonly IEmailService _emailService = emailService;
+        private readonly ILogger<AuthController> _logger = logger;
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginDto)
         {
             if(!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
             AppUser? user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user is null)
@@ -104,6 +104,44 @@ namespace UnitedForUkraine.Server.Controllers
 
             return NoContent();
         }
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserProfileInfo([FromBody] UpdateUserProfileDto updateProfileDto)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized(new { message = "Invalid user confirmation token" });
+
+            AppUser? appUser = await _userManager.FindByIdAsync(userId);
+            if (appUser is null)
+                return Unauthorized(new { message = "User was not found" });
+
+            try
+            {
+                appUser.UserName = updateProfileDto.UserName;
+                appUser.PhoneNumber = updateProfileDto.PhoneNumber;
+                appUser.City = updateProfileDto.City;
+
+                IdentityResult result = await _userManager.UpdateAsync(appUser);
+
+                if (!result.Succeeded)
+                {
+                    string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
+                    return BadRequest(new { message = $"An error has occurred during profile update: {errorMessage}" });
+                }
+
+                return Ok(new { message = "Profile updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, message: $"Error updating profile for user {userId}");
+                return Unauthorized(new { message = "Something weird has happened on our side" });
+            }
+        }
         [HttpGet("userInfo")]
         [Authorize]
         public async Task<IActionResult> GetUserInfo()
@@ -111,10 +149,10 @@ namespace UnitedForUkraine.Server.Controllers
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrWhiteSpace(userId))
-                return Unauthorized(new { message = "Invalid token" });
+                return Unauthorized(new { message = "Invalid user confirmation token" });
 
             AppUser? appUser = await _userManager.FindByIdAsync(userId);
-            if (appUser == null)
+            if (appUser is null)
                 return Unauthorized(new { message = "User was not found" });
 
             UserDto userDto = new()
@@ -123,6 +161,7 @@ namespace UnitedForUkraine.Server.Controllers
                 Email = appUser.Email!,
                 UserName = appUser.UserName!,
                 PhoneNumber = appUser.PhoneNumber ?? string.Empty,
+                City = appUser.City ?? string.Empty,
                 IsAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin)
             };
             return Ok(userDto);

@@ -22,7 +22,8 @@ const LoginPage: FC = () => {
             <div className="text-content">
               <h2 className="auth__title">Welcome back, mate!</h2>
               <p className="auth__description">
-                {message || "We have been missing you so much!"}
+                {message ||
+                  "We have been missing you so much! Please fill in your credentials to log in."}
               </p>
             </div>
             <SignInForm />

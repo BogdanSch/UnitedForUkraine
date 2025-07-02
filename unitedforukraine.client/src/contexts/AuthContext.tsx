@@ -11,6 +11,7 @@ interface IAuthContextProps {
   logoutUser: () => Promise<void>;
   isAuthenticated: () => boolean;
   isAdmin: () => boolean;
+  refreshUserData: () => Promise<void>;
   loading: boolean;
 }
 type AuthProviderProps = {
@@ -24,6 +25,7 @@ const AuthContext = createContext<IAuthContextProps>({
   logoutUser: async () => {},
   isAuthenticated: () => false,
   isAdmin: () => false,
+  refreshUserData: async () => {},
   loading: false,
 });
 
@@ -98,6 +100,12 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const isAuthenticated = () => user != null && authToken.trim().length > 0;
   const isAdmin = () => user?.isAdmin ?? false;
 
+  const refreshUserData = async (): Promise<void> => {
+    if (!isAuthenticated()) return;
+    setLoading(true);
+    await fetchUserData(authToken);
+  };
+
   const contextValue = useMemo(
     () => ({
       user,
@@ -106,6 +114,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       logoutUser,
       isAuthenticated,
       isAdmin,
+      refreshUserData,
       loading,
     }),
     [user, authToken, loading]

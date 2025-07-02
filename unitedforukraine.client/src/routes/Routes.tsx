@@ -19,6 +19,7 @@ import {
   Failed,
   Dashboard,
   VerifyRegistration,
+  UpdateUserProfile,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -93,6 +94,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "update",
+        element: (
+          <ProtectedRoute>
+            <UpdateUserProfile />
           </ProtectedRoute>
         ),
       },

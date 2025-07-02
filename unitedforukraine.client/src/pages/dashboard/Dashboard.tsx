@@ -17,22 +17,30 @@ const Dashboard: FC = () => {
           <div className="dashboard__wrap">
             <div className="text-content text-center mb-4">
               <h2 className="heading dashboard__title">
-                Welcome<span className="decoration">, {user?.userName}!</span>
+                Welcome, <span className="decoration">{user?.userName}!</span>
               </h2>
               <p className="dashboard__description">
-                We're glad to have you back! Here you can view your profile
-                details, track your donations, and explore the campaigns you've
-                supported.
+                We're glad to have you back! Here you can view and edit your
+                profile details, track the statistics of your donations, and
+                explore the campaigns you've supported.
               </p>
             </div>
             <Card className="px-5 py-4" isLite={false}>
+              <div className="mb-3">
+                <a className="dashboard__link" href="/dashboard/update">
+                  Update profile info
+                </a>
+              </div>
               <ul className="dashboard__list">
                 <li className="dashboard__item">
                   Your email address: <strong>{user?.email}</strong>
                 </li>
                 <li className="dashboard__item">
                   Your contact number:{" "}
-                  <strong>{user?.phoneNumber ?? "None"}</strong>
+                  <strong>{user?.phoneNumber ?? "Unknown"}</strong>
+                </li>
+                <li className="dashboard__item">
+                  Your city: <strong>{user?.city || "Unknown"}</strong>
                 </li>
               </ul>
             </Card>

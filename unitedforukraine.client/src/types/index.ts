@@ -70,19 +70,19 @@ export type ImageDto = {
   description?: string;
 };
 
-export type Address = {
-  id: number;
-  street: string;
-  city: string;
-  country: string;
-};
-
 export type UserDto = {
   id: string;
   userName: string;
   email: string;
   phoneNumber: string;
+  city: string;
   isAdmin: boolean;
+};
+
+export type UpdateUserProfileDto = {
+  userName: string;
+  phoneNumber: string;
+  city: string;
 };
 
 export type Statistics = {

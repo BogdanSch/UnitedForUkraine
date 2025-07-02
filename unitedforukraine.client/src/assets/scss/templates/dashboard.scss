@@ -1,0 +1,14 @@
+.dashboard {
+  &__link {
+    font-size: 1.5rem;
+    color: $sky-blue;
+    text-decoration: none;
+    font-weight: $fw-bold;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: $primary;
+      text-decoration: underline;
+    }
+  }
+}

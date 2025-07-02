@@ -98,7 +98,7 @@ public class Seed
 
             //Users
             var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-            string adminUserEmail = "bohdan.dev777@gmail.com";
+            string adminUserEmail = "bogsvity777@gmail.com";
 
             var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
             if (adminUser == null)

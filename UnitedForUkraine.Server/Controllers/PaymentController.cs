@@ -15,7 +15,7 @@ namespace UnitedForUkraine.Server.Controllers
 {
     [ApiController]
     [Route("api/payments")]
-    public class PaymentController(IOptions<FrontendSettings> frontendSettings, UserManager<AppUser> userManager, IDonationRepository donationRepository, ICampaignRepository campaignRepository, ICurrencyConverterService currencyConverterService) : ControllerBase
+    public class PaymentController(IOptions<FrontendSettings> frontendSettings, UserManager<AppUser> userManager, IDonationRepository donationRepository, ICampaignRepository campaignRepository) : ControllerBase
     {
         public const string DEFAULT_STRIPE_CURRENCY = "uah";
         private readonly FrontendSettings _frontendSettings = frontendSettings.Value;

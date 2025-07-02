@@ -5,7 +5,7 @@ import axios from "axios";
 
 import AuthContext from "../../../contexts/AuthContext";
 import { useAuthForm } from "../../../hooks/";
-import { Input, PasswordInput } from "../../../components";
+import { ErrorAlert, Input, PasswordInput } from "../../../components";
 
 const SignInForm: FC = () => {
   const navigate = useNavigate();
@@ -80,11 +80,7 @@ const SignInForm: FC = () => {
       onReset={handleReset}
       aria-labelledby="loginForm"
     >
-      {requestError && (
-        <div className="alert alert-danger" role="alert">
-          {requestError}
-        </div>
-      )}
+      {requestError && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="email" className="form-label">
           Email*
@@ -134,6 +130,9 @@ const SignInForm: FC = () => {
         <label htmlFor="rememberMe" className="form-check-label">
           Remember Me
         </label>
+      </div>
+      <div id="passwordHelpBlock" className="form-text">
+        All fields marked with an asterisk (*) are required.
       </div>
       <div className="form-buttons mt-2">
         <button type="submit" className="btn btn-secondary">
