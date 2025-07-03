@@ -90,12 +90,17 @@ export type Statistics = {
   totalDonationsAmount: number;
   averageDonationsAmount: number;
   uniqueDonorsCount: number;
+  cityWithMostDonations: string;
+  mostFrequentDonorName: string;
+  donationsGrowthRate: number;
 };
 
 export type UserStatistics = {
   donationsCount: number;
   totalDonationsAmount: number;
   averageDonationsAmount: number;
+  smallestDonationAmount: number;
+  biggestDonationAmount: number;
   supportedCampaignsCount: number;
 };
 

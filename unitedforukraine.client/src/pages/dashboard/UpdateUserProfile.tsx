@@ -6,10 +6,11 @@ const UpdateUserProfile: FC = () => {
     <section className="dashboard">
       <div className="container">
         <div className="dashboard__wrap">
-          <div className="text-content">
-            <h1 className="heading">Update User Profile</h1>
+          <div className="text-content text-center mt-5 mb-4">
+            <h1 className="heading">Update Personal Information</h1>
             <p className="dashboard__description">
-              This page will allow users to update their profile information.
+              This page allows users to update their profile information. You
+              can change your user name, phone number, and city.
             </p>
           </div>
           <UpdateUserProfileForm />

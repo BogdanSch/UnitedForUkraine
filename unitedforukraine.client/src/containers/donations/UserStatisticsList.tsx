@@ -14,6 +14,8 @@ const UserStatisticsList: FC = () => {
     donationsCount: 0,
     totalDonationsAmount: 0,
     averageDonationsAmount: 0,
+    smallestDonationAmount: 0,
+    biggestDonationAmount: 0,
     supportedCampaignsCount: 0,
   });
 
@@ -36,6 +38,8 @@ const UserStatisticsList: FC = () => {
             donationsCount: 0,
             totalDonationsAmount: 0,
             averageDonationsAmount: 0,
+            smallestDonationAmount: 0,
+            biggestDonationAmount: 0,
             supportedCampaignsCount: 0,
           }
         );
@@ -53,7 +57,7 @@ const UserStatisticsList: FC = () => {
         <li className="statistics__item">
           <Card className="card-border p-3" isLite={false}>
             <div className="statistics__item-group">
-              <i className="bi bi-currency-exchange"></i>
+              <i className="statistics__item-icon bi bi-currency-exchange"></i>
               <h4 className="sub-heading statistics__item-title">
                 Total Donations Received
               </h4>
@@ -67,7 +71,7 @@ const UserStatisticsList: FC = () => {
         <li className="statistics__item">
           <Card className="card-border p-3" isLite={false}>
             <div className="statistics__item-group">
-              <i className="bi bi-card-checklist"></i>
+              <i className="statistics__item-icon bi bi-card-checklist"></i>
               <h4 className="sub-heading statistics__item-title">
                 Total Donations Number
               </h4>
@@ -80,7 +84,21 @@ const UserStatisticsList: FC = () => {
         <li className="statistics__item">
           <Card className="card-border p-3" isLite={false}>
             <div className="statistics__item-group">
-              <i className="bi bi-arrow-left-right"></i>
+              <i className="statistics__item-icon bi bi-bar-chart"></i>
+              <h4 className="sub-heading statistics__item-title">
+                Smallest Donation
+              </h4>
+            </div>
+            <p className="statistics__item-amount">
+              {formatMoney(statistics.smallestDonationAmount)}{" "}
+              <span className="currency">UAH</span>
+            </p>
+          </Card>
+        </li>
+        <li className="statistics__item">
+          <Card className="card-border p-3" isLite={false}>
+            <div className="statistics__item-group">
+              <i className="statistics__item-icon bi bi-arrow-left-right"></i>
               <h4 className="sub-heading statistics__item-title">
                 Average Donation
               </h4>
@@ -94,7 +112,21 @@ const UserStatisticsList: FC = () => {
         <li className="statistics__item">
           <Card className="card-border p-3" isLite={false}>
             <div className="statistics__item-group">
-              <i className="bi bi-envelope-check"></i>
+              <i className="statistics__item-icon bi bi-bar-chart-steps"></i>
+              <h4 className="sub-heading statistics__item-title">
+                Biggest Donation
+              </h4>
+            </div>
+            <p className="statistics__item-amount">
+              {formatMoney(statistics.biggestDonationAmount)}{" "}
+              <span className="currency">UAH</span>
+            </p>
+          </Card>
+        </li>
+        <li className="statistics__item">
+          <Card className="card-border p-3" isLite={false}>
+            <div className="statistics__item-group">
+              <i className="statistics__item-icon bi bi-envelope-check"></i>
               <h4 className="sub-heading statistics__item-title">
                 Supported Campaigns Count
               </h4>

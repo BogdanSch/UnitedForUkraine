@@ -17,7 +17,6 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     private readonly IDonationRepository _donationRepository = donationRepository;
     private readonly ICampaignRepository _campaignRepository = campaignRepository;
     private const int NUMBER_OF_DONATIONs_PER_PAGE = 12;
-
     [HttpGet]
     public async Task<IActionResult> GetPaginatedDontaionsData([FromQuery] QueryObject queryObject)
     {
@@ -91,24 +90,28 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
             DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(null),
             TotalDonationsAmount = await _donationRepository.GetTotalUserDonationsAmountAsync(null),
             AverageDonationsAmount = await _donationRepository.GetAverageUserDonationsAmountAsync(null),
-            UniqueDonorsCount = await _donationRepository.GetUniqueDonorsCountAsync()
+            UniqueDonorsCount = await _donationRepository.GetUniqueDonorsCountAsync(),
+            CityWithMostDonations = await _donationRepository.GetCityWithMostDonationsAsync(),
+            MostFrequentDonorName = (await _donationRepository.GetMostFrequentDonorInformationAsync()).donorName,
+            DonationsGrowthRate = await _donationRepository.GetDonationsGrowthRateAsync(DateTime.UtcNow.AddMonths(-1)),
         };
-
         return Ok(statisticsDto);
     }
     [HttpGet("statistics/{userId:guid}")]
     [Authorize]
-    public async Task<IActionResult> GetUserStatistics([FromRoute] Guid userId)
+    public async Task<IActionResult> GetUserStatistics(Guid userId)
     {
         if(userId == Guid.Empty)
-            return BadRequest("User ID cannot be empty.");
+            return BadRequest("User Id can't be empty");
 
         UserDonationsStatisticsDto statisticsDto = new()
         {
             DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(userId.ToString()),
             TotalDonationsAmount = await _donationRepository.GetTotalUserDonationsAmountAsync(userId.ToString()),
             AverageDonationsAmount = await _donationRepository.GetAverageUserDonationsAmountAsync(userId.ToString()),
-            SupportedCampaignsCount = await _campaignRepository.GetAllUserSupportedCampaignsCount(userId.ToString())
+            SmallestDonationAmount = await _donationRepository.GetSmallestDonationAmountAsync(userId.ToString()),
+            BiggestDonationAmount = await _donationRepository.GetBiggestDonationAmountAsync(userId.ToString()),
+            SupportedCampaignsCount = await _campaignRepository.GetAllUserSupportedCampaignsCount(userId.ToString()),
         };
 
         return Ok(statisticsDto);

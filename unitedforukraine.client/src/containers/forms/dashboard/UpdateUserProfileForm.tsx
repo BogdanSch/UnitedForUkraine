@@ -37,7 +37,11 @@ const UpdateUserProfileForm: FC = () => {
       });
 
       refreshUserData();
-      navigate("/dashboard");
+      navigate("/dashboard", {
+        state: {
+          message: "Profile was updated successfully.",
+        },
+      });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setRequestError(

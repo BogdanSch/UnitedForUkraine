@@ -3,15 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
-using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.Services;
 
 namespace UnitedForUkraine.Server.Repositories;
 
 public class DonationRepository(ApplicationDbContext context, ICurrencyConverterService currencyConverterService) : IDonationRepository
 {
+    public const string POPULAR_DONATIONS_CITY_NAME = "Kharkiv";
+    public const string DEFAULT_FREQUENT_DONOR_NAME = "bogsvity777";
+    public const int DEFAULT_FREQUENT_DONOR_COUNT = 100;
     private readonly ApplicationDbContext _context = context;
     private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
     public IQueryable<Donation> HandleDonationsFiltering(QueryObject queryObject, IQueryable<Donation> donations)
@@ -85,6 +86,15 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
         int saved = await _context.SaveChangesAsync();
         return saved > 0;
     }
+    public async Task<string> GetCityWithMostDonationsAsync()
+    {
+        var popularCity = await _context.Donations.Include(d => d.User)
+            .GroupBy(d => d.User.City)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
+            .FirstOrDefaultAsync();
+        return popularCity ?? POPULAR_DONATIONS_CITY_NAME;
+    }
     public async Task<int> GetTotalUserDonationsCountAsync(string? userId)
     {
         IQueryable<Donation> donations;
@@ -139,12 +149,61 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
 
         return (int)Math.Round(totalDonationsAmount / totalDonationsCount);
     }
+    public async Task<decimal> GetSmallestDonationAmountAsync(string? userId)
+    {
+        IQueryable<Donation> donations = _context.Donations.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            donations = donations.Where(d => d.UserId == userId);
+        }
+
+        return await donations.MinAsync(d => d.Amount);
+    }
+    public async Task<decimal> GetBiggestDonationAmountAsync(string? userId)
+    {
+        IQueryable<Donation> donations = _context.Donations.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            donations = donations.Where(d => d.UserId == userId);
+        }
+
+        return await donations.MaxAsync(d => d.Amount);
+    }
     public async Task<int> GetUniqueDonorsCountAsync()
     {
         return await _context.Donations
            .Select(d => d.UserId)
            .Distinct()
            .CountAsync();
+    }
+    public async Task<(string donorName, int donationsCount)> GetMostFrequentDonorInformationAsync()
+    {
+        var result = await _context.Donations.Include(d => d.User)
+            .Where(d => !string.IsNullOrWhiteSpace(d.User.UserName))
+            .GroupBy(d => d.User.UserName )
+            .OrderByDescending(g => g.Count())
+            .Select(g => new { Name = g.Key, Count = g.Count() })
+            .FirstOrDefaultAsync();
+
+        return result is not null ? (result.Name!, result.Count) : (DEFAULT_FREQUENT_DONOR_NAME, DEFAULT_FREQUENT_DONOR_COUNT);
+    }
+    public async Task<decimal> GetDonationsGrowthRateAsync(DateTime currentPeriod)
+    {
+        DateTime previousPeriod = currentPeriod.AddMonths(-1);
+        DateTime currentPeriodEnd = currentPeriod.AddMonths(1);
+
+        decimal previousPeriodTotal = await _context.Donations.Where(d => d.PaymentDate >= previousPeriod && d.PaymentDate < currentPeriod)
+            .SumAsync(d => d.Amount);
+        decimal currentPeriodTotal = await _context.Donations.Where(d => d.PaymentDate >= currentPeriod && d.PaymentDate < currentPeriodEnd)
+            .SumAsync(d => d.Amount);
+
+        if (previousPeriodTotal == decimal.Zero)
+            return currentPeriodTotal > decimal.Zero ? 100m : decimal.Zero;
+
+        decimal growthRate = Math.Round((currentPeriodTotal - previousPeriodTotal) * 100 / previousPeriodTotal, 2);
+        return growthRate;
     }
     public Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId)
     {

@@ -1,13 +1,16 @@
 import { FC, useContext } from "react";
+import { useLocation } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 import {
   DonationsList,
   CampaignsList,
   UserStatisticsList,
 } from "../../containers";
-import { Card, SectionHeadline } from "../../components";
+import { Alert, Card, SectionHeadline } from "../../components";
 
 const Dashboard: FC = () => {
+  const location = useLocation();
+  const message: string = location.state?.message || "";
   const { user, isAdmin } = useContext(AuthContext);
 
   return (
@@ -15,6 +18,7 @@ const Dashboard: FC = () => {
       <section className="dashboard" id="dashboard">
         <div className="container">
           <div className="dashboard__wrap">
+            {message && <Alert className="mb-3" message={message} />}
             <div className="text-content text-center mb-4">
               <h2 className="heading dashboard__title">
                 Welcome, <span className="decoration">{user?.userName}!</span>
@@ -81,7 +85,7 @@ const Dashboard: FC = () => {
                 victory
               </p>
               <DonationsList
-                showUserDonations={!isAdmin()}
+                showUserDonations={true}
                 showQueryCriteria={true}
               />
             </div>

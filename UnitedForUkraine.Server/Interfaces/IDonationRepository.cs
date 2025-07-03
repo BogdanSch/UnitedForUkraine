@@ -14,7 +14,12 @@ public interface IDonationRepository
     Task<int> GetTotalUserDonationsCountAsync(string? userId);
     Task<decimal> GetTotalUserDonationsAmountAsync(string? userId);
     Task<int> GetAverageUserDonationsAmountAsync(string? userId);
+    Task<decimal> GetSmallestDonationAmountAsync(string? userId);
+    Task<decimal> GetBiggestDonationAmountAsync(string? userId);
     Task<int> GetUniqueDonorsCountAsync();
+    Task<string> GetCityWithMostDonationsAsync();
+    Task<(string donorName, int donationsCount)> GetMostFrequentDonorInformationAsync();
+    Task<decimal> GetDonationsGrowthRateAsync(DateTime period);
     Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId);
     Task AddAsync(Donation donation);
     Task<bool> DeleteAsync(int id);

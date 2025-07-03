@@ -90,7 +90,9 @@ const DonationsList: FC<IDonationListProps> = ({
                 <option data-value="date_dsc">Most Recent</option>
                 <option data-value="amount_dsc">Biggest Amount</option>
                 <option data-value="amount_asc">Smallest Amount</option>
-                <option data-value="userName_asc">User Name A-Z</option>
+                {!showUserDonations && (
+                  <option data-value="userName_asc">User Name A-Z</option>
+                )}
               </select>
             </div>
           </div>

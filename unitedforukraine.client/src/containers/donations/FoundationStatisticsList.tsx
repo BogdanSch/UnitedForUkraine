@@ -7,13 +7,18 @@ import { Card } from "../../components";
 import { formatMoney } from "../../utils/helpers/currencyHelper";
 import formatNumber from "../../utils/formatNumber";
 
+const DEFAULT_STATISTICS: Statistics = {
+  donationsCount: 0,
+  totalDonationsAmount: 0,
+  averageDonationsAmount: 0,
+  uniqueDonorsCount: 0,
+  cityWithMostDonations: "",
+  mostFrequentDonorName: "",
+  donationsGrowthRate: 0,
+};
+
 const FoundationStatisticsList: FC = () => {
-  const [statistics, setStatistics] = useState<Statistics>({
-    donationsCount: 0,
-    totalDonationsAmount: 0,
-    averageDonationsAmount: 0,
-    uniqueDonorsCount: 0,
-  });
+  const [statistics, setStatistics] = useState<Statistics>(DEFAULT_STATISTICS);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,14 +31,7 @@ const FoundationStatisticsList: FC = () => {
         const { data } = await axios.request(options);
 
         console.log(data);
-        setStatistics(
-          data || {
-            donationsCount: 0,
-            totalDonationsAmount: 0,
-            averageDonationsAmount: 0,
-            uniqueDonorsCount: 0,
-          }
-        );
+        setStatistics(data || DEFAULT_STATISTICS);
       } catch (error) {
         console.error(error);
       }
@@ -47,7 +45,7 @@ const FoundationStatisticsList: FC = () => {
       <li className="statistics__item">
         <Card className="card-border p-3" isLite={false}>
           <div className="statistics__item-group">
-            <i className="bi bi-currency-exchange"></i>
+            <i className="statistics__item-icon  bi bi-currency-exchange"></i>
             <h4 className="sub-heading statistics__item-title">
               Total Donations Received
             </h4>
@@ -61,7 +59,7 @@ const FoundationStatisticsList: FC = () => {
       <li className="statistics__item">
         <Card className="card-border p-3" isLite={false}>
           <div className="statistics__item-group">
-            <i className="bi bi-card-checklist"></i>
+            <i className="statistics__item-icon bi bi-card-checklist"></i>
             <h4 className="sub-heading statistics__item-title">
               Total Donations Number
             </h4>
@@ -74,7 +72,7 @@ const FoundationStatisticsList: FC = () => {
       <li className="statistics__item">
         <Card className="card-border p-3" isLite={false}>
           <div className="statistics__item-group">
-            <i className="bi bi-arrow-left-right"></i>
+            <i className="statistics__item-icon bi bi-arrow-left-right"></i>
             <h4 className="sub-heading statistics__item-title">
               Average Donation
             </h4>
@@ -88,13 +86,52 @@ const FoundationStatisticsList: FC = () => {
       <li className="statistics__item">
         <Card className="card-border p-3" isLite={false}>
           <div className="statistics__item-group">
-            <i className="bi bi-people"></i>
+            <i className="statistics__item-icon bi bi-people"></i>
             <h4 className="sub-heading statistics__item-title">
               Unique Donors
             </h4>
           </div>
           <p className="statistics__item-amount">
             {formatNumber(statistics.uniqueDonorsCount)}+
+          </p>
+        </Card>
+      </li>
+      <li className="statistics__item">
+        <Card className="card-border p-3" isLite={false}>
+          <div className="statistics__item-group">
+            <i className="statistics__item-icon bi bi-house-up-fill"></i>
+            <h4 className="sub-heading statistics__item-title">
+              City with Most Donations
+            </h4>
+          </div>
+          <p className="statistics__item-amount">
+            {statistics.cityWithMostDonations}
+          </p>
+        </Card>
+      </li>
+      <li className="statistics__item">
+        <Card className="card-border p-3" isLite={false}>
+          <div className="statistics__item-group">
+            <i className="statistics__item-icon bi bi-person-hearts"></i>
+            <h4 className="sub-heading statistics__item-title">
+              Our Most Frequent Donor
+            </h4>
+          </div>
+          <p className="statistics__item-amount">
+            {statistics.mostFrequentDonorName}
+          </p>
+        </Card>
+      </li>
+      <li className="statistics__item">
+        <Card className="card-border p-3" isLite={false}>
+          <div className="statistics__item-group">
+            <i className="statistics__item-icon bi bi-graph-up-arrow"></i>
+            <h4 className="sub-heading statistics__item-title">
+              Donations Growth Rate
+            </h4>
+          </div>
+          <p className="statistics__item-amount">
+            {statistics.donationsGrowthRate.toFixed(2)}%
           </p>
         </Card>
       </li>
