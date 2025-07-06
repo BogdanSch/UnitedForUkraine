@@ -5,6 +5,7 @@ namespace UnitedForUkraine.Server.Helpers.Settings
     public static class DateSettings
     {
         public const string DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+        public const string UNDEFINED_DATE = "N/A";
         public static DateTime ParseDate(string dateString)
         {
             if (!DateTime.TryParseExact(dateString, DEFAULT_DATE_FORMAT, null, DateTimeStyles.None, out DateTime parsedDate))

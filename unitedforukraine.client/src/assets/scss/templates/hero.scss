@@ -55,8 +55,11 @@
   }
 
   &__title {
-    color: $dark-navy;
+    color: $sky-blue !important;
     font-weight: $fw-super-bold;
+    .yellow {
+      color: $secondary;
+    }
   }
   &__description {
     color: $text-light-gray;

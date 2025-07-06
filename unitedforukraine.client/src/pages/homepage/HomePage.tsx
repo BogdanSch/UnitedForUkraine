@@ -18,7 +18,8 @@ const HomePage: FC = () => {
           <div className="hero__wrap">
             <Card className="hero__card" isLite={true}>
               <h1 className="heading hero__title">
-                United for Ukraine: Stand with Us
+                United for Ukraine:{" "}
+                <span className="yellow">Stand with Us</span>
               </h1>
               <p className="hero__description">
                 Providing essential aid, shelter, and opportunities for

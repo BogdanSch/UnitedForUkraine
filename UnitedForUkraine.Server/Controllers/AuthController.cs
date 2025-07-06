@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
-using UnitedForUkraine.Server.Dtos.User;
 
 namespace UnitedForUkraine.Server.Controllers
 {

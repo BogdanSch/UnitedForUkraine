@@ -1,17 +1,12 @@
 import { FC } from "react";
 import { TimelineItem } from "../types";
+import { convertToReadableDate } from "../utils/dateConverter";
 
 type TimelineProps = {
   timelines: TimelineItem[];
 };
 
 const Timeline: FC<TimelineProps> = ({ timelines }) => {
-  const options: Record<string, string> = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-
   return (
     <div className="row mt-5 mb-4">
       <div className="col">
@@ -21,7 +16,7 @@ const Timeline: FC<TimelineProps> = ({ timelines }) => {
               <div className="timeline-content">
                 <div className="inner-circle"></div>
                 <p className="h6 mt-3 mb-1">
-                  {new Date(timeline.date).toLocaleDateString("en-US", options)}
+                  {convertToReadableDate(timeline.date)}
                 </p>
                 <p className="h6 text-muted mb-0 mb-lg-0">
                   {timeline.description}

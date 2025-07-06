@@ -12,6 +12,7 @@
     padding-left: 0;
   }
   &__item {
+    min-height: 200px;
     .card {
       height: 100%;
     }
@@ -23,14 +24,15 @@
         color: $pale-blue;
       }
     }
-    &:last-child > .card {
-      background-color: $text-light-gray !important;
+    &:nth-child(odd) > .card {
+      background-color: $text-light-gray;
       color: $white;
 
       p {
         color: $pale-blue;
       }
     }
+
     &-group {
       @include flex-row();
       align-items: center;

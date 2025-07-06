@@ -88,6 +88,7 @@ export type UpdateUserProfileDto = {
 export type Statistics = {
   donationsCount: number;
   totalDonationsAmount: number;
+  mostFrequentDonationAmount: number;
   averageDonationsAmount: number;
   uniqueDonorsCount: number;
   cityWithMostDonations: string;
@@ -102,6 +103,8 @@ export type UserStatistics = {
   smallestDonationAmount: number;
   biggestDonationAmount: number;
   supportedCampaignsCount: number;
+  firstDonationDate: string;
+  lastDonationDate: string;
 };
 
 export type TimelineItem = {

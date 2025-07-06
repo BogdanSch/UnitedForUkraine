@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UnitedForUkraine.Server.Dtos.User
+namespace UnitedForUkraine.Server.DTOs.User
 {
     public class UpdateUserProfileDto
     {

@@ -1,5 +1,4 @@
-﻿using ContosoUniversity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
@@ -67,7 +66,7 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     {
         Donation? donation = await _context.Donations.FindAsync(id);
 
-        if (donation != null)
+        if (donation is not null)
         {
             _context.Donations.Remove(donation);
             await SaveAsync();
@@ -95,28 +94,23 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
             .FirstOrDefaultAsync();
         return popularCity ?? POPULAR_DONATIONS_CITY_NAME;
     }
-    public async Task<int> GetTotalUserDonationsCountAsync(string? userId)
+    private IQueryable<Donation> GetDonationsQuery(string? userId)
     {
-        IQueryable<Donation> donations;
-
-        if(userId == null)
+        IQueryable<Donation> query = _context.Donations.AsQueryable();
+        if (!string.IsNullOrWhiteSpace(userId))
         {
-            donations = _context.Donations.AsQueryable();
+            query = query.Where(d => d.UserId == userId);
         }
-        else
-        {
-            donations = _context.Donations.Where(d => d.UserId == userId);
-        }
-
-        return await donations.CountAsync();
+        return query;
     }
+    public async Task<int> GetTotalUserDonationsCountAsync(string? userId) => await GetDonationsQuery(userId).CountAsync();
     public async Task<decimal> GetTotalUserDonationsAmountAsync(string? userId)
     {
         IQueryable<Donation> donations;
 
         if (userId == null)
         {
-            donations = _context.Donations;
+            donations = _context.Donations.AsQueryable();
         }
         else
         {
@@ -140,6 +134,13 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
 
         return converted.Sum();
     }
+    public async Task<decimal> GetMostFrequentUserDonationAmountAsync()
+    {
+        return await _context.Donations.GroupBy(d => d.Amount)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
+            .FirstOrDefaultAsync();
+    }
     public async Task<int> GetAverageUserDonationsAmountAsync(string? userId)
     {
         int totalDonationsCount = await GetTotalUserDonationsCountAsync(userId);
@@ -151,23 +152,19 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     }
     public async Task<decimal> GetSmallestDonationAmountAsync(string? userId)
     {
-        IQueryable<Donation> donations = _context.Donations.AsQueryable();
+        IQueryable<Donation> donations = GetDonationsQuery(userId);
 
-        if (!string.IsNullOrWhiteSpace(userId))
-        {
-            donations = donations.Where(d => d.UserId == userId);
-        }
-
+        if (!donations.Any())
+            return decimal.Zero;
+       
         return await donations.MinAsync(d => d.Amount);
     }
     public async Task<decimal> GetBiggestDonationAmountAsync(string? userId)
     {
-        IQueryable<Donation> donations = _context.Donations.AsQueryable();
+        IQueryable<Donation> donations = GetDonationsQuery(userId);
 
-        if (!string.IsNullOrWhiteSpace(userId))
-        {
-            donations = donations.Where(d => d.UserId == userId);
-        }
+        if (!donations.Any())
+            return decimal.Zero;
 
         return await donations.MaxAsync(d => d.Amount);
     }
@@ -205,10 +202,27 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
         decimal growthRate = Math.Round((currentPeriodTotal - previousPeriodTotal) * 100 / previousPeriodTotal, 2);
         return growthRate;
     }
-    public Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId)
+    public async Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId)
     {
-        return _context.Donations
-            .Include(d => d.User)
+        return await _context.Donations.Include(d => d.User)
             .FirstOrDefaultAsync(d => d.CheckoutSessionId == checkoutSessionId);
+    }
+    public async Task<DateTime?> GetFirstDonationDateAsync(string? userId)
+    {
+        IQueryable<Donation> donations = GetDonationsQuery(userId);
+
+        if(!donations.Any())
+            return null;
+
+        return await donations.MinAsync(d => d.PaymentDate); 
+    }
+    public async Task<DateTime?> GetLastDonationDateAsync(string? userId)
+    {
+        IQueryable<Donation> donations = GetDonationsQuery(userId);
+
+        if (!donations.Any())
+            return null;
+
+        return await donations.MaxAsync(d => d.PaymentDate);
     }
 }

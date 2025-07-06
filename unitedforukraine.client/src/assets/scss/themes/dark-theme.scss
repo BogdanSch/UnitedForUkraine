@@ -32,6 +32,7 @@
   }
   .dropdown {
     &-menu {
+      box-shadow: $light-shadow;
       background-color: $dark-navy-transparent;
     }
     &-item {
@@ -39,6 +40,15 @@
       &:hover,
       &:focus {
         background-color: $primary-transparent;
+      }
+    }
+  }
+  .hero {
+    &__wrap {
+      &::before {
+        backdrop-filter: brightness(0%);
+        opacity: 0.4;
+        border-radius: 40px;
       }
     }
   }
@@ -115,5 +125,8 @@
   }
   .progress {
     background-color: $primary-transparent;
+  }
+  .blur-load {
+    filter: brightness(80%);
   }
 }

@@ -1,5 +1,4 @@
-﻿using ContosoUniversity;
-using UnitedForUkraine.Server.Helpers;
+﻿using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Interfaces;

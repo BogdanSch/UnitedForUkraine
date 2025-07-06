@@ -1,5 +1,4 @@
-﻿using ContosoUniversity;
-using UnitedForUkraine.Server.Helpers;
+﻿using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Interfaces;
@@ -13,6 +12,7 @@ public interface IDonationRepository
     Task<Donation?> GetDonationByIdAsync(int id);
     Task<int> GetTotalUserDonationsCountAsync(string? userId);
     Task<decimal> GetTotalUserDonationsAmountAsync(string? userId);
+    Task<decimal> GetMostFrequentUserDonationAmountAsync();
     Task<int> GetAverageUserDonationsAmountAsync(string? userId);
     Task<decimal> GetSmallestDonationAmountAsync(string? userId);
     Task<decimal> GetBiggestDonationAmountAsync(string? userId);
@@ -21,6 +21,8 @@ public interface IDonationRepository
     Task<(string donorName, int donationsCount)> GetMostFrequentDonorInformationAsync();
     Task<decimal> GetDonationsGrowthRateAsync(DateTime period);
     Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId);
+    Task<DateTime?> GetFirstDonationDateAsync(string? userId);
+    Task<DateTime?> GetLastDonationDateAsync(string? userId);
     Task AddAsync(Donation donation);
     Task<bool> DeleteAsync(int id);
     Task<bool> UpdateAsync(Donation donation);

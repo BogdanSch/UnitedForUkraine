@@ -1,23 +1,29 @@
 import axios from "axios";
 import { FC, useContext, useEffect, useState } from "react";
-import { API_URL } from "../../variables";
+import { API_URL, UNDEFINED_DATE } from "../../variables";
 import { UserStatistics } from "../../types";
 import AuthContext from "../../contexts/AuthContext";
-import { formatMoney } from "../../utils/helpers/currencyHelper";
 import formatNumber from "../../utils/formatNumber";
+import { formatMoney } from "../../utils/helpers/currencyHelper";
+import { convertToReadableDate } from "../../utils/dateConverter";
 import { Card } from "../../components";
+
+const DEFAULT_STATISTICS: UserStatistics = {
+  donationsCount: 0,
+  totalDonationsAmount: 0,
+  averageDonationsAmount: 0,
+  smallestDonationAmount: 0,
+  biggestDonationAmount: 0,
+  supportedCampaignsCount: 0,
+  firstDonationDate: "",
+  lastDonationDate: "",
+};
 
 const UserStatisticsList: FC = () => {
   const { user, authToken } = useContext(AuthContext);
 
-  const [statistics, setStatistics] = useState<UserStatistics>({
-    donationsCount: 0,
-    totalDonationsAmount: 0,
-    averageDonationsAmount: 0,
-    smallestDonationAmount: 0,
-    biggestDonationAmount: 0,
-    supportedCampaignsCount: 0,
-  });
+  const [statistics, setStatistics] =
+    useState<UserStatistics>(DEFAULT_STATISTICS);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,17 +38,10 @@ const UserStatisticsList: FC = () => {
       try {
         const { data } = await axios.request(options);
 
+        console.log("User statistics data: ");
         console.log(data);
-        setStatistics(
-          data || {
-            donationsCount: 0,
-            totalDonationsAmount: 0,
-            averageDonationsAmount: 0,
-            smallestDonationAmount: 0,
-            biggestDonationAmount: 0,
-            supportedCampaignsCount: 0,
-          }
-        );
+
+        setStatistics(data || DEFAULT_STATISTICS);
       } catch (error) {
         console.error(error);
       }
@@ -133,6 +132,36 @@ const UserStatisticsList: FC = () => {
             </div>
             <p className="statistics__item-amount">
               {formatNumber(statistics.supportedCampaignsCount)}+
+            </p>
+          </Card>
+        </li>
+        <li className="statistics__item">
+          <Card className="card-border p-3" isLite={false}>
+            <div className="statistics__item-group">
+              <i className="statistics__item-icon bi bi-envelope-check"></i>
+              <h4 className="sub-heading statistics__item-title">
+                First Donation Date
+              </h4>
+            </div>
+            <p className="statistics__item-amount">
+              {statistics.firstDonationDate == UNDEFINED_DATE
+                ? UNDEFINED_DATE
+                : convertToReadableDate(statistics.firstDonationDate)}
+            </p>
+          </Card>
+        </li>
+        <li className="statistics__item">
+          <Card className="card-border p-3" isLite={false}>
+            <div className="statistics__item-group">
+              <i className="statistics__item-icon bi bi-envelope-check"></i>
+              <h4 className="sub-heading statistics__item-title">
+                Last Donation Date
+              </h4>
+            </div>
+            <p className="statistics__item-amount">
+              {statistics.lastDonationDate == UNDEFINED_DATE
+                ? UNDEFINED_DATE
+                : convertToReadableDate(statistics.lastDonationDate)}
             </p>
           </Card>
         </li>

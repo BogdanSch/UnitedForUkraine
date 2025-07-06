@@ -8,3 +8,4 @@ export const donatinsTemplatesOtherCurrencies: number[] = [
 ];
 
 export const DARK_THEME_CLASS_NAME: string = "dark-theme";
+export const UNDEFINED_DATE: string = "N/A";

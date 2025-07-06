@@ -1,9 +1,8 @@
-﻿using ContosoUniversity;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UnitedForUkraine.Server.Dtos.Donation;
 using UnitedForUkraine.Server.DTOs.Donation;
 using UnitedForUkraine.Server.Helpers;
+using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
@@ -90,6 +89,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
             DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(null),
             TotalDonationsAmount = await _donationRepository.GetTotalUserDonationsAmountAsync(null),
             AverageDonationsAmount = await _donationRepository.GetAverageUserDonationsAmountAsync(null),
+            MostFrequentDonationAmount = await _donationRepository.GetMostFrequentUserDonationAmountAsync(),
             UniqueDonorsCount = await _donationRepository.GetUniqueDonorsCountAsync(),
             CityWithMostDonations = await _donationRepository.GetCityWithMostDonationsAsync(),
             MostFrequentDonorName = (await _donationRepository.GetMostFrequentDonorInformationAsync()).donorName,
@@ -104,14 +104,20 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
         if(userId == Guid.Empty)
             return BadRequest("User Id can't be empty");
 
+        string donorId = userId.ToString();
+        string firstDonationDate = (await _donationRepository.GetFirstDonationDateAsync(donorId))?.ToString(DateSettings.DEFAULT_DATE_FORMAT) ?? DateSettings.UNDEFINED_DATE;
+        string lastDonatioDate = (await _donationRepository.GetLastDonationDateAsync(donorId))?.ToString(DateSettings.DEFAULT_DATE_FORMAT) ?? DateSettings.UNDEFINED_DATE;
+
         UserDonationsStatisticsDto statisticsDto = new()
         {
-            DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(userId.ToString()),
-            TotalDonationsAmount = await _donationRepository.GetTotalUserDonationsAmountAsync(userId.ToString()),
-            AverageDonationsAmount = await _donationRepository.GetAverageUserDonationsAmountAsync(userId.ToString()),
-            SmallestDonationAmount = await _donationRepository.GetSmallestDonationAmountAsync(userId.ToString()),
-            BiggestDonationAmount = await _donationRepository.GetBiggestDonationAmountAsync(userId.ToString()),
-            SupportedCampaignsCount = await _campaignRepository.GetAllUserSupportedCampaignsCount(userId.ToString()),
+            DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(donorId),
+            TotalDonationsAmount = await _donationRepository.GetTotalUserDonationsAmountAsync(donorId),
+            AverageDonationsAmount = await _donationRepository.GetAverageUserDonationsAmountAsync(donorId),
+            SmallestDonationAmount = await _donationRepository.GetSmallestDonationAmountAsync(donorId),
+            BiggestDonationAmount = await _donationRepository.GetBiggestDonationAmountAsync(donorId),
+            SupportedCampaignsCount = await _campaignRepository.GetAllUserSupportedCampaignsCount(donorId),
+            FirstDonationDate = firstDonationDate,
+            LastDonationDate = lastDonatioDate
         };
 
         return Ok(statisticsDto);

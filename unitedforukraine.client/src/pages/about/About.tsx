@@ -420,7 +420,10 @@ const About: FC = () => {
                   </p>
                   <div className="impact__cta">
                     <a className="btn btn-lg btn-secondary" href="#donate">
-                      Get Involved
+                      <div className="d-flex flex-row align-items-center gap-2">
+                        <span>Get Involved</span>
+                        <i className="bi bi-bandaid"></i>
+                      </div>
                     </a>
                   </div>
                 </Card>

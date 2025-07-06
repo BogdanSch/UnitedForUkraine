@@ -10,6 +10,7 @@ import formatNumber from "../../utils/formatNumber";
 const DEFAULT_STATISTICS: Statistics = {
   donationsCount: 0,
   totalDonationsAmount: 0,
+  mostFrequentDonationAmount: 0,
   averageDonationsAmount: 0,
   uniqueDonorsCount: 0,
   cityWithMostDonations: "",
@@ -29,7 +30,6 @@ const FoundationStatisticsList: FC = () => {
 
       try {
         const { data } = await axios.request(options);
-
         console.log(data);
         setStatistics(data || DEFAULT_STATISTICS);
       } catch (error) {
@@ -93,6 +93,20 @@ const FoundationStatisticsList: FC = () => {
           </div>
           <p className="statistics__item-amount">
             {formatNumber(statistics.uniqueDonorsCount)}+
+          </p>
+        </Card>
+      </li>
+      <li className="statistics__item">
+        <Card className="card-border p-3" isLite={false}>
+          <div className="statistics__item-group">
+            <i className="statistics__item-icon bi bi-balloon-heart"></i>
+            <h4 className="sub-heading statistics__item-title">
+              Most Frequent Donation
+            </h4>
+          </div>
+          <p className="statistics__item-amount">
+            {formatMoney(statistics.mostFrequentDonationAmount)}{" "}
+            <span className="currency">UAH</span>
           </p>
         </Card>
       </li>
