@@ -156,8 +156,16 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
 
         if (!donations.Any())
             return decimal.Zero;
-       
-        return await donations.MinAsync(d => d.Amount);
+
+        Donation? smallestDonation = await donations.OrderBy(d => d.Amount).FirstOrDefaultAsync();
+
+        if (smallestDonation is null)
+            return decimal.Zero;
+
+        string from = Enum.GetName(smallestDonation.Currency)!;
+        string to = Enum.GetName(CurrencyType.UAH)!;
+
+        return await _currencyConverterService.ConvertCurrency(smallestDonation.Amount, from, to);
     }
     public async Task<decimal> GetBiggestDonationAmountAsync(string? userId)
     {
@@ -166,7 +174,15 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
         if (!donations.Any())
             return decimal.Zero;
 
-        return await donations.MaxAsync(d => d.Amount);
+        Donation? smallestDonation = await donations.OrderByDescending(d => d.Amount).FirstOrDefaultAsync();
+
+        if (smallestDonation is null)
+            return decimal.Zero;
+
+        string from = Enum.GetName(smallestDonation.Currency)!;
+        string to = Enum.GetName(CurrencyType.UAH)!;
+
+        return await _currencyConverterService.ConvertCurrency(smallestDonation.Amount, from, to);
     }
     public async Task<int> GetUniqueDonorsCountAsync()
     {

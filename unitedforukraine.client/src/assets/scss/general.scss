@@ -422,3 +422,13 @@ section {
   box-shadow: $light-shadow !important;
   border: 1px solid $primary !important;
 }
+
+.alert {
+  font-weight: $fw-bold;
+  &-info {
+    color: $green;
+    background-color: $bg-light-gray;
+    border-radius: 1rem;
+    box-shadow: $dark-shadow;
+  }
+}

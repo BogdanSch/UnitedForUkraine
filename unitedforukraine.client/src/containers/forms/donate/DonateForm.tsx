@@ -42,8 +42,6 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
     }
   );
 
-  debugger;
-
   const [requestError, setRequestError] = useState<string>("");
   const { handleChange, handleSelectChange } = useCustomForm(setFormData);
 
@@ -149,7 +147,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
       onReset={handleReset}
     >
       <div className="text-center mt-3 mb-3">
-        <h2 className="donate__title">
+        <h2 className="donate__title sub-heading">
           Help Ukraine means <strong>Save a life!</strong>
         </h2>
         <p className="donate__subtitle">

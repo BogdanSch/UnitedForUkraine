@@ -11,4 +11,16 @@
       text-decoration: underline;
     }
   }
+  &__image {
+    &-container {
+      margin: 0 auto;
+      max-width: 60%;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .dashboard__image-container {
+    max-width: 100%;
+  }
 }

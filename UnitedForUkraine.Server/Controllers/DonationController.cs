@@ -84,6 +84,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     [HttpGet("statistics")]
     public async Task<IActionResult> GetFoundationStatistics()
     {
+        DateTime currentPeriod = DateTime.UtcNow.AddMonths(-1);
         FoundationDonationsStatisticsDto statisticsDto = new()
         {
             DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(null),
@@ -93,7 +94,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
             UniqueDonorsCount = await _donationRepository.GetUniqueDonorsCountAsync(),
             CityWithMostDonations = await _donationRepository.GetCityWithMostDonationsAsync(),
             MostFrequentDonorName = (await _donationRepository.GetMostFrequentDonorInformationAsync()).donorName,
-            DonationsGrowthRate = await _donationRepository.GetDonationsGrowthRateAsync(DateTime.UtcNow.AddMonths(-1)),
+            DonationsGrowthRate = await _donationRepository.GetDonationsGrowthRateAsync(currentPeriod),
         };
         return Ok(statisticsDto);
     }

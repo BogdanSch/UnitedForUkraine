@@ -137,7 +137,7 @@ const UpdateUserProfileForm: FC = () => {
       </div>
       <div className="form-buttons mt-2">
         <button type="submit" className="btn btn-secondary">
-          Login
+          Submit Changes
         </button>
         <button type="reset" className="btn btn-outline-danger">
           Reset

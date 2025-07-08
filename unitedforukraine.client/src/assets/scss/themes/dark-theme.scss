@@ -32,8 +32,8 @@
   }
   .dropdown {
     &-menu {
-      box-shadow: $light-shadow;
-      background-color: $dark-navy-transparent;
+      // box-shadow: $light-shadow;
+      background-color: $light-navy;
     }
     &-item {
       color: $white;
@@ -41,6 +41,9 @@
       &:focus {
         background-color: $primary-transparent;
       }
+    }
+    &-divider {
+      background-color: $text-light-gray;
     }
   }
   .hero {
@@ -71,18 +74,25 @@
   .btn {
     color: $bg-light-gray;
 
-    &-outline-dark {
-      border: 2px solid $bg-light-gray;
-    }
-    &-outline-secondary {
-      border-width: 2px;
+    &-outline {
+      &-dark {
+        border: 2px solid $bg-light-gray;
+      }
+      &-secondary {
+        border-width: 2px;
 
-      &:hover {
-        color: $white;
+        &:hover {
+          color: $white;
+        }
+      }
+      &-primary {
+        border-width: 2px;
       }
     }
-    &-outline-primary {
-      border-width: 2px;
+    &-light {
+      // color: $dark-navy;
+      background-color: $light-navy !important;
+      border: 2px solid $primary;
     }
   }
   .card {
@@ -128,5 +138,17 @@
   }
   .blur-load {
     filter: brightness(80%);
+  }
+  .alert {
+    &-info {
+      background-color: $light-navy;
+      border-color: $primary;
+    }
+    &-danger {
+      color: $white;
+      background-color: $accent-dark;
+      border-color: $primary-transparent;
+      border-width: 2px;
+    }
   }
 }
