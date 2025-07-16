@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using UnitedForUkraine.Server.Helpers.Settings;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -18,6 +22,7 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly SignInManager<AppUser> _signInManager = signInManager;
         private readonly IAuthTokenService _authTokenService = authTokenService;
         private readonly IEmailService _emailService = emailService;
+        //private readonly IHttpContextAccessor _context = httpContext;
         private readonly ILogger<AuthController> _logger = logger;
 
         [HttpPost("login")]
@@ -43,6 +48,82 @@ namespace UnitedForUkraine.Server.Controllers
 
             return Ok(token);
         }
+        private async Task<AppUser?> CreateNewUser(string email, string userName, string phoneNumber, string? password)
+        {
+            AppUser? user = await _userManager.FindByEmailAsync(email);
+
+            if (user is not null) return user;
+
+            AppUser newUser = new()
+            {
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phoneNumber
+            };
+
+            IdentityResult result;
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                result = await _userManager.CreateAsync(newUser);
+            }
+            else
+            {
+                result = await _userManager.CreateAsync(newUser, password);
+            }
+
+            if (!result.Succeeded)
+            {
+                string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
+                _logger.LogError($"An error has occurred during registration: {errorMessage}");
+                return null;
+            }
+
+            await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+            return newUser;
+        }
+        [HttpGet("login/google")]
+        public IResult GoogleLogin([FromQuery] string returnUrl)
+        {
+            string? origin = HttpContext.Request.Host.Value;
+            if (string.IsNullOrWhiteSpace(origin))
+                return Results.BadRequest(new { message = "Invalid request origin" });
+
+            string uri = $"{HttpContext.Request.Scheme}://{origin}/api/Auth/login/google/callback?returnUrl={returnUrl}";
+            AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", uri);
+            return Results.Challenge(properties, ["Google"]);
+        }
+        [HttpGet("login/google/callback")]
+        public async Task<IActionResult> GoogleLoginCallback([FromQuery] string returnUrl)
+        {
+            AuthenticateResult authResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            if (!authResult.Succeeded)
+                return Unauthorized(new { message = "Google authentication failed" });
+
+            ClaimsPrincipal? userPrincipal = authResult.Principal;
+            if (userPrincipal is null)
+                return Unauthorized(new { message = "Google authentication failed as claims are empty" });
+
+            string? email = userPrincipal.FindFirstValue(ClaimTypes.Email);
+            if(email is null)
+                return Unauthorized(new { message = "Google authentication failed as email is empty" });
+
+            AppUser? user = await CreateNewUser(
+                email,
+                userPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
+                userPrincipal.FindFirstValue(ClaimTypes.MobilePhone) ?? string.Empty,
+                null);
+
+            if(user is null)
+                return Unauthorized(new { message = "Google authentication failed as we weren't able to create a new user" });
+
+            await _signInManager.SignInAsync(user, isPersistent: true);
+
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+            string token = _authTokenService.CreateToken(user, roles, true);
+
+            string redirectUrl = QueryHelpers.AddQueryString(returnUrl, "token", token);
+            return Redirect(redirectUrl);
+        }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerDto)
         {
@@ -52,29 +133,15 @@ namespace UnitedForUkraine.Server.Controllers
                 return BadRequest(new { message = "Passwords don't match" });
 
             AppUser? user = await _userManager.FindByEmailAsync(registerDto.Email);
-
             if (user is not null)
-                return BadRequest(new { message = "Email address already in use. Please, try again" });
+                return BadRequest(new { message = "Email address's already in use. Please, try again" });
 
-            AppUser newUser = new()
-            {
-                UserName = registerDto.UserName,
-                Email = registerDto.Email,
-                PhoneNumber = registerDto.PhoneNumber
-            };
-
-            IdentityResult result = await _userManager.CreateAsync(newUser, registerDto.Password);
-
-            if(!result.Succeeded)
-            {
-                string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
-                return BadRequest(new { message = $"An error has occurred during registration: {errorMessage}" });
-            }
-
-            await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+            AppUser? newUser = await CreateNewUser(registerDto.Email, registerDto.UserName, registerDto.PhoneNumber, registerDto.Password);
+            if(newUser is null)
+                return BadRequest(new { message = "An error has occurred during registration. Please, try again later" });
 
             string emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-            string encodedToken = WebEncoders.Base64UrlEncode(System.Text.Encoding.UTF8.GetBytes(emailConfirmationToken));
+            string encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken));
 
             Dictionary<string, string?> parameters = new()
             {
@@ -83,10 +150,10 @@ namespace UnitedForUkraine.Server.Controllers
             };
             string callback = QueryHelpers.AddQueryString(registerDto.ConfirmEmailClientUri ?? string.Empty, parameters);
 
-            EmailMetadata emailMetadata = new(newUser.Email, "Confirm your email address");
+            EmailMetadata emailMetadata = new(newUser.Email!, "Confirm your email address");
             await _emailService.SendEmailConfirmationAsync(emailMetadata, callback);
 
-            return Ok(new { message = "Registration successful! We've sent you a verification token via email! Now, please, confirm your email!" });
+            return Ok(new { message = "Successful registration! We've sent you a verification token via email! Now, please, confirm your email" });
         }
         [HttpGet("emailConfirmation")]
         public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
@@ -95,9 +162,8 @@ namespace UnitedForUkraine.Server.Controllers
             if (user is null)
                 return BadRequest(new { message = "Invalid email address" });
 
-            string decodedToken = System.Text.Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+            string decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
             IdentityResult confirmationResult = await _userManager.ConfirmEmailAsync(user, decodedToken);
-
             if (!confirmationResult.Succeeded)
                 return BadRequest(new { message = $"Invalid email confirmation request" });
 
@@ -126,7 +192,6 @@ namespace UnitedForUkraine.Server.Controllers
                 appUser.City = updateProfileDto.City;
 
                 IdentityResult result = await _userManager.UpdateAsync(appUser);
-
                 if (!result.Succeeded)
                 {
                     string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));

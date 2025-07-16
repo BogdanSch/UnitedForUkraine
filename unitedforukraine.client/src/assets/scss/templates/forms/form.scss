@@ -16,14 +16,24 @@
 
   &-buttons {
     @include flex-row();
-    column-gap: 8px;
+    column-gap: 0.5rem;
+
+    &--full {
+      .form-buttons__item {
+        width: 100%;
+        @include flex-row;
+        justify-content: center;
+        align-items: center;
+        column-gap: 0.25rem;
+      }
+    }
   }
 }
 
 @media screen and (max-width: 768px) {
   .form {
     &-buttons {
-      row-gap: 4px;
+      row-gap: 0.25rem;
     }
   }
 }

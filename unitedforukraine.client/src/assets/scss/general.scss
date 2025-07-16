@@ -432,3 +432,29 @@ section {
     box-shadow: $dark-shadow;
   }
 }
+
+.separator {
+  @include flex-row;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.75rem;
+
+  &__text {
+    font-weight: $fw-super-bold;
+    text-transform: uppercase;
+    color: $text-light-gray;
+  }
+  &__line {
+    flex: 1;
+    height: 4px;
+    background-color: $dark-navy-transparent;
+  }
+}
+@media screen and (max-width: 48rem) {
+  .separator {
+    column-gap: 0.5rem;
+    &__line {
+      height: 2px;
+    }
+  }
+}

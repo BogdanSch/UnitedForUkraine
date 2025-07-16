@@ -5,7 +5,12 @@ import axios from "axios";
 
 import AuthContext from "../../../contexts/AuthContext";
 import { useAuthForm } from "../../../hooks/";
-import { ErrorAlert, Input, PasswordInput } from "../../../components";
+import {
+  ErrorAlert,
+  ExternalAuthServicesButtons,
+  Input,
+  PasswordInput,
+} from "../../../components";
 
 const SignInForm: FC = () => {
   const navigate = useNavigate();
@@ -142,11 +147,17 @@ const SignInForm: FC = () => {
           Reset
         </button>
       </div>
-      <div className="mt-4 text-center">
+      <div className="mt-2">
         <p>
           Don't have an account? <Link to="/auth/register">Sign up here</Link>.
         </p>
       </div>
+      <div className="separator mt-4 mb-4">
+        <div className="separator__line"></div>
+        <div className="separator__text">or</div>
+        <div className="separator__line"></div>
+      </div>
+      <ExternalAuthServicesButtons />
     </form>
   );
 };
