@@ -30,6 +30,12 @@
       }
     }
   }
+  .navbar {
+    &-toggler {
+      color: $bg-light-gray !important;
+      border-color: $primary-transparent !important;
+    }
+  }
   .dropdown {
     &-menu {
       // box-shadow: $light-shadow;

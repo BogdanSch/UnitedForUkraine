@@ -14,4 +14,5 @@ export { default as Donate } from "./donate/Donate";
 export { default as Confirmation } from "./donate/Confirmation";
 export { default as Failed } from "./donate/Failed";
 export { default as Dashboard } from "./dashboard/Dashboard";
+export { default as Authentication } from "./auth/Authentication";
 export { default as UpdateUserProfile } from "./dashboard/UpdateUserProfile";

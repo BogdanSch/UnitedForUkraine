@@ -1,9 +1,8 @@
-import { FC, FormEvent, useContext, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../../variables";
 import axios from "axios";
 
-import AuthContext from "../../../contexts/AuthContext";
 import { useAuthForm } from "../../../hooks/";
 import {
   ErrorAlert,
@@ -15,7 +14,6 @@ import {
 const SignInForm: FC = () => {
   const navigate = useNavigate();
   const [requestError, setRequestError] = useState("");
-  const { authenticateUser } = useContext(AuthContext);
 
   const {
     formData,
@@ -49,8 +47,7 @@ const SignInForm: FC = () => {
         );
 
         const authToken: string = response.data;
-        await authenticateUser(authToken);
-        navigate("/dashboard");
+        navigate(`/auth/${authToken}`);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           setRequestError(

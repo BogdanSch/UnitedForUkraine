@@ -9,7 +9,6 @@ using UnitedForUkraine.Server.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
-using UnitedForUkraine.Server.Helpers.Settings;
 using Microsoft.AspNetCore.Authentication.Google;
 
 namespace UnitedForUkraine.Server.Controllers
@@ -22,7 +21,6 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly SignInManager<AppUser> _signInManager = signInManager;
         private readonly IAuthTokenService _authTokenService = authTokenService;
         private readonly IEmailService _emailService = emailService;
-        //private readonly IHttpContextAccessor _context = httpContext;
         private readonly ILogger<AuthController> _logger = logger;
 
         [HttpPost("login")]
@@ -51,7 +49,6 @@ namespace UnitedForUkraine.Server.Controllers
         private async Task<AppUser?> CreateNewUser(string email, string userName, string phoneNumber, string? password)
         {
             AppUser? user = await _userManager.FindByEmailAsync(email);
-
             if (user is not null) return user;
 
             AppUser newUser = new()
@@ -90,6 +87,7 @@ namespace UnitedForUkraine.Server.Controllers
 
             string uri = $"{HttpContext.Request.Scheme}://{origin}/api/Auth/login/google/callback?returnUrl={returnUrl}";
             AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", uri);
+            _logger.LogInformation(properties.RedirectUri);
             return Results.Challenge(properties, ["Google"]);
         }
         [HttpGet("login/google/callback")]
@@ -121,7 +119,7 @@ namespace UnitedForUkraine.Server.Controllers
             IList<string> roles = await _userManager.GetRolesAsync(user);
             string token = _authTokenService.CreateToken(user, roles, true);
 
-            string redirectUrl = QueryHelpers.AddQueryString(returnUrl, "token", token);
+            string redirectUrl = $"{returnUrl}/{token}";
             return Redirect(redirectUrl);
         }
         [HttpPost("register")]

@@ -32,6 +32,7 @@ namespace UnitedForUkraine.Server.Extensions
                 options.ClientSecret = googleClientSecret;
                 options.ClientId = googleClientId;
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //options.CallbackPath = "/api/Auth/login/google/callback";
             })
             .AddJwtBearer(options =>
             {

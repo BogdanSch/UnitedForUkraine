@@ -2,8 +2,8 @@ import { FC, MouseEvent } from "react";
 import { API_URL } from "../../variables";
 
 const ExternalAuthServicesButtons: FC = () => {
-  const returnUrl: string = `${window.location.origin}/dashboard`;
-  
+  const returnUrl: string = `${window.location.origin}/auth`;
+
   const handleGoogleSignIn = (event: MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault();
     window.location.href = `${API_URL}/Auth/login/google?returnUrl=${returnUrl}`;
