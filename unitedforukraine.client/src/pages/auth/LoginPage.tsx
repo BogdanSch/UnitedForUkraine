@@ -1,7 +1,7 @@
 import { FC } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { SignInForm } from "../../containers/";
-import { Image } from "../../components";
+import { Card, Image } from "../../components";
 
 import loginImage from "/assets/img/loginImage.png";
 
@@ -12,22 +12,29 @@ const LoginPage: FC = () => {
   return (
     <section className="auth login">
       <div className="container">
-        <div className="login__wrap auth__wrap card p-3">
-          <Image
-            imageClassName="login-image"
-            src={loginImage}
-            alt={`Login page, featuring a cartoon character holding a tablet and sitting on a coach.`}
-          />
-          <div className="auth__hero-content">
-            <div className="text-content">
-              <h2 className="auth__title">Welcome back, mate!</h2>
-              <p className="auth__description">
-                {message ||
-                  "We have been missing you so much! Please fill in your credentials to log in."}
-              </p>
+        <div className="login__wrap auth__wrap">
+          <div className="auth__hero card p-3">
+            <Image
+              imageClassName="login-image"
+              containerClassName="login-image__container"
+              src={loginImage}
+              alt={`Login page, featuring a cartoon character holding a tablet and sitting on a coach.`}
+            />
+            <div className="auth__hero-content">
+              <div className="text-content">
+                <h2 className="auth__title">Welcome back, mate!</h2>
+                <p className="auth__description">
+                  {message ||
+                    "We have been missing you so much! Please fill in your credentials to log in."}
+                </p>
+              </div>
+              <SignInForm />
             </div>
-            <SignInForm />
           </div>
+          <Card className="auth__interlink" isLite={false}>
+            Don't have an account?{" "}
+            <Link to="/auth/register">Sign up here.</Link>
+          </Card>
         </div>
       </div>
     </section>

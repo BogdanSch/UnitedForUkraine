@@ -1,15 +1,13 @@
 .register {
   &-image {
     border-radius: 16px;
-
     &__container {
       max-width: 60%;
     }
   }
   &__form {
-    max-width: 84%;
+    max-width: 80%;
     margin: auto;
-
     &-buttons {
       @include flex-row();
       column-gap: 8px;
@@ -19,13 +17,15 @@
 
 @media screen and (max-width: 764px) {
   .register {
-    &__wrap {
-      flex-direction: column-reverse !important;
+    &.auth {
+      &__hero {
+        flex-direction: column-reverse !important;
+      }
     }
     &-image {
       border-radius: 12px;
       &__container {
-        max-width: 50%;
+        max-width: 100%;
       }
     }
     &__form {

@@ -1,5 +1,5 @@
 import { FC, FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../variables";
 import axios from "axios";
 
@@ -8,6 +8,7 @@ import {
   ErrorAlert,
   ExternalAuthServicesButtons,
   Input,
+  OrSeparator,
   PasswordInput,
 } from "../../../components";
 
@@ -144,16 +145,7 @@ const SignInForm: FC = () => {
           Reset
         </button>
       </div>
-      <div className="mt-2">
-        <p>
-          Don't have an account? <Link to="/auth/register">Sign up here</Link>.
-        </p>
-      </div>
-      <div className="separator mt-4 mb-4">
-        <div className="separator__line"></div>
-        <div className="separator__text">or</div>
-        <div className="separator__line"></div>
-      </div>
+      <OrSeparator />
       <ExternalAuthServicesButtons />
     </form>
   );

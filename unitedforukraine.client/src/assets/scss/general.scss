@@ -206,8 +206,7 @@ section {
     margin-bottom: 0.75rem;
   }
   &-body {
-    padding: 0;
-    padding-top: 8px;
+    padding: 8px 0;
   }
   .icon-wrapper {
     width: 60px;
@@ -250,6 +249,9 @@ section {
         border-radius: 4px;
         font-size: 8px;
       }
+    }
+    &-body {
+      padding: 4px 0;
     }
   }
 }

@@ -15,24 +15,24 @@ namespace UnitedForUkraine.Server.Controllers
         IDonationRepository donationRepository,
         ICampaignRepository campaignRepository,
         ICurrencyConverterService currencyConverterService,
-        ILogger<StripeWebhooksController> logger,
-        IOptions<StripeSettings> stripeOptions) : ControllerBase
+        IOptions<StripeSettings> stripeOptions,
+        ILogger<StripeWebhooksController> logger) : ControllerBase
     {
         private readonly IDonationRepository _donationRepository = donationRepository;
         private readonly ICampaignRepository _campaignRepository = campaignRepository;
         private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
-        private readonly ILogger<StripeWebhooksController> _logger = logger;
         private readonly StripeSettings _stripeSettings = stripeOptions.Value;
+        private readonly ILogger<StripeWebhooksController> _logger = logger;
 
         [HttpPost("webhook")]
-        public async Task<IActionResult> Handle()
+        public async Task<IActionResult> HandleTransaction()
         {
-            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            string json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
             try
             {
                 string secret = _stripeSettings.WebhookSecret;
-                var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], secret);
+                Event stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], secret);
 
                 if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted)
                 {
@@ -44,11 +44,11 @@ namespace UnitedForUkraine.Server.Controllers
 
                     Donation? donation = await _donationRepository.GetDonationByCheckoutSessionId(session.Id);
 
-                    if (donation != null)
+                    if (donation is not null)
                     {
                         donation.Status = DonationStatus.Completed;
-                        var campaign = await _campaignRepository.GetCampaignByIdAsync(donation.CampaignId);
-                        if (campaign != null)
+                        Campaign? campaign = await _campaignRepository.GetCampaignByIdAsync(donation.CampaignId);
+                        if (campaign is not null)
                         {
                             decimal convertedAmount = await
                                 _currencyConverterService.ConvertCurrency(
@@ -68,17 +68,18 @@ namespace UnitedForUkraine.Server.Controllers
                 {
                     if (stripeEvent.Data.Object is not Session session)
                     {
-                        _logger.LogWarning("Stripe event '{EventType}' received, but session was null or invalid.", stripeEvent.Type);
-                        return BadRequest();
+                        string errorMessage = "Stripe event '{EventType}' received, but session was null or invalid";
+                        _logger.LogWarning(errorMessage, stripeEvent.Type);
+                        return BadRequest(new { message = errorMessage });
                     }
 
                     Donation? donation = await _donationRepository.GetDonationByCheckoutSessionId(session.Id);
 
-                    if (donation != null && donation.Status == DonationStatus.Pending)
+                    if (donation is not null && donation.Status == DonationStatus.Pending)
                     {
                         await _donationRepository.DeleteAsync(donation.Id);
                     }
-                    return Ok(new { message = "An error has occured during check-out!" });
+                    return BadRequest(new { message = "An error has occured during check-out" });
                 }
 
                 return Ok(new { message = "Event processed successfully" });

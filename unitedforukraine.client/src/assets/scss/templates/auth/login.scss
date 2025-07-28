@@ -1,7 +1,6 @@
 .login {
   &-image {
     border-radius: 16px;
-
     &__container {
       max-width: 50%;
     }
@@ -21,7 +20,7 @@
     &-image {
       border-radius: 12px;
       &__container {
-        max-width: 40%;
+        max-width: 100%;
       }
     }
     &__form {

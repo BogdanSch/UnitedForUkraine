@@ -17,3 +17,4 @@ export { default as Gallery } from "./gallery/Gallery";
 export { default as CampaignItem } from "./campaigns/CampaignItem";
 export { default as CampaignsPaginator } from "./campaigns/CampaignsPaginator";
 export { default as ExternalAuthServicesButtons } from "./buttons/ExternalAuthServicesButtons";
+export { default as OrSeparator } from "./formElements/OrSeparator";

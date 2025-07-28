@@ -1,6 +1,6 @@
 import axios from "axios";
 import { FC, useState, FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../variables";
 
 import {
@@ -193,11 +193,6 @@ const RegisterForm: FC = () => {
         <button type="reset" className="btn btn-outline-danger">
           Reset
         </button>
-      </div>
-      <div className="mt-4 text-center">
-        <p>
-          Already have an account? <Link to="/auth/login">Sign in here</Link>.
-        </p>
       </div>
     </form>
   );

@@ -15,12 +15,13 @@ namespace UnitedForUkraine.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService, IEmailService emailService, ILogger<AuthController> logger) : ControllerBase
+    public class AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService, IEmailService emailService, ILogger<AuthController> logger, IUserService userService) : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly SignInManager<AppUser> _signInManager = signInManager;
         private readonly IAuthTokenService _authTokenService = authTokenService;
         private readonly IEmailService _emailService = emailService;
+        private readonly IUserService _userService = userService;
         private readonly ILogger<AuthController> _logger = logger;
 
         [HttpPost("login")]
@@ -46,40 +47,8 @@ namespace UnitedForUkraine.Server.Controllers
 
             return Ok(token);
         }
-        private async Task<AppUser?> CreateNewUser(string email, string userName, string phoneNumber, string? password)
-        {
-            AppUser? user = await _userManager.FindByEmailAsync(email);
-            if (user is not null) return user;
-
-            AppUser newUser = new()
-            {
-                UserName = userName,
-                Email = email,
-                PhoneNumber = phoneNumber
-            };
-
-            IdentityResult result;
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                result = await _userManager.CreateAsync(newUser);
-            }
-            else
-            {
-                result = await _userManager.CreateAsync(newUser, password);
-            }
-
-            if (!result.Succeeded)
-            {
-                string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
-                _logger.LogError($"An error has occurred during registration: {errorMessage}");
-                return null;
-            }
-
-            await _userManager.AddToRoleAsync(newUser, UserRoles.User);
-            return newUser;
-        }
         [HttpGet("login/google")]
-        public IResult GoogleLogin([FromQuery] string returnUrl)
+        public IResult HandleGoogleLogin([FromQuery] string returnUrl)
         {
             string? origin = HttpContext.Request.Host.Value;
             if (string.IsNullOrWhiteSpace(origin))
@@ -87,6 +56,18 @@ namespace UnitedForUkraine.Server.Controllers
 
             string uri = $"{HttpContext.Request.Scheme}://{origin}/api/Auth/login/google/callback?returnUrl={returnUrl}";
             AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", uri);
+            _logger.LogInformation(properties.RedirectUri);
+            return Results.Challenge(properties, ["Google"]);
+        }
+        [HttpGet("login/microsoft")]
+        public IResult GoogleMicrosoft([FromQuery] string returnUrl)
+        {
+            string? origin = HttpContext.Request.Host.Value;
+            if (string.IsNullOrWhiteSpace(origin))
+                return Results.BadRequest(new { message = "Invalid request origin" });
+
+            string uri = $"{HttpContext.Request.Scheme}://{origin}/api/Auth/login/google/callback?returnUrl={returnUrl}";
+            AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties("Microsoft", uri);
             _logger.LogInformation(properties.RedirectUri);
             return Results.Challenge(properties, ["Google"]);
         }
@@ -99,21 +80,22 @@ namespace UnitedForUkraine.Server.Controllers
 
             ClaimsPrincipal? userPrincipal = authResult.Principal;
             if (userPrincipal is null)
-                return Unauthorized(new { message = "Google authentication failed as claims are empty" });
+                return Unauthorized(new { message = "Google authentication failed, because claims are empty" });
 
             string? email = userPrincipal.FindFirstValue(ClaimTypes.Email);
             if(email is null)
-                return Unauthorized(new { message = "Google authentication failed as email is empty" });
+                return Unauthorized(new { message = "Google authentication failed because email is empty" });
 
-            AppUser? user = await CreateNewUser(
+            AppUser? user = await _userService.GetOrCreateUserAsync(
                 email,
                 userPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
                 userPrincipal.FindFirstValue(ClaimTypes.MobilePhone) ?? string.Empty,
                 null);
 
             if(user is null)
-                return Unauthorized(new { message = "Google authentication failed as we weren't able to create a new user" });
+                return Unauthorized(new { message = "Google authentication failed, because we weren't able to create a new user" });
 
+            user.EmailConfirmed = true;
             await _signInManager.SignInAsync(user, isPersistent: true);
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
@@ -134,7 +116,7 @@ namespace UnitedForUkraine.Server.Controllers
             if (user is not null)
                 return BadRequest(new { message = "Email address's already in use. Please, try again" });
 
-            AppUser? newUser = await CreateNewUser(registerDto.Email, registerDto.UserName, registerDto.PhoneNumber, registerDto.Password);
+            AppUser? newUser = await _userService.GetOrCreateUserAsync(registerDto.Email, registerDto.UserName, registerDto.PhoneNumber, registerDto.Password);
             if(newUser is null)
                 return BadRequest(new { message = "An error has occurred during registration. Please, try again later" });
 
@@ -148,7 +130,7 @@ namespace UnitedForUkraine.Server.Controllers
             };
             string callback = QueryHelpers.AddQueryString(registerDto.ConfirmEmailClientUri ?? string.Empty, parameters);
 
-            EmailMetadata emailMetadata = new(newUser.Email!, "Confirm your email address");
+            EmailMetadata emailMetadata = new(newUser.Email, "Confirm your email address");
             await _emailService.SendEmailConfirmationAsync(emailMetadata, callback);
 
             return Ok(new { message = "Successful registration! We've sent you a verification token via email! Now, please, confirm your email" });
