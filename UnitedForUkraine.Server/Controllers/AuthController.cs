@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using UnitedForUkraine.Server.Mappers;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -23,18 +25,23 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly IEmailService _emailService = emailService;
         private readonly IUserService _userService = userService;
         private readonly ILogger<AuthController> _logger = logger;
+        private readonly HashSet<string> _allowedAuthSchemes = new()
+        {
+            GoogleDefaults.AuthenticationScheme,
+            FacebookDefaults.AuthenticationScheme
+        };
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             AppUser? user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user is null)
                 return BadRequest(new { message = "Invalid email" });
 
-            if(!await _userManager.IsEmailConfirmedAsync(user))
+            if (!await _userManager.IsEmailConfirmedAsync(user))
                 return Unauthorized(new { message = "Email is not confirmed. Please, check your inbox" });
 
             var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, loginDto.RememberMe, false);
@@ -47,44 +54,37 @@ namespace UnitedForUkraine.Server.Controllers
 
             return Ok(token);
         }
-        [HttpGet("login/google")]
-        public IResult HandleGoogleLogin([FromQuery] string returnUrl)
+        [HttpGet("login/{provider:alpha}")]
+        public IResult HandleExternalLogin([FromRoute] string provider, [FromQuery] string returnUrl)
         {
             string? origin = HttpContext.Request.Host.Value;
             if (string.IsNullOrWhiteSpace(origin))
                 return Results.BadRequest(new { message = "Invalid request origin" });
 
-            string uri = $"{HttpContext.Request.Scheme}://{origin}/api/Auth/login/google/callback?returnUrl={returnUrl}";
-            AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", uri);
-            _logger.LogInformation(properties.RedirectUri);
-            return Results.Challenge(properties, ["Google"]);
-        }
-        [HttpGet("login/microsoft")]
-        public IResult GoogleMicrosoft([FromQuery] string returnUrl)
-        {
-            string? origin = HttpContext.Request.Host.Value;
-            if (string.IsNullOrWhiteSpace(origin))
-                return Results.BadRequest(new { message = "Invalid request origin" });
+            string authScheme = provider.FirstCharacterToUpper();
+            if (!_allowedAuthSchemes.Contains(authScheme))
+                return Results.BadRequest(new { message = $"Unsupported authentication provider: {provider}" });
 
-            string uri = $"{HttpContext.Request.Scheme}://{origin}/api/Auth/login/google/callback?returnUrl={returnUrl}";
-            AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties("Microsoft", uri);
+            string uri = $"{HttpContext.Request.Scheme}://{origin}/api/Auth/login/{provider}/callback?returnUrl={returnUrl}";
+            AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties(authScheme, uri);
             _logger.LogInformation(properties.RedirectUri);
-            return Results.Challenge(properties, ["Google"]);
+            return Results.Challenge(properties, [authScheme]);
         }
-        [HttpGet("login/google/callback")]
-        public async Task<IActionResult> GoogleLoginCallback([FromQuery] string returnUrl)
+        [HttpGet("login/{provider:alpha}/callback")]
+        public async Task<IActionResult> HandleExternalLoginCallback([FromRoute] string provider, [FromQuery] string returnUrl)
         {
-            AuthenticateResult authResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            string authScheme = provider.FirstCharacterToUpper();
+            AuthenticateResult authResult = await HttpContext.AuthenticateAsync(authScheme);
             if (!authResult.Succeeded)
-                return Unauthorized(new { message = "Google authentication failed" });
+                return Unauthorized(new { message = $"{authScheme} authentication failed. Try again later" });
 
             ClaimsPrincipal? userPrincipal = authResult.Principal;
             if (userPrincipal is null)
-                return Unauthorized(new { message = "Google authentication failed, because claims are empty" });
+                return Unauthorized(new { message = $"{authScheme} authentication failed, because user claims are empty" });
 
             string? email = userPrincipal.FindFirstValue(ClaimTypes.Email);
-            if(email is null)
-                return Unauthorized(new { message = "Google authentication failed because email is empty" });
+            if (email is null)
+                return Unauthorized(new { message = $"{authScheme} authentication failed, because email is empty" });
 
             AppUser? user = await _userService.GetOrCreateUserAsync(
                 email,
@@ -92,12 +92,11 @@ namespace UnitedForUkraine.Server.Controllers
                 userPrincipal.FindFirstValue(ClaimTypes.MobilePhone) ?? string.Empty,
                 null);
 
-            if(user is null)
-                return Unauthorized(new { message = "Google authentication failed, because we weren't able to create a new user" });
-
+            if (user is null)
+                return Unauthorized(new { message = $"{authScheme} authentication failed, because we weren't able to create a new user" });
             user.EmailConfirmed = true;
-            await _signInManager.SignInAsync(user, isPersistent: true);
 
+            await _signInManager.SignInAsync(user, isPersistent: true);
             IList<string> roles = await _userManager.GetRolesAsync(user);
             string token = _authTokenService.CreateToken(user, roles, true);
 
@@ -117,7 +116,7 @@ namespace UnitedForUkraine.Server.Controllers
                 return BadRequest(new { message = "Email address's already in use. Please, try again" });
 
             AppUser? newUser = await _userService.GetOrCreateUserAsync(registerDto.Email, registerDto.UserName, registerDto.PhoneNumber, registerDto.Password);
-            if(newUser is null)
+            if (newUser is null)
                 return BadRequest(new { message = "An error has occurred during registration. Please, try again later" });
 
             string emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
@@ -130,8 +129,11 @@ namespace UnitedForUkraine.Server.Controllers
             };
             string callback = QueryHelpers.AddQueryString(registerDto.ConfirmEmailClientUri ?? string.Empty, parameters);
 
-            EmailMetadata emailMetadata = new(newUser.Email, "Confirm your email address");
-            await _emailService.SendEmailConfirmationAsync(emailMetadata, callback);
+            if (!string.IsNullOrWhiteSpace(newUser.Email))
+            {
+                EmailMetadata emailMetadata = new(newUser.Email, "Confirm your email address");
+                await _emailService.SendEmailConfirmationAsync(emailMetadata, callback);
+            }
 
             return Ok(new { message = "Successful registration! We've sent you a verification token via email! Now, please, confirm your email" });
         }
@@ -153,7 +155,7 @@ namespace UnitedForUkraine.Server.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateUserProfileInfo([FromBody] UpdateUserProfileDto updateProfileDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

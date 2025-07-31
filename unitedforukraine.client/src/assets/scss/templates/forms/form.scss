@@ -19,6 +19,10 @@
     column-gap: 0.5rem;
 
     &--full {
+      flex-direction: column;
+      column-gap: 0;
+      row-gap: 0.5rem;
+
       .form-buttons__item {
         width: 100%;
         @include flex-row;
@@ -34,6 +38,12 @@
   .form {
     &-buttons {
       row-gap: 0.25rem;
+      &--full {
+        row-gap: 0.75rem;
+        .form-buttons__item {
+          column-gap: 0.5rem;
+        }
+      }
     }
   }
 }

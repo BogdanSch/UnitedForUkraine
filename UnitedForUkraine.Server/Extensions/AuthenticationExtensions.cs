@@ -15,6 +15,9 @@ namespace UnitedForUkraine.Server.Extensions
             string? googleClientId = configuration.GetSection("Authentication")["Google:ClientId"];
             string? googleClientSecret = configuration.GetSection("Authentication")["Google:ClientSecret"];
 
+            string? facebookAppId = configuration.GetSection("Authentication")["Facebook:AppId"];
+            string? facebookAppSecret = configuration.GetSection("Authentication")["Facebook:AppSecret"];
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme =
@@ -32,7 +35,14 @@ namespace UnitedForUkraine.Server.Extensions
                 options.ClientSecret = googleClientSecret;
                 options.ClientId = googleClientId;
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //options.CallbackPath = "/api/Auth/login/google/callback";
+            })
+            .AddFacebook(options =>
+            {
+                if (string.IsNullOrWhiteSpace(facebookAppId)) throw new ArgumentNullException(nameof(facebookAppId));
+                else if (string.IsNullOrWhiteSpace(facebookAppSecret)) throw new ArgumentNullException(nameof(facebookAppSecret));
+                options.AppId = facebookAppId;
+                options.AppSecret = facebookAppSecret;
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(options =>
             {
