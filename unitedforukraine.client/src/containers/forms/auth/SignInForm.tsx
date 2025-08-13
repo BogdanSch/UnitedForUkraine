@@ -11,10 +11,15 @@ import {
   OrSeparator,
   PasswordInput,
 } from "../../../components";
+import { TokenDto } from "../../../types";
 
 const SignInForm: FC = () => {
   const navigate = useNavigate();
   const [requestError, setRequestError] = useState("");
+  const options = {
+    headers: { "Content-Type": "application/json" },
+    withCredentials: true,
+  };
 
   const {
     formData,
@@ -34,30 +39,36 @@ const SignInForm: FC = () => {
   ): Promise<void> => {
     event.preventDefault();
 
-    if (validateForm()) {
-      const options = {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      };
+    if (!validateForm()) return;
 
-      try {
-        const response = await axios.post(
-          `${API_URL}/Auth/login`,
-          formData,
-          options
+    try {
+      const response = await axios.post(
+        `${API_URL}/Auth/login`,
+        formData,
+        options
+      );
+
+      const token: TokenDto = response.data as TokenDto;
+
+      navigate(
+        `/auth/authentication?` +
+          `accessToken=${encodeURIComponent(token.accessToken)}` +
+          `&accessTokenExpirationTime=${encodeURIComponent(
+            token.accessTokenExpirationTime
+          )}` +
+          `&refreshToken=${encodeURIComponent(token.refreshToken)}` +
+          `&refreshTokenExpirationTime=${encodeURIComponent(
+            token.refreshTokenExpirationTime
+          )}`
+      );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setRequestError(
+          error.response?.data.message ||
+            "An error has occurred while logging in. Please, try again later!"
         );
-
-        const authToken: string = response.data;
-        navigate(`/auth/${authToken}`);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          setRequestError(
-            error.response?.data.message ||
-              "An error has occurred while logging in. Please try again later!"
-          );
-        } else {
-          console.error(`Unexpected error: ${error}`);
-        }
+      } else {
+        console.error(`Unexpected error: ${error}`);
       }
     }
   };

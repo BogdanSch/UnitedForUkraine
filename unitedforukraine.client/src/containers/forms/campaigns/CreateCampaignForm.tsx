@@ -1,9 +1,9 @@
-import axios from "axios";
-import { FC, FormEvent, useContext, useState } from "react";
+// import axios from "axios";
+import { protectedAxios } from "../../../utils/axiosInstances";
+import { FC, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../../contexts/AuthContext";
 import { ErrorAlert } from "../../../components";
-import { CreateCampaignRequestDto } from "../../../types";
+import { CampaignDto, CreateCampaignRequestDto } from "../../../types";
 import {
   CampaignCategory,
   CampaignStatus,
@@ -33,7 +33,6 @@ const CreateCampaignForm: FC = () => {
   });
   const [requestError, setRequestError] = useState<string>("");
   const navigate = useNavigate();
-  const { authToken } = useContext(AuthContext);
   const {
     handleChange,
     handleSelectChange,
@@ -77,11 +76,10 @@ const CreateCampaignForm: FC = () => {
     if (!isValid()) return;
 
     try {
-      const { data } = await axios.post(`${API_URL}/campaigns`, formData, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+      const { data } = await protectedAxios.post<CampaignDto>(
+        `${API_URL}/campaigns`,
+        formData
+      );
 
       console.log(data);
 
@@ -91,7 +89,9 @@ const CreateCampaignForm: FC = () => {
 
       navigate(`/campaigns/detail/${data.id}`);
     } catch (error) {
-      setRequestError("Failed to create campaign. Please try again later!");
+      setRequestError(
+        "Failed to create a new campaign. Please, try again later!"
+      );
       console.error(`Error creating campaign: ${error}`);
     }
   };

@@ -49,7 +49,7 @@ const Header: FC = () => {
       id="mainNav"
     >
       <div className="container">
-        <Link className="navbar-brand fw-bold" to="/">
+        <Link className="navbar-brand" to="/">
           <Logo />
         </Link>
         <button

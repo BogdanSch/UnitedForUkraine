@@ -1,7 +1,6 @@
-import axios from "axios";
-import { FC, FormEvent, useContext } from "react";
+import { protectedAxios } from "../../../utils/axiosInstances";
+import { FC, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../../contexts/AuthContext";
 import { API_URL } from "../../../variables";
 
 interface IDeleteCampaignFormProps {
@@ -9,7 +8,6 @@ interface IDeleteCampaignFormProps {
 }
 const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
   const navigate = useNavigate();
-  const { authToken } = useContext(AuthContext);
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
@@ -17,11 +15,7 @@ const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
     event.preventDefault();
 
     try {
-      await axios.delete(`${API_URL}/campaigns/${id}`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+      await protectedAxios.delete(`${API_URL}/campaigns/${id}`);
       navigate(`/campaigns`);
     } catch (error) {
       console.error(`Error deleting campaign: ${error}`);
@@ -29,10 +23,16 @@ const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <button className="btn btn-outline-danger" type="submit">
-        Delete Campaign
-      </button>
+    <form className="campaigns-detail__delete-form" onSubmit={handleSubmit}>
+      <div className="form-buttons">
+        <button
+          className="btn btn-outline-danger form-buttons__item"
+          type="submit"
+        >
+          <span>Delete Campaign</span>
+          <i className="bi bi-trash3-fill"></i>
+        </button>
+      </div>
     </form>
   );
 };

@@ -1,11 +1,11 @@
-import axios from "axios";
+import { protectedAxios } from "../../utils/axiosInstances";
 import { FC, useContext, useEffect, useState } from "react";
 import { API_URL, UNDEFINED_DATE } from "../../variables";
 import { UserStatistics } from "../../types";
 import AuthContext from "../../contexts/AuthContext";
 import formatNumber from "../../utils/formatNumber";
 import { formatMoney } from "../../utils/helpers/currencyHelper";
-import { convertToReadableDate } from "../../utils/dateConverter";
+import { convertToReadableDate } from "../../utils/dateHelper";
 import { Card } from "../../components";
 
 const DEFAULT_STATISTICS: UserStatistics = {
@@ -20,7 +20,7 @@ const DEFAULT_STATISTICS: UserStatistics = {
 };
 
 const UserStatisticsList: FC = () => {
-  const { user, authToken } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const [statistics, setStatistics] =
     useState<UserStatistics>(DEFAULT_STATISTICS);
@@ -30,17 +30,12 @@ const UserStatisticsList: FC = () => {
       const options = {
         method: "GET",
         url: `${API_URL}/donations/statistics/${user?.id}`,
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
       };
 
       try {
-        const { data } = await axios.request(options);
+        const { data } = await protectedAxios.request<UserStatistics>(options);
 
-        console.log("User statistics data: ");
-        console.log(data);
-
+        console.log("User statistics data: " + data);
         setStatistics(data || DEFAULT_STATISTICS);
       } catch (error) {
         console.error(error);

@@ -1,7 +1,7 @@
 import axios from "axios";
-import { FC, FormEvent, useState, useEffect, useContext } from "react";
+import { protectedAxios } from "../../../utils/axiosInstances";
+import { FC, FormEvent, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../../contexts/AuthContext";
 import { API_URL } from "../../../variables";
 import { UpdateCampaignRequestDto } from "../../../types";
 import { CampaignCategory, CampaignStatus } from "../../../types/enums";
@@ -33,7 +33,6 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     endDate: "",
   });
   const [requestError, setRequestError] = useState<string>("");
-  const { authToken } = useContext(AuthContext);
   const navigate = useNavigate();
   const {
     handleChange,
@@ -88,14 +87,9 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     if (!isValid()) return;
 
     try {
-      const response = await axios.put(
+      const response = await protectedAxios.put(
         `${API_URL}/campaigns/${formData.id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
+        formData
       );
 
       console.log(response);
@@ -111,9 +105,8 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           error.response?.data.message ||
             "Failed to update the campaign. Please try again later!"
         );
-        console.error(`Error updating campaign: ${error}`);
       } else {
-        console.error(`Error creating payment session: ${error}`);
+        console.error(`Error updating campaign: ${error}`);
       }
     }
   };

@@ -1,17 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.DTOs.User;
-using Microsoft.AspNetCore.Authorization;
-using UnitedForUkraine.Server.Data;
-using UnitedForUkraine.Server.Interfaces;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Text;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Claims;
+using System.Text;
+using UnitedForUkraine.Server.Data;
+using UnitedForUkraine.Server.DTOs.Token;
+using UnitedForUkraine.Server.DTOs.User;
+using UnitedForUkraine.Server.Helpers.Settings;
+using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
+using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -25,11 +27,11 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly IEmailService _emailService = emailService;
         private readonly IUserService _userService = userService;
         private readonly ILogger<AuthController> _logger = logger;
-        private readonly HashSet<string> _allowedAuthSchemes = new()
-        {
+        private readonly HashSet<string> _allowedAuthSchemes =
+        [
             GoogleDefaults.AuthenticationScheme,
-            FacebookDefaults.AuthenticationScheme
-        };
+            FacebookDefaults.AuthenticationScheme,
+        ];
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginDto)
@@ -49,31 +51,48 @@ namespace UnitedForUkraine.Server.Controllers
                 return Unauthorized(new { message = "Invalid password" });
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
+            (string accessTokenValue, DateTime accessTokenExpirationDate) = _authTokenService.GenerateToken(user, roles);
+            (string refreshTokenValue, DateTime refreshTokenExpirationDate) = _authTokenService.GenerateRefreshToken(loginDto.RememberMe);
 
-            string token = _authTokenService.CreateToken(user, roles, loginDto.RememberMe);
+            user.RefreshToken = refreshTokenValue;
+            user.RefreshTokenExpiresAtUtc = refreshTokenExpirationDate;
+            await _userManager.UpdateAsync(user);
 
-            return Ok(token);
+            TokenDto tokenDto = new()
+            {
+                AccessToken = accessTokenValue,
+                RefreshToken = refreshTokenValue,
+                AccessTokenExpirationTime = accessTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT),
+                RefreshTokenExpirationTime = refreshTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT)
+            };
+
+            return Ok(tokenDto);
         }
         [HttpGet("login/{provider:alpha}")]
-        public IResult HandleExternalLogin([FromRoute] string provider, [FromQuery] string returnUrl)
+        public IActionResult HandleExternalLogin([FromRoute] string provider, [FromQuery] string returnUrl)
         {
             string? origin = HttpContext.Request.Host.Value;
             if (string.IsNullOrWhiteSpace(origin))
-                return Results.BadRequest(new { message = "Invalid request origin" });
+                return BadRequest(new { message = "Invalid request origin" });
 
             string authScheme = provider.FirstCharacterToUpper();
             if (!_allowedAuthSchemes.Contains(authScheme))
-                return Results.BadRequest(new { message = $"Unsupported authentication provider: {provider}" });
+                return BadRequest(new { message = $"Unsupported authentication provider: {provider}" });
 
             string uri = $"{HttpContext.Request.Scheme}://{origin}/api/Auth/login/{provider}/callback?returnUrl={returnUrl}";
             AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties(authScheme, uri);
             _logger.LogInformation(properties.RedirectUri);
-            return Results.Challenge(properties, [authScheme]);
+
+            return Challenge(properties, [authScheme]);
+            //return Results.Challenge(properties, [authScheme]);
         }
         [HttpGet("login/{provider:alpha}/callback")]
         public async Task<IActionResult> HandleExternalLoginCallback([FromRoute] string provider, [FromQuery] string returnUrl)
         {
             string authScheme = provider.FirstCharacterToUpper();
+            if (!_allowedAuthSchemes.Contains(authScheme))
+                return BadRequest(new { message = $"Unsupported authentication provider: {provider}" });
+
             AuthenticateResult authResult = await HttpContext.AuthenticateAsync(authScheme);
             if (!authResult.Succeeded)
                 return Unauthorized(new { message = $"{authScheme} authentication failed. Try again later" });
@@ -94,14 +113,69 @@ namespace UnitedForUkraine.Server.Controllers
 
             if (user is null)
                 return Unauthorized(new { message = $"{authScheme} authentication failed, because we weren't able to create a new user" });
-            user.EmailConfirmed = true;
 
-            await _signInManager.SignInAsync(user, isPersistent: true);
             IList<string> roles = await _userManager.GetRolesAsync(user);
-            string token = _authTokenService.CreateToken(user, roles, true);
+            (string accessTokenValue, DateTime accessTokenExpirationDate) = _authTokenService.GenerateToken(user, roles);
+            (string refreshTokenValue, DateTime refreshTokenExpirationDate) = _authTokenService.GenerateRefreshToken(true);
 
-            string redirectUrl = $"{returnUrl}/{token}";
-            return Redirect(redirectUrl);
+            user.EmailConfirmed = true;
+            user.RefreshToken = refreshTokenValue;
+            user.RefreshTokenExpiresAtUtc = refreshTokenExpirationDate;
+            await _userManager.UpdateAsync(user);
+
+            //string encodedRefreshToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(refreshTokenValue));
+
+            //TokenDto tokenDto = new()
+            //{
+            //    AccessToken = accessToken,
+            //    RefreshToken = refreshTokenValue,
+            //    AccessTokenExpirationTime = accessTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_FORMAT),
+            //    RefreshTokenExpirationTime = refreshTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_FORMAT)
+            //};
+
+            Dictionary<string, string?> parameters = new()
+            {
+                { "accessToken", accessTokenValue },
+                { "refreshToken", refreshTokenValue },
+                { "accessTokenExpirationTime", accessTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT) },
+                { "refreshTokenExpirationTime", refreshTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT) }
+            };
+            string callback = QueryHelpers.AddQueryString(returnUrl, parameters);
+
+            return Redirect(callback);
+        }
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
+        {
+            string? refreshToken = refreshTokenRequest.RefreshToken;
+
+            if (string.IsNullOrEmpty(refreshToken))
+                return BadRequest(new { message = "Refresh token's missing" });
+
+            AppUser? user = await _userService.GetUserByRefreshTokenAsync(refreshToken);
+            if (user is null)
+                return Unauthorized(new { message = "Invalid refresh token" });
+
+            if(user.RefreshTokenExpiresAtUtc < DateTime.UtcNow)
+                return Unauthorized(new { message = "Refresh token has already expired" });
+
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+            (string accessTokenValue, DateTime accessTokenExpirationDate) = _authTokenService.GenerateToken(user, roles);
+            (string refreshTokenValue, DateTime refreshTokenExpirationDate) = _authTokenService.GenerateRefreshToken(true);
+
+            user.RefreshToken = refreshTokenValue;
+            user.RefreshTokenExpiresAtUtc = refreshTokenExpirationDate;
+            await _userManager.UpdateAsync(user);
+
+            TokenDto tokenDto = new()
+            {
+                AccessToken = accessTokenValue,
+                RefreshToken = refreshTokenValue,
+                AccessTokenExpirationTime = accessTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT),
+                RefreshTokenExpirationTime = refreshTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT)
+            };
+
+            return Ok(tokenDto);
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerDto)
@@ -113,7 +187,7 @@ namespace UnitedForUkraine.Server.Controllers
 
             AppUser? user = await _userManager.FindByEmailAsync(registerDto.Email);
             if (user is not null)
-                return BadRequest(new { message = "Email address's already in use. Please, try again" });
+                return Conflict(new { message = "Email address's already in use. Please, try a different one" });
 
             AppUser? newUser = await _userService.GetOrCreateUserAsync(registerDto.Email, registerDto.UserName, registerDto.PhoneNumber, registerDto.Password);
             if (newUser is null)

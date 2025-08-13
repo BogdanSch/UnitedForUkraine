@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { SignInForm } from "../../containers/";
-import { Card, Image } from "../../components";
+import { Card, Image, Logo } from "../../components";
 
 import loginImage from "/assets/img/loginImage.png";
 
@@ -13,6 +13,11 @@ const LoginPage: FC = () => {
     <section className="auth login">
       <div className="container">
         <div className="login__wrap auth__wrap">
+          <Card className="auth__interlink" isLite={false}>
+            <Link className="auth__interlink-link" to="/">
+              <Logo />
+            </Link>
+          </Card>
           <div className="auth__hero card p-3">
             <Image
               imageClassName="login-image"
@@ -32,8 +37,11 @@ const LoginPage: FC = () => {
             </div>
           </div>
           <Card className="auth__interlink" isLite={false}>
-            Don't have an account?{" "}
-            <Link to="/auth/register">Sign up here.</Link>
+            <i className="auth__interlink-icon bi bi-question-circle"></i>
+            <div className="auth__interlink-text">
+              Don't have an account?{" "}
+              <Link to="/auth/register">Sign up here.</Link>
+            </div>
           </Card>
         </div>
       </div>

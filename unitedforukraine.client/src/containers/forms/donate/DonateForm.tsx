@@ -1,3 +1,4 @@
+import { protectedAxios } from "../../../utils/axiosInstances";
 import axios from "axios";
 import { FC, useState, useEffect, useContext, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +20,7 @@ interface IDonateFormProps {
 
 const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
   const navigate = useNavigate();
-  const { authToken, user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const [formData, setFormData] = useState<CreateDonationRequestDto>({
     userId: "",
@@ -65,14 +66,8 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
 
   const createPaymentSession = async (donationId: number): Promise<void> => {
     try {
-      const { data } = await axios.post(
-        `${API_URL}/payments/${donationId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
+      const { data } = await protectedAxios.post(
+        `${API_URL}/payments/${donationId}`
       );
 
       if (!data.redirectUrl) {
@@ -99,11 +94,10 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
     if (!isValid()) return;
 
     try {
-      const { data } = await axios.post(`${API_URL}/donations/`, formData, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+      const { data } = await protectedAxios.post(
+        `${API_URL}/donations/`,
+        formData
+      );
 
       console.log(data);
 
@@ -113,7 +107,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
 
       await createPaymentSession(data.id);
     } catch (error) {
-      setRequestError("Failed to donate. Please try again later!");
+      setRequestError("Failed to make a donation. Please, try again later!");
       console.error("Error creating payment session:", error);
     }
   };

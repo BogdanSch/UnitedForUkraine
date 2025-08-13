@@ -111,3 +111,10 @@ export type TimelineItem = {
   date: string;
   description: string;
 };
+
+export type TokenDto = {
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpirationTime: string;
+  refreshTokenExpirationTime: string;
+};

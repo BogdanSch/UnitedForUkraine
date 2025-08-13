@@ -1,3 +1,4 @@
+import { protectedAxios } from "../../../utils/axiosInstances";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FC, FormEvent, useContext, useState } from "react";
@@ -9,7 +10,7 @@ import { API_URL } from "../../../variables";
 
 const UpdateUserProfileForm: FC = () => {
   const navigate = useNavigate();
-  const { user, authToken, refreshUserData } = useContext(AuthContext);
+  const { user, refreshUserData } = useContext(AuthContext);
   const [formData, setFormData] = useState<UpdateUserProfileDto>({
     userName: user?.userName || "",
     phoneNumber: user?.phoneNumber || "",
@@ -30,11 +31,7 @@ const UpdateUserProfileForm: FC = () => {
     if (!isValid()) return;
 
     try {
-      await axios.put(`${API_URL}/Auth/`, formData, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+      await protectedAxios.put(`${API_URL}/Auth/`, formData);
 
       refreshUserData();
       navigate("/dashboard", {
@@ -45,7 +42,8 @@ const UpdateUserProfileForm: FC = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setRequestError(
-          error.response?.data?.message || "An error has occurred"
+          error.response?.data?.message ||
+            "Failed to update the profile. Please, try again later!"
         );
       } else {
         setRequestError("An unexpected error occurred");

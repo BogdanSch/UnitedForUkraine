@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using UnitedForUkraine.Server.Controllers;
+using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
@@ -42,6 +41,13 @@ namespace UnitedForUkraine.Server.Services
 
             await _userManager.AddToRoleAsync(newUser, UserRoles.User);
             return newUser;
+        }
+        public async Task<AppUser?> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken))
+                return null;
+
+            return await _userManager.Users.FirstOrDefaultAsync(user => user.RefreshToken == refreshToken);
         }
     }
 }

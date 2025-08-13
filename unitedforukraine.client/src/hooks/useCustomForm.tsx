@@ -1,5 +1,5 @@
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
-import { convertDate } from "../utils/dateConverter";
+import { convertDate } from "../utils/dateHelper";
 import {
   deleteImageAsync,
   uploadImageAsync,

@@ -1,13 +1,15 @@
 import axios from "axios";
 import { FC, createContext, useState, useEffect, useMemo } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
+import { useLocalStorage } from "../hooks";
 import { API_URL } from "../variables";
-import { UserDto } from "../types";
+import { TokenDto, UserDto } from "../types";
+import { refreshTokens } from "../utils/services/tokenService";
+import { convertToUTCDate } from "../utils/dateHelper";
 
 interface IAuthContextProps {
   user: UserDto | null;
-  authToken: string | null;
-  authenticateUser: (authToken: string) => Promise<void>;
+  accessToken: string | null;
+  authenticateUser: (token: TokenDto) => Promise<void>;
   logoutUser: () => Promise<void>;
   isAuthenticated: () => boolean;
   isAdmin: () => boolean;
@@ -20,7 +22,7 @@ type AuthProviderProps = {
 
 const AuthContext = createContext<IAuthContextProps>({
   user: null,
-  authToken: null,
+  accessToken: null,
   authenticateUser: async () => {},
   logoutUser: async () => {},
   isAuthenticated: () => false,
@@ -32,18 +34,29 @@ const AuthContext = createContext<IAuthContextProps>({
 export default AuthContext;
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
-  const [authToken, setAuthToken, removeAuthToken] = useLocalStorage<string>(
-    "authToken",
-    ""
-  );
+  const [refreshToken, setRefreshToken, removeRefreshToken] =
+    useLocalStorage<string>("refreshToken", "");
+  // const [
+  //   refreshTokenExpirationTime,
+  //   setRefreshTokenExpirationTime,
+  //   removeRefreshTokenExpirationTime,
+  // ] = useLocalStorage<string>("refreshTokenExpirationTime", "");
+  const [accessToken, setAccessToken, removeAccessToken] =
+    useLocalStorage<string>("accessToken", "");
+  const [
+    accessTokenExpirationTimeUTC,
+    setAccessTokenExpirationTimeUTC,
+    removeAccessTokenExpirationTimeUTC,
+  ] = useLocalStorage<string>("accessTokenExpirationTimeUTC", "");
+
   const [user, setUser, removeUser] = useLocalStorage<UserDto | null>(
     "user",
     null
   );
   const [loading, setLoading] = useState(true);
 
-  const fetchUserData = async (authToken: string): Promise<void> => {
-    if (!authToken || authToken.trim() === "") {
+  const fetchUserData = async (accessToken: string): Promise<void> => {
+    if (!accessToken || accessToken.trim() === "") {
       setLoading(false);
       return;
     }
@@ -52,33 +65,44 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       method: "GET",
       url: `${API_URL}/Auth/userInfo`,
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     };
 
     try {
-      const { data } = await axios.request(options);
+      const { data } = await axios.request<UserDto>(options);
       setUser(data);
       console.log("Fetched user info: ");
       console.log(data);
     } catch (error) {
       await logoutUser();
-      console.log("Error while fetching user info: " + error);
+      console.log("Error while fetching the user info: " + error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    (async () => {
-      await fetchUserData(authToken);
-    })();
-  }, [authToken]);
+    const expirationDateUtc = new Date(accessTokenExpirationTimeUTC).getTime(); // API date in ms
+    const nowUtc = new Date().getTime();
 
-  const authenticateUser = async (authToken: string): Promise<void> => {
+    // debugger;
+    if (expirationDateUtc < nowUtc) refreshTokens();
+
+    (async () => {
+      await fetchUserData(accessToken);
+    })();
+  }, [accessToken, accessTokenExpirationTimeUTC]);
+
+  const authenticateUser = async (token: TokenDto): Promise<void> => {
     setLoading(true);
-    setAuthToken(authToken);
-    await fetchUserData(authToken);
+
+    setRefreshToken(token.refreshToken);
+    setAccessToken(token.accessToken);
+    setAccessTokenExpirationTimeUTC(
+      convertToUTCDate(token.accessTokenExpirationTime)
+    );
+    await fetchUserData(token.accessToken);
   };
 
   const logoutUser = async (): Promise<void> => {
@@ -86,30 +110,34 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       method: "POST",
       url: `${API_URL}/Auth/logout`,
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     };
 
     removeUser();
-    removeAuthToken();
-    setUser(null);
+    removeAccessToken();
+    removeAccessTokenExpirationTimeUTC();
+    removeRefreshToken();
 
     await axios.request(options);
   };
 
-  const isAuthenticated = () => user != null && authToken.trim().length > 0;
+  const isAuthenticated = () =>
+    user != null &&
+    accessToken.trim().length > 0 &&
+    refreshToken.trim().length > 0;
   const isAdmin = () => user?.isAdmin ?? false;
 
   const refreshUserData = async (): Promise<void> => {
     if (!isAuthenticated()) return;
     setLoading(true);
-    await fetchUserData(authToken);
+    await fetchUserData(accessToken);
   };
 
   const contextValue = useMemo(
     () => ({
       user,
-      authToken,
+      accessToken,
       authenticateUser,
       logoutUser,
       isAuthenticated,
@@ -117,7 +145,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       refreshUserData,
       loading,
     }),
-    [user, authToken, loading]
+    [user, accessToken, loading]
   );
 
   return (

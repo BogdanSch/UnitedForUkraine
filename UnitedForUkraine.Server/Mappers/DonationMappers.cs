@@ -1,5 +1,4 @@
 ﻿using UnitedForUkraine.Server.Data.Enums;
-using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.DTOs.Donation;
 using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Models;

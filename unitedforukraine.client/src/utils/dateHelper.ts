@@ -6,6 +6,8 @@ const options: Record<string, string> = {
   day: "numeric",
 };
 
+const UTC_SUFFIX: string = " Z";
+
 export const convertDate = (dateString: string): string => {
   if (dateString.length === 0) {
     return UNDEFINED_DATE;
@@ -18,4 +20,11 @@ export const convertToReadableDate = (dateString: string): string => {
     return UNDEFINED_DATE;
   }
   return new Date(dateString).toLocaleDateString("en-US", options);
+};
+
+export const convertToUTCDate = (dateString: string): string => {
+  if (dateString.length === 0) {
+    return UNDEFINED_DATE;
+  }
+  return dateString + UTC_SUFFIX;
 };

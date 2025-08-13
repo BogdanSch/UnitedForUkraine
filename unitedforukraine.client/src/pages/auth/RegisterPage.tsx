@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Card, Image } from "../../components";
+import { Card, Image, Logo } from "../../components";
 
 import registerImage from "/assets/img/registerImage.jpg";
 import { RegisterForm } from "../../containers/";
@@ -10,6 +10,11 @@ const RegisterPage: FC = () => {
     <section className="register auth">
       <div className="container">
         <div className="register__wrap auth__wrap">
+          <Card className="auth__interlink" isLite={false}>
+            <Link className="auth__interlink-link" to="/">
+              <Logo />
+            </Link>
+          </Card>
           <div className="auth__hero card p-3">
             <div className="auth__hero-content">
               <div className="text-content">
@@ -28,7 +33,11 @@ const RegisterPage: FC = () => {
             />
           </div>
           <Card className="auth__interlink" isLite={false}>
-            Already have an account? <Link to="/auth/login">Sign in here.</Link>
+            <i className="auth__interlink-icon bi bi-question-circle"></i>
+            <div className="auth__interlink-text">
+              Already have an account?{" "}
+              <Link to="/auth/login">Sign in here.</Link>
+            </div>
           </Card>
         </div>
       </div>

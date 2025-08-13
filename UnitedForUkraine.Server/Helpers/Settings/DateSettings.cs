@@ -5,6 +5,7 @@ namespace UnitedForUkraine.Server.Helpers.Settings
     public static class DateSettings
     {
         public const string DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+        public const string DEFAULT_DATE_WITH_TIME_FORMAT = "yyyy-MM-ddTHH:mm:ss";
         public const string UNDEFINED_DATE = "N/A";
         public static DateTime ParseDate(string dateString)
         {

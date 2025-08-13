@@ -1,4 +1,5 @@
 import axios from "axios";
+import { protectedAxios } from "../../utils/axiosInstances";
 import { ChangeEvent, FC, useContext, useEffect, useState } from "react";
 import { API_URL } from "../../variables";
 import AuthContext from "../../contexts/AuthContext";
@@ -17,7 +18,7 @@ const DonationsList: FC<IDonationListProps> = ({
   showUserDonations,
   showQueryCriteria,
 }) => {
-  const { user, authToken } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const [donations, setDonations] = useState<DonationDto[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("date_dsc");
@@ -43,14 +44,12 @@ const DonationsList: FC<IDonationListProps> = ({
 
       if (showUserDonations && !user) {
         return;
-      } else {
-        options.headers = {
-          Authorization: `Bearer ${authToken}`,
-        };
       }
 
+      let axiosInstance = showUserDonations ? protectedAxios : axios;
+
       try {
-        const { data } = await axios.request(options);
+        const { data } = await axiosInstance.request(options);
 
         console.log(data);
         setDonations([...donations, ...data.donations]);

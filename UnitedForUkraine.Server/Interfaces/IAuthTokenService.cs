@@ -4,5 +4,6 @@ namespace UnitedForUkraine.Server.Interfaces;
 
 public interface IAuthTokenService
 {
-    public string CreateToken(AppUser user, IList<string> roles, bool rememberUser);
+    (string, DateTime) GenerateToken(AppUser user, IList<string> roles);
+    (string, DateTime) GenerateRefreshToken(bool rememberUser);
 }

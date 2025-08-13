@@ -69,7 +69,7 @@ export const router = createBrowserRouter([
       { path: "registered", element: <SuccessfulRegistration /> },
       { path: "verifyRegistration", element: <VerifyRegistration /> },
       {
-        path: ":token",
+        path: "authentication",
         element: <Authentication />,
       },
     ],

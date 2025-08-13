@@ -1,7 +1,7 @@
 ﻿import axios from "axios";
+import { protectedAxios } from "../../utils/axiosInstances";
 import { FC, useEffect, useState, useRef, FormEvent, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
-
 import { CampaignDto } from "../../types";
 import { CampaignCategory } from "../../types/enums";
 import { CampaignItem, CampaignsPaginator } from "../../components";
@@ -35,7 +35,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
   const [searchParams] = useSearchParams();
   const page = searchParams.get("page");
 
-  const { user, authToken } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const currentPage: number = Number(page) > 0 ? Number(page) : 1;
@@ -57,14 +57,10 @@ const CampaignsList: FC<CampaignsListProps> = ({
         url: requestUrl,
       };
 
-      if (showUserCampaigns) {
-        options.headers = {
-          Authorization: `Bearer ${authToken}`,
-        };
-      }
+      let axiosInstance = showUserCampaigns ? protectedAxios : axios;
 
       try {
-        const { data } = await axios.request(options);
+        const { data } = await axiosInstance.request(options);
 
         setCampaigns(data.campaigns || []);
         setHasPreviousPage(data.hasPreviousPage);

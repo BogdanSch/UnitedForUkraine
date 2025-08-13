@@ -74,6 +74,12 @@
       color: $text-light-gray !important;
     }
   }
+  h1,
+  h2 {
+    & span.decoration {
+      color: $sky-blue;
+    }
+  }
   .section-indicator {
     color: $sky-blue;
   }
