@@ -1,26 +1,22 @@
-import axios from "axios";
+// import axios from "axios";
+import { protectedAxios } from "../axiosInstances";
 import { API_URL } from "../../variables";
-import { TokenDto } from "../../types";
+import { TokenDateDto } from "../../types";
 import { convertToUTCDate } from "../dateHelper";
 
 export const ENCODE_SYMBOL: string = "";
 
-export const refreshTokens = async (): Promise<string> => {
-  let refreshToken: string = JSON.parse(
-    localStorage.getItem("refreshToken") || ""
+export const refreshTokens = async (): Promise<void> => {
+  const { data } = await protectedAxios.post<TokenDateDto>(
+    `${API_URL}/Auth/refresh`
   );
-  if (!refreshToken) throw new Error("No refresh token available");
 
-  const { data } = await axios.post<TokenDto>(`${API_URL}/Auth/refresh`, {
-    refreshToken,
-  });
-
-  localStorage.setItem("accessToken", JSON.stringify(data.accessToken));
   localStorage.setItem(
     "accessTokenExpirationTimeUTC",
     JSON.stringify(convertToUTCDate(data.accessTokenExpirationTime))
   );
-  localStorage.setItem("refreshToken", JSON.stringify(data.refreshToken));
+  // localStorage.setItem("accessToken", JSON.stringify(data.accessToken));
+  // localStorage.setItem("refreshToken", JSON.stringify(data.refreshToken));
 
-  return data.accessToken;
+  // return data.accessToken;
 };

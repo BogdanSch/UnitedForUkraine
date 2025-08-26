@@ -112,9 +112,17 @@ export type TimelineItem = {
   description: string;
 };
 
-export type TokenDto = {
-  accessToken: string;
-  refreshToken: string;
+export type TokenDateDto = {
+  // accessToken: string;
+  // refreshToken: string;
   accessTokenExpirationTime: string;
   refreshTokenExpirationTime: string;
+};
+
+export type ContactFormData = {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  messageDate: string;
 };

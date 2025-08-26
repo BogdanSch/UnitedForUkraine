@@ -21,6 +21,7 @@ import {
   VerifyRegistration,
   UpdateUserProfile,
   Authentication,
+  Contact,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -35,6 +36,11 @@ export const router = createBrowserRouter([
       { path: "/notAuthorized", element: <NotAuthorized /> },
       { path: "*", element: <NotFoundPage /> },
     ],
+  },
+  {
+    path: "/contact",
+    element: <MainLayout />,
+    children: [{ index: true, element: <Contact /> }],
   },
   {
     path: "/campaigns",

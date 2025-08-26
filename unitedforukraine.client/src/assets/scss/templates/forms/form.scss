@@ -2,18 +2,14 @@
   width: 100%;
   margin: 0 auto;
 
-  // &-select {
-  //   &::picker-icon {
-  //     transition: 0.4s rotate;
-  //   }
-  //   &:open::picker-icon {
-  //     rotate: 180deg;
-  //   }
-  //   &::picker(select) {
-  //     border: none;
-  //   }
-  // }
-
+  &-text {
+    font-size: 12px;
+    font-weight: $fw-light;
+  }
+  &-control {
+    border-radius: 1.25rem;
+    padding: 0.5rem 1.25rem;
+  }
   &-buttons {
     @include flex-row();
     column-gap: 0.5rem;

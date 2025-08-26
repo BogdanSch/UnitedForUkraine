@@ -7,9 +7,9 @@ namespace UnitedForUkraine.Server.Models
     {
         [Key]
         public int Id { get; set; }
-        [MaxLength(60)]
+        [MaxLength(80)]
         public required string Title { get; set; }
-        [MinLength(10)]
+        [MinLength(20)]
         public required string Content { get; set; }
         public required DateTime PostedAt { get; set; }
         public required string ImageUrl { get; set; } = string.Empty;

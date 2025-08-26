@@ -30,7 +30,7 @@ namespace UnitedForUkraine.Server.Extensions
             .AddCookie()
             .AddGoogle(options =>
             {
-                if(string.IsNullOrWhiteSpace(googleClientId)) throw new ArgumentNullException(nameof(googleClientId));
+                if (string.IsNullOrWhiteSpace(googleClientId)) throw new ArgumentNullException(nameof(googleClientId));
                 else if (string.IsNullOrWhiteSpace(googleClientSecret)) throw new ArgumentNullException(nameof(googleClientSecret));
                 options.ClientSecret = googleClientSecret;
                 options.ClientId = googleClientId;
@@ -54,6 +54,17 @@ namespace UnitedForUkraine.Server.Extensions
                     ValidAudience = jwtSettings["Audience"],
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = ctx =>
+                    {
+                        ctx.Request.Cookies.TryGetValue("accessToken", out var accessToken);
+                        if (!string.IsNullOrWhiteSpace(accessToken))
+                            ctx.Token = accessToken;
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }

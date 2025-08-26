@@ -183,7 +183,7 @@ const RegisterForm: FC = () => {
           </div>
         )}
       </div>
-      <div id="passwordHelpBlock" className="form-text">
+      <div id="formHelpBlock" className="form-text">
         All fields marked with an asterisk (*) are required.
       </div>
       <div className="form-buttons mt-2">

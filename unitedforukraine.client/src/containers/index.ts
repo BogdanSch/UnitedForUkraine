@@ -10,3 +10,4 @@ export { default as DonationsList } from "./donations/DonationsList";
 export { default as FoundationStatisticsList } from "./donations/FoundationStatisticsList";
 export { default as UserStatisticsList } from "./donations/UserStatisticsList";
 export { default as UpdateUserProfileForm } from "./forms/dashboard/UpdateUserProfileForm";
+export { default as ContactForm } from "./forms/contact/ContactForm";

@@ -10,6 +10,7 @@ using System.Text;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.DTOs.Token;
 using UnitedForUkraine.Server.DTOs.User;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
@@ -51,22 +52,23 @@ namespace UnitedForUkraine.Server.Controllers
                 return Unauthorized(new { message = "Invalid password" });
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
-            (string accessTokenValue, DateTime accessTokenExpirationDate) = _authTokenService.GenerateToken(user, roles);
-            (string refreshTokenValue, DateTime refreshTokenExpirationDate) = _authTokenService.GenerateRefreshToken(loginDto.RememberMe);
+            TokenObject token = _authTokenService.CreateToken(user, roles, loginDto.RememberMe);
 
-            user.RefreshToken = refreshTokenValue;
-            user.RefreshTokenExpiresAtUtc = refreshTokenExpirationDate;
+            user.RefreshToken = token.RefreshToken;
+            user.RefreshTokenExpiresAtUtc = token.RefreshTokenExpirationTime;
             await _userManager.UpdateAsync(user);
 
-            TokenDto tokenDto = new()
+            _authTokenService.SetTokensInsideCookie(token, HttpContext);
+
+            TokenDateDto tokenDateDto = new()
             {
-                AccessToken = accessTokenValue,
-                RefreshToken = refreshTokenValue,
-                AccessTokenExpirationTime = accessTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT),
-                RefreshTokenExpirationTime = refreshTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT)
+                // AccessToken = token.AccessTokenValue,
+                // RefreshToken = token.RefreshTokenValue,
+                AccessTokenExpirationTime = token.AccessTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT),
+                RefreshTokenExpirationTime = token.RefreshTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT)
             };
 
-            return Ok(tokenDto);
+            return Ok(tokenDateDto);
         }
         [HttpGet("login/{provider:alpha}")]
         public IActionResult HandleExternalLogin([FromRoute] string provider, [FromQuery] string returnUrl)
@@ -84,7 +86,6 @@ namespace UnitedForUkraine.Server.Controllers
             _logger.LogInformation(properties.RedirectUri);
 
             return Challenge(properties, [authScheme]);
-            //return Results.Challenge(properties, [authScheme]);
         }
         [HttpGet("login/{provider:alpha}/callback")]
         public async Task<IActionResult> HandleExternalLoginCallback([FromRoute] string provider, [FromQuery] string returnUrl)
@@ -110,72 +111,63 @@ namespace UnitedForUkraine.Server.Controllers
                 userPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
                 userPrincipal.FindFirstValue(ClaimTypes.MobilePhone) ?? string.Empty,
                 null);
-
             if (user is null)
                 return Unauthorized(new { message = $"{authScheme} authentication failed, because we weren't able to create a new user" });
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
-            (string accessTokenValue, DateTime accessTokenExpirationDate) = _authTokenService.GenerateToken(user, roles);
-            (string refreshTokenValue, DateTime refreshTokenExpirationDate) = _authTokenService.GenerateRefreshToken(true);
+            TokenObject token = _authTokenService.CreateToken(user, roles, true);
 
             user.EmailConfirmed = true;
-            user.RefreshToken = refreshTokenValue;
-            user.RefreshTokenExpiresAtUtc = refreshTokenExpirationDate;
+            user.RefreshToken = token.RefreshToken;
+            user.RefreshTokenExpiresAtUtc = token.RefreshTokenExpirationTime;
             await _userManager.UpdateAsync(user);
 
-            //string encodedRefreshToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(refreshTokenValue));
-
-            //TokenDto tokenDto = new()
-            //{
-            //    AccessToken = accessToken,
-            //    RefreshToken = refreshTokenValue,
-            //    AccessTokenExpirationTime = accessTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_FORMAT),
-            //    RefreshTokenExpirationTime = refreshTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_FORMAT)
-            //};
+            _authTokenService.SetTokensInsideCookie(token, HttpContext);
 
             Dictionary<string, string?> parameters = new()
             {
-                { "accessToken", accessTokenValue },
-                { "refreshToken", refreshTokenValue },
-                { "accessTokenExpirationTime", accessTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT) },
-                { "refreshTokenExpirationTime", refreshTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT) }
+                //{ "accessToken", token.AccessTokenValue },
+                //{ "refreshToken", token.RefreshTokenValue },
+                { "accessTokenExpirationTime", token.AccessTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT) },
+                { "refreshTokenExpirationTime", token.RefreshTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT) }
             };
             string callback = QueryHelpers.AddQueryString(returnUrl, parameters);
 
             return Redirect(callback);
         }
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
+        public async Task<IActionResult> RefreshToken()
         {
-            string? refreshToken = refreshTokenRequest.RefreshToken;
+            //HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken);
+            HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
 
-            if (string.IsNullOrEmpty(refreshToken))
-                return BadRequest(new { message = "Refresh token's missing" });
+            if(string.IsNullOrWhiteSpace(refreshToken))
+                return Unauthorized(new { message = "Empty refresh token" });
 
             AppUser? user = await _userService.GetUserByRefreshTokenAsync(refreshToken);
             if (user is null)
                 return Unauthorized(new { message = "Invalid refresh token" });
-
-            if(user.RefreshTokenExpiresAtUtc < DateTime.UtcNow)
+            if (user.RefreshTokenExpiresAtUtc < DateTime.UtcNow)
                 return Unauthorized(new { message = "Refresh token has already expired" });
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
-            (string accessTokenValue, DateTime accessTokenExpirationDate) = _authTokenService.GenerateToken(user, roles);
-            (string refreshTokenValue, DateTime refreshTokenExpirationDate) = _authTokenService.GenerateRefreshToken(true);
+            TokenObject token = _authTokenService.CreateToken(user, roles, true);
 
-            user.RefreshToken = refreshTokenValue;
-            user.RefreshTokenExpiresAtUtc = refreshTokenExpirationDate;
+            user.RefreshToken = token.RefreshToken;
+            user.RefreshTokenExpiresAtUtc = token.RefreshTokenExpirationTime;
             await _userManager.UpdateAsync(user);
 
-            TokenDto tokenDto = new()
+            _authTokenService.SetTokensInsideCookie(token, HttpContext);
+
+            TokenDateDto tokenDateDto = new()
             {
-                AccessToken = accessTokenValue,
-                RefreshToken = refreshTokenValue,
-                AccessTokenExpirationTime = accessTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT),
-                RefreshTokenExpirationTime = refreshTokenExpirationDate.ToString(DateSettings.DEFAULT_DATE_WITH_TIME_FORMAT)
+                // AccessToken = token.AccessTokenValue,
+                // RefreshToken = token.RefreshTokenValue,
+                AccessTokenExpirationTime = token.AccessTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT),
+                RefreshTokenExpirationTime = token.RefreshTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT)
             };
 
-            return Ok(tokenDto);
+            return Ok(tokenDateDto);
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerDto)
@@ -267,7 +259,6 @@ namespace UnitedForUkraine.Server.Controllers
         public async Task<IActionResult> GetUserInfo()
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized(new { message = "Invalid user confirmation token" });
 
@@ -292,6 +283,38 @@ namespace UnitedForUkraine.Server.Controllers
         {
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Successfully logged out" });
+        }
+        [HttpDelete("delete")]
+        [Authorize]
+        public async Task<IActionResult> Delete()
+        {
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized(new { message = "Invalid user confirmation token" });
+
+            AppUser? user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return NotFound(new { message = "User was not found" });
+
+            IdentityResult result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                return BadRequest(new { message = "Failed to delete the user" });
+
+            return Ok(new { message = "Successfully removed the user" });
+        }
+        [HttpDelete("delete/{userId:guid}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteById([FromRoute] Guid userId)
+        {
+            AppUser? user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null)
+                return NotFound(new { message = $"User with id={userId} was not found" });
+
+            IdentityResult result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                return BadRequest(new { message = "Failed to delete the user" });
+
+            return Ok(new { message = $"Successfully removed the user with id={userId}" });
         }
     }
 }

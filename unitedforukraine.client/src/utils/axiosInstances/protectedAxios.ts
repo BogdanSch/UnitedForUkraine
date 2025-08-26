@@ -10,12 +10,12 @@ const protectedAxios = axios.create({
 
 protectedAxios.interceptors.request.use(
   async (config) => {
-    const accessToken: string = JSON.parse(
-      localStorage.getItem("accessToken") || ""
-    );
-    const refreshToken: string = JSON.parse(
-      localStorage.getItem("refreshToken") || ""
-    );
+    // const accessToken: string = JSON.parse(
+    //   localStorage.getItem("accessToken") || ""
+    // );
+    // const refreshToken: string = JSON.parse(
+    //   localStorage.getItem("refreshToken") || ""
+    // );
     const accessTokenExpirationTimeUTC: string = JSON.parse(
       localStorage.getItem("accessTokenExpirationTimeUTC") || ""
     );
@@ -25,12 +25,11 @@ protectedAxios.interceptors.request.use(
       convertToUTCDate(accessTokenExpirationTimeUTC)
     ).getTime();
 
-    if (expiryUtc <= nowUtc && refreshToken) {
-      const newAccessToken: string = await refreshTokens();
-      config.headers.Authorization = `Bearer ${newAccessToken}`;
-    } else {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    if (expiryUtc <= nowUtc) {
+      await refreshTokens();
+      // config.headers.Authorization = `Bearer ${newAccessToken}`;
     }
+    config.withCredentials = true;
 
     return config;
   },

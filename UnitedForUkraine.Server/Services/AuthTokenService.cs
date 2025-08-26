@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
@@ -13,7 +14,7 @@ namespace UnitedForUkraine.Server.Services;
 public class AuthTokenService(IOptions<JwtSettings> jwtSettings) : IAuthTokenService
 {
     private readonly JwtSettings _jwtSettings = jwtSettings.Value;
-    private readonly SymmetricSecurityKey _key = new (Encoding.UTF8.GetBytes(jwtSettings.Value.SecretKey));
+    private readonly SymmetricSecurityKey _key = new(Encoding.UTF8.GetBytes(jwtSettings.Value.SecretKey));
     public const int DEFAULT_EXPIRATION_TIME_IN_MINUTES = 180;
 
     public (string, DateTime) GenerateToken(AppUser user, IList<string> roles)
@@ -64,5 +65,31 @@ public class AuthTokenService(IOptions<JwtSettings> jwtSettings) : IAuthTokenSer
         }
 
         return (token, expirationTime);
+    }
+    public TokenObject CreateToken(AppUser user, IList<string> roles, bool rememberUser)
+    {
+        (string accessTokenValue, DateTime accessTokenExpirationDate) = GenerateToken(user, roles);
+        (string refreshTokenValue, DateTime refreshTokenExpirationDate) = GenerateRefreshToken(rememberUser);
+
+        return new TokenObject(accessTokenValue, accessTokenExpirationDate, refreshTokenValue, refreshTokenExpirationDate);
+    }
+    public void SetTokensInsideCookie(TokenObject token, HttpContext context)
+    {
+        context.Response.Cookies.Append("accessToken", token.AccessToken, new CookieOptions
+        {
+            Expires = token.AccessTokenExpirationTime,
+            HttpOnly = true,
+            IsEssential = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+        });
+        context.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
+        {
+            Expires = token.RefreshTokenExpirationTime,
+            HttpOnly = true,
+            IsEssential = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+        });
     }
 }
