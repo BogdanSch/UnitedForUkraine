@@ -17,7 +17,7 @@ public class CampaignRepository(ApplicationDbContext context) : ICampaignReposit
         if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
         {
             string query = queryObject.SearchedQuery;
-            campaigns = campaigns.Where(c => c.Title.Contains(query) || c.Description.Contains(query));
+            campaigns = campaigns.Where(c => c.Title.Contains(query, StringComparison.OrdinalIgnoreCase) || c.Description.Contains(query, StringComparison.OrdinalIgnoreCase));
         }
         if (!string.IsNullOrWhiteSpace(queryObject.SortOrder))
         {

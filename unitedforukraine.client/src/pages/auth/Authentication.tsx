@@ -5,13 +5,9 @@ import AuthContext from "../../contexts/AuthContext";
 type AuthComplete = "pending" | "success" | "fail";
 
 const Authentication: FC = () => {
-  const { authenticateUser } = useContext(AuthContext);
+  const { authenticateUser, user } = useContext(AuthContext);
   const [searchParams] = useSearchParams();
 
-  const accessToken = decodeURIComponent(searchParams.get("accessToken") || "");
-  const refreshToken = decodeURIComponent(
-    searchParams.get("refreshToken") || ""
-  );
   const accessTokenExpirationTime = decodeURIComponent(
     searchParams.get("accessTokenExpirationTime") || ""
   );
@@ -22,31 +18,21 @@ const Authentication: FC = () => {
   const [authComplete, setAuthComplete] = useState<AuthComplete>("pending");
 
   useEffect(() => {
-    if (
-      !accessToken ||
-      !refreshToken ||
-      !accessTokenExpirationTime ||
-      !refreshTokenExpirationTime
-    ) {
+    if (!accessTokenExpirationTime || !refreshTokenExpirationTime) {
       setAuthComplete("fail");
       return;
     }
 
     authenticateUser({
-      accessToken,
-      refreshToken,
       accessTokenExpirationTime,
       refreshTokenExpirationTime,
     })
-      .then(() => setAuthComplete("success"))
+      .then(() => {
+        setAuthComplete("success");
+        console.log("Successfully loaded user: ", user);
+      })
       .catch(() => setAuthComplete("fail"));
-  }, [
-    accessToken,
-    refreshToken,
-    accessTokenExpirationTime,
-    refreshTokenExpirationTime,
-    authenticateUser,
-  ]);
+  }, [accessTokenExpirationTime, refreshTokenExpirationTime, authenticateUser]);
 
   if (authComplete === "success") {
     return <Navigate to="/dashboard" replace />;

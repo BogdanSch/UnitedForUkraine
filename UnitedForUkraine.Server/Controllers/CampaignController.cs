@@ -16,12 +16,12 @@ namespace UnitedForUkraine.Server.Controllers;
 public class CampaignController(ICampaignRepository campaignRepository) : ControllerBase
 {
     private readonly ICampaignRepository _campaignRepository = campaignRepository;
-    private const int NUMBER_OF_CAMPAIGNS_PER_PAGE = 6;
+    private const int NUMBER_OF_ITEMS_PER_PAGE = 6;
 
     [HttpGet]
     public async Task<IActionResult> GetPaginatedCampaignsData([FromQuery] QueryObject queryObject)
     {
-        var paginatedCampaigns = await _campaignRepository.GetPaginatedCampaigns(queryObject, NUMBER_OF_CAMPAIGNS_PER_PAGE);
+        var paginatedCampaigns = await _campaignRepository.GetPaginatedCampaigns(queryObject, NUMBER_OF_ITEMS_PER_PAGE);
         List<CampaignDto> campainsList = [.. paginatedCampaigns.Select(c => c.ToCampaignDto())];
 
         return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
@@ -98,11 +98,9 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
             targetCampaign.StartDate = startDate;
             targetCampaign.EndDate = endDate;
 
-            if (updatedCampaignDto.ImageUrl != null)
-            {
+            if (!string.IsNullOrWhiteSpace(updatedCampaignDto.ImageUrl))
                 targetCampaign.ImageUrl = updatedCampaignDto.ImageUrl;
-            }
-
+            
             await _campaignRepository.UpdateAsync(targetCampaign);
         }
         catch (Exception)

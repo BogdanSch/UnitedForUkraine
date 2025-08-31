@@ -35,15 +35,6 @@ const AuthContext = createContext<IAuthContextProps>({
 export default AuthContext;
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
-  // const [refreshToken, setRefreshToken, removeRefreshToken] =
-  //   useLocalStorage<string>("refreshToken", "");
-  // const [
-  //   refreshTokenExpirationTime,
-  //   setRefreshTokenExpirationTime,
-  //   removeRefreshTokenExpirationTime,
-  // ] = useLocalStorage<string>("refreshTokenExpirationTime", "");
-  // const [accessToken, setAccessToken, removeAccessToken] =
-  //   useLocalStorage<string>("accessToken", "");
   const [
     accessTokenExpirationTimeUTC,
     setAccessTokenExpirationTimeUTC,
@@ -56,10 +47,12 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   );
   const [loading, setLoading] = useState(true);
 
-  const fetchUserData = async (): Promise<void> => {
+  const fetchUserData = async (
+    accessTokenExpirationTime: string
+  ): Promise<void> => {
     if (
-      !accessTokenExpirationTimeUTC ||
-      accessTokenExpirationTimeUTC.trim() === ""
+      !accessTokenExpirationTime ||
+      accessTokenExpirationTime.trim().length === 0
     ) {
       setLoading(false);
       return;
@@ -70,8 +63,6 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         `${API_URL}/Auth/userInfo`
       );
       setUser(data);
-      console.log("Fetched user info: ");
-      console.log(data);
     } catch (error) {
       await logoutUser();
       console.log("Error while fetching the user info: " + error);
@@ -81,47 +72,44 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    // const expirationDateUtc = new Date(accessTokenExpirationTimeUTC).getTime();
-    // const nowUtc = new Date().getTime();
-    // // debugger;
-    // if (expirationDateUtc < nowUtc) refreshTokens();
-    fetchUserData();
+    fetchUserData(accessTokenExpirationTimeUTC);
   }, [accessTokenExpirationTimeUTC]);
 
   const authenticateUser = async (tokenDate: TokenDateDto): Promise<void> => {
     setLoading(true);
 
-    // setRefreshToken(token.refreshToken);
-    // setAccessToken(token.accessToken);
-    setAccessTokenExpirationTimeUTC(
-      convertToUTCDate(tokenDate.accessTokenExpirationTime)
+    const accessTokenExpirationTimeUTC: string = convertToUTCDate(
+      tokenDate.accessTokenExpirationTime
     );
-    await fetchUserData();
+    setAccessTokenExpirationTimeUTC(accessTokenExpirationTimeUTC);
+
+    await fetchUserData(accessTokenExpirationTimeUTC);
   };
 
   const logoutUser = async (): Promise<void> => {
-    removeUser();
-    // removeAccessToken();
-    removeAccessTokenExpirationTimeUTC();
-    // removeRefreshToken();
-
     await protectedAxios.post(`${API_URL}/Auth/logout`);
+    removeUser();
+    removeAccessTokenExpirationTimeUTC();
   };
 
-  const isAuthenticated = () =>
-    user != null && accessTokenExpirationTimeUTC.trim().length > 0;
+  const isAuthenticated = () => {
+    return user != null && accessTokenExpirationTimeUTC.trim().length > 0;
+  };
+
   const isAdmin = () => user?.isAdmin ?? false;
 
   const refreshUserData = async (): Promise<void> => {
-    if (!isAuthenticated()) return;
+    if (!isAuthenticated()) {
+      await logoutUser();
+      return;
+    }
     setLoading(true);
-    await fetchUserData();
+    await fetchUserData(accessTokenExpirationTimeUTC);
   };
 
   const contextValue = useMemo(
     () => ({
       user,
-      // accessToken,
       authenticateUser,
       logoutUser,
       isAuthenticated,

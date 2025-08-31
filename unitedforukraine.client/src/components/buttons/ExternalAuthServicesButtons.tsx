@@ -21,14 +21,14 @@ const ExternalAuthServicesButtons: FC = () => {
         <i className="bi bi-google"></i>
         <span className="small ms-2">Sign in with Google</span>
       </button>
-      <button
+      {/* <button
         type="submit"
         className="btn btn-outline-dark form-buttons__item"
         onClick={(event) => handleExternalSignIn(event, "microsoft")}
       >
         <i className="bi bi-microsoft"></i>
         <span className="small ms-2">Sign in with Microsoft</span>
-      </button>
+      </button> */}
       <button
         type="submit"
         className="btn btn-outline-dark form-buttons__item"

@@ -72,16 +72,16 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-
 IConfigurationSection frontendSettings = builder.Configuration.GetSection("FrontendSettings");
 app.UseCors(cors => cors
                   .WithOrigins(frontendSettings["Origin"]!)
-                  .AllowAnyMethod()
                   .AllowAnyHeader()
+                  .AllowAnyMethod()
                   .AllowCredentials());
+
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapFallbackToFile("/index.html");

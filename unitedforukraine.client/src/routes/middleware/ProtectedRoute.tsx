@@ -16,12 +16,9 @@ const ProtectedRoute: FC<IProtectedRouteProps> = ({
   if (loading) {
     return <div>Loading...</div>;
   }
-  if (!isAuthenticated()) {
-    return <Navigate to="/auth/login" replace />;
-  }
-  if (requireAdmin && !isAdmin()) {
+  if (!isAuthenticated()) return <Navigate to="/auth/login" replace />;
+  if (requireAdmin && !isAdmin())
     return <Navigate to="/notAuthorized" replace />;
-  }
 
   return <>{children}</>;
 };

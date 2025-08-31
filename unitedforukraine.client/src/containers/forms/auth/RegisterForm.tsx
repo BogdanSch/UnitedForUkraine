@@ -15,7 +15,7 @@ const RegisterForm: FC = () => {
   const clientUri: string = `${window.location.origin}/auth/verifyRegistration`;
   const navigate = useNavigate();
 
-  const [requestError, setRequestError] = useState("");
+  const [requestError, setRequestError] = useState<string>("");
   const {
     formData,
     errors,

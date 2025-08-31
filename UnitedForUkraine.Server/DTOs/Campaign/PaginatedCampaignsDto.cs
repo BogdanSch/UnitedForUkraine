@@ -1,11 +1,3 @@
-﻿namespace UnitedForUkraine.Server.DTOs.Campaign
-{
-    public class PaginatedCampaignsDto(List<CampaignDto> campaigns, bool hasPreviousPage, bool hasNextPage)
-    {
-        public PaginatedCampaignsDto() : this([], false, false) { }
+﻿namespace UnitedForUkraine.Server.DTOs.Campaign;
 
-        public List<CampaignDto> Campaigns { get; set; } = campaigns;
-        public bool HasPreviousPage { get; set; } = hasPreviousPage;
-        public bool HasNextPage { get; set; } = hasNextPage;
-    }
-}
+public record PaginatedCampaignsDto(List<CampaignDto> Campaigns, bool HasPreviousPage, bool HasNextPage);

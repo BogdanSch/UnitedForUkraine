@@ -6,7 +6,7 @@ const options: Record<string, string> = {
   day: "numeric",
 };
 
-const UTC_SUFFIX: string = " Z";
+const UTC_SUFFIX: string = "Z";
 
 export const convertDate = (dateString: string): string => {
   if (dateString.length === 0) {

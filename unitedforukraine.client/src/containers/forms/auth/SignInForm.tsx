@@ -11,7 +11,8 @@ import {
   OrSeparator,
   PasswordInput,
 } from "../../../components";
-import { TokenDto } from "../../../types";
+import { TokenDateDto } from "../../../types";
+// import { TokenDto } from "../../../types";
 
 const SignInForm: FC = () => {
   const navigate = useNavigate();
@@ -42,23 +43,21 @@ const SignInForm: FC = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await axios.post(
+      const { data } = await axios.post<TokenDateDto>(
         `${API_URL}/Auth/login`,
         formData,
         options
       );
 
-      const token: TokenDto = response.data as TokenDto;
+      // const token: TokenDto = response.data as TokenDto;
 
       navigate(
         `/auth/authentication?` +
-          `accessToken=${encodeURIComponent(token.accessToken)}` +
           `&accessTokenExpirationTime=${encodeURIComponent(
-            token.accessTokenExpirationTime
+            data.accessTokenExpirationTime
           )}` +
-          `&refreshToken=${encodeURIComponent(token.refreshToken)}` +
           `&refreshTokenExpirationTime=${encodeURIComponent(
-            token.refreshTokenExpirationTime
+            data.refreshTokenExpirationTime
           )}`
       );
     } catch (error) {

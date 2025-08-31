@@ -126,3 +126,17 @@ export type ContactFormData = {
   message: string;
   messageDate: string;
 };
+
+export type NewsUpdateDto = {
+  title: string;
+  content: string;
+  imageUrl: string;
+  readingTimeMinutes: number;
+  postedAt: string;
+};
+
+export type PaginatedNewsUpdatesDto = {
+  newsUpdates: NewsUpdateDto[];
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+};
