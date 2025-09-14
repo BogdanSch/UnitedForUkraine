@@ -17,3 +17,4 @@ export { default as Dashboard } from "./dashboard/Dashboard";
 export { default as Authentication } from "./auth/Authentication";
 export { default as UpdateUserProfile } from "./dashboard/UpdateUserProfile";
 export { default as Contact } from "./contact/Contact";
+export { default as NewsUpdatesIndex } from "./newsUpdates/NewsUpdatesIndex";

@@ -1,0 +1,17 @@
+.theme {
+  &-button {
+    padding: 12px 24px;
+    border: none;
+
+    &:focus-visible {
+      outline: 2px solid $primary !important;
+      outline-offset: 0.1rem !important;
+    }
+    
+    &__icon {
+      width: 44px;
+      height: 44px;
+      fill: $dark-navy;
+    }
+  }
+}

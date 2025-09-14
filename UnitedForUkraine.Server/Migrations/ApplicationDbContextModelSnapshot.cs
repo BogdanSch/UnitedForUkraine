@@ -276,7 +276,7 @@ namespace UnitedForUkraine.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Campaigns");
+                    b.ToTable("Campaigns", (string)null);
                 });
 
             modelBuilder.Entity("UnitedForUkraine.Server.Models.Donation", b =>
@@ -319,7 +319,7 @@ namespace UnitedForUkraine.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Donations");
+                    b.ToTable("Donations", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

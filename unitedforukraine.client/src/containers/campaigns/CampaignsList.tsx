@@ -4,7 +4,7 @@ import { FC, useEffect, useState, useRef, FormEvent, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CampaignDto } from "../../types";
 import { CampaignCategory } from "../../types/enums";
-import { CampaignItem, CampaignsPaginator } from "../../components";
+import { CampaignItem, CampaignsPaginator, SearchBar } from "../../components";
 import AuthContext from "../../contexts/AuthContext";
 import { API_URL } from "../../variables";
 import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
@@ -87,23 +87,10 @@ const CampaignsList: FC<CampaignsListProps> = ({
       {showQueryCriteria && (
         <form className="campaigns__query" onSubmit={handleSearch}>
           <div className="campaigns__query-container">
-            <div className="input-group campaigns__query-search">
-              <div className="form-outline">
-                <input
-                  type="search"
-                  id="searchInput"
-                  className="form-control campaigns__query-search-input"
-                  ref={searchInputRef}
-                  placeholder="What are we searching for: military, support, Ukraine?"
-                />
-              </div>
-              <button
-                type="submit"
-                className="btn btn-primary input-group-button"
-              >
-                <i className="bi bi-search-heart"></i>
-              </button>
-            </div>
+            <SearchBar
+              searchInputReference={searchInputRef}
+              className={"campaigns"}
+            />
             <div className="campaigns__query-group">
               <select
                 className="form-select campaigns__query-filter"
@@ -151,7 +138,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
             <CampaignItem key={campaign.id} campaign={campaign} />
           ))
         ) : (
-          <p className="text-center">No campaigns have been found!</p>
+          <p className="text-center">No campaigns have been found.</p>
         )}
       </ul>
       {showPaginationButtons && campaigns.length > 0 && (

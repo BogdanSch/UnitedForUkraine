@@ -2,10 +2,9 @@ import { FC, useContext, useEffect } from "react";
 import { ScrollSpy } from "bootstrap";
 import { Link, useLocation } from "react-router-dom";
 
-import { Logo } from "../../components";
+import { Logo, ThemeSwitchButton } from "../../components";
 import { SignOutForm } from "../../containers";
 import AuthContext from "../../contexts/AuthContext";
-import ThemeSwitchButton from "../../components/buttons/ThemeSwitchButton";
 
 const Header: FC = () => {
   const location = useLocation();
@@ -67,7 +66,7 @@ const Header: FC = () => {
           className="header__navbar collapse navbar-collapse"
           id="responsiveNavbar"
         >
-          <ul className="header__list navbar-nav ms-auto me-4 my-3 my-lg-0">
+          <ul className="header__list navbar-nav ms-auto me-md-2 me-0">
             <li className="nav-item">
               <Link className="nav-link me-lg-3" to="/home">
                 Home
@@ -97,6 +96,30 @@ const Header: FC = () => {
                   <li className="dropdown-menu__item">
                     <Link className="dropdown-item" to="/campaigns/create">
                       Create a new campaign
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </li>
+            <li className="nav-item sub-menu dropdown">
+              <Link
+                className="nav-link me-lg-3 dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                to="/newsUpdates"
+              >
+                News
+              </Link>
+              <ul className="dropdown-menu">
+                <li className="dropdown-menu__item">
+                  <Link className="dropdown-item" to="/newsUpdates">
+                    View all News & Updates
+                  </Link>
+                </li>
+                {isAuthenticated() && isAdmin() && (
+                  <li className="dropdown-menu__item">
+                    <Link className="dropdown-item" to="/newsUpdates/create">
+                      Create a new update
                     </Link>
                   </li>
                 )}
@@ -156,7 +179,7 @@ const Header: FC = () => {
               </Link>
             </div>
           )}
-          <div className="header__theme">
+          <div className="theme">
             <ThemeSwitchButton />
           </div>
         </nav>

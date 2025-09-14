@@ -9,3 +9,5 @@ export const donatinsTemplatesOtherCurrencies: number[] = [
 
 export const DARK_THEME_CLASS_NAME: string = "dark-theme";
 export const UNDEFINED_DATE: string = "N/A";
+
+export const DEFAULT_PREVIEW_TEXT_LENGTH: number = 30;

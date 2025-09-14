@@ -3,9 +3,9 @@ import { FC, useContext, useEffect, useState } from "react";
 import { API_URL, UNDEFINED_DATE } from "../../variables";
 import { UserStatistics } from "../../types";
 import AuthContext from "../../contexts/AuthContext";
-import formatNumber from "../../utils/formatNumber";
+import formatNumber from "../../utils/helpers/formatNumber";
 import { formatMoney } from "../../utils/helpers/currencyHelper";
-import { convertToReadableDate } from "../../utils/dateHelper";
+import { convertToReadableDate } from "../../utils/helpers/dateHelper";
 import { Card } from "../../components";
 
 const DEFAULT_STATISTICS: UserStatistics = {

@@ -9,7 +9,7 @@ const CampaignsIndex: FC = () => {
         <div className="campaigns__wrap">
           <SectionHeadline
             sectionIndicatorTitle="Campaigns"
-            title="The United For Ukraine Current Campaigns"
+            title="The United For Ukraine's Current Campaigns"
             headingClassName="campaigns__title"
             description="United For Ukraine is a humanitarian initiative providing aid,
                 essential supplies, and support to those affected by the war.

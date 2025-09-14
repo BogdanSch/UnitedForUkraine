@@ -4,6 +4,7 @@ import { Card, Image, Logo } from "../../components";
 import registerImage from "/assets/img/registerImage.jpg";
 import { RegisterForm } from "../../containers/";
 import { Link } from "react-router-dom";
+import { ThemeSwitchButton } from "../../components";
 
 const RegisterPage: FC = () => {
   return (
@@ -14,11 +15,14 @@ const RegisterPage: FC = () => {
             <Link className="auth__interlink-link" to="/">
               <Logo />
             </Link>
+            <div className="theme">
+              <ThemeSwitchButton />
+            </div>
           </Card>
           <div className="auth__hero card p-3">
             <div className="auth__hero-content">
               <div className="text-content">
-                <h2 className="auth__title">Register</h2>
+                <h2 className="sub-heading auth__title">Register</h2>
                 <p className="auth__description">
                   Are you new here? Let's create a new account for you!
                 </p>

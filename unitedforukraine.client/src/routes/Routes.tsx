@@ -22,6 +22,7 @@ import {
   UpdateUserProfile,
   Authentication,
   Contact,
+  NewsUpdatesIndex,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -47,6 +48,30 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <CampaignIndex /> },
+      { path: "detail/:id", element: <CampaignDetail /> },
+      {
+        path: "edit/:id",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <CampaignEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "create",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <CampaignCreate />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/newsUpdates",
+    element: <MainLayout />,
+    children: [
+      { index: true, element: <NewsUpdatesIndex /> },
       { path: "detail/:id", element: <CampaignDetail /> },
       {
         path: "edit/:id",

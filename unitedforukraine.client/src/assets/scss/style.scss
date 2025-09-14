@@ -52,6 +52,7 @@ $fw-normal: 500;
 $fw-bold: 700;
 $fw-super-bold: 900;
 
+@import "./themes/theme.scss";
 @import "./themes/dark-theme.scss";
 @import "./general.scss";
 @import "./animations.scss";
@@ -63,6 +64,7 @@ $fw-super-bold: 900;
 @import "./templates/impact.scss";
 @import "./templates/campaigns/campaigns.scss";
 @import "./templates/campaigns/campaigns-detail.scss";
+@import "./templates/news/news.scss";
 @import "./templates/features.scss";
 @import "./templates/statistics.scss";
 @import "./templates/auth/auth.scss";

@@ -9,6 +9,8 @@ using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Controllers;
 
+[ApiController]
+[Route("api/newsUpdates")]
 public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : ControllerBase
 {
     private readonly INewsUpdateRepository _newsUpdateRepository = newsUpdateRepository;
@@ -49,7 +51,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         }
         catch (Exception)
         {
-            return BadRequest(new { message = "Error, we weren't able to create a new blog post" });
+            return BadRequest(new { message = "Error, we weren't able to create a new blog post! Please, try again later" });
         }
     }
     [HttpPut]
@@ -73,12 +75,11 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
                 newsUpdate.ImageUrl = updateRequestDto.ImageUrl;
 
             await _newsUpdateRepository.UpdateAsync(newsUpdate);
-
             return NoContent();
         }
         catch (Exception)
         {
-            return BadRequest(new { message = "Error, we weren't able to update this blog post" });
+            return BadRequest(new { message = "Error, we weren't able to update this blog post! Please, try again later" });
         }
     }
     [HttpDelete("{id:int}")]
@@ -87,6 +88,17 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
     {
         NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(id);
 
-        
+        if (newsUpdate is null)
+            return NotFound(new { message = "Error, we weren't able to retrieve this blog post" });
+
+        try
+        {
+            await _newsUpdateRepository.DeleteByIdAsync(id);
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            return BadRequest(new { message = "Error, we weren't able to delete this blog post! Please, try again later" });
+        }
     }
 }

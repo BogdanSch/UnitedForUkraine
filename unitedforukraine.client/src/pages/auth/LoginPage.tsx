@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { SignInForm } from "../../containers/";
-import { Card, Image, Logo } from "../../components";
+import { Card, Image, Logo, ThemeSwitchButton } from "../../components";
 
 import loginImage from "/assets/img/loginImage.png";
 
@@ -17,6 +17,9 @@ const LoginPage: FC = () => {
             <Link className="auth__interlink-link" to="/">
               <Logo />
             </Link>
+            <div className="theme">
+              <ThemeSwitchButton />
+            </div>
           </Card>
           <div className="auth__hero card p-3">
             <Image
@@ -27,7 +30,7 @@ const LoginPage: FC = () => {
             />
             <div className="auth__hero-content">
               <div className="text-content">
-                <h2 className="auth__title">Welcome back, mate!</h2>
+                <h2 className="sub-heading auth__title">Welcome back, mate!</h2>
                 <p className="auth__description">
                   {message ||
                     "We have been missing you so much! Please fill in your credentials to log in."}

@@ -7,16 +7,17 @@ namespace UnitedForUkraine.Server.Data;
 
 public class Seed
 {
+    public const string DEFAULT_IMAGE_URL = "https://placehold.co/600x400/EEE/31343C";
     public static async Task SeedCampaignsAndDonationsAsync(IApplicationBuilder applicationBuilder)
     {
-        using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
-        {
-            var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            await context.Database.MigrateAsync();
+        using var serviceScope = applicationBuilder.ApplicationServices.CreateScope();
 
-            if (!context.Campaigns.Any())
-            {
-                List<Campaign> campaigns = new List<Campaign>
+        var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync();
+
+        if (!context.Campaigns.Any())
+        {
+            List<Campaign> campaigns = new List<Campaign>
                 {
                     new()
                     {
@@ -27,7 +28,7 @@ public class Seed
                         Currency = CurrencyType.USD,
                         StartDate = DateTime.UtcNow.AddDays(-10),
                         EndDate = DateTime.UtcNow.AddMonths(2),
-                        ImageUrl = "https://placehold.co/600x400/EEE/31343C",
+                        ImageUrl = DEFAULT_IMAGE_URL,
                         Status = CampaignStatus.Ongoing
                     },
                     new()
@@ -39,22 +40,22 @@ public class Seed
                         Currency = CurrencyType.UAH,
                         StartDate = DateTime.UtcNow,
                         EndDate = DateTime.UtcNow.AddMonths(4),
-                        ImageUrl = "https://placehold.co/600x400/EEE/31343C",
+                        ImageUrl = DEFAULT_IMAGE_URL,
                         Status = CampaignStatus.Upcoming
                     }
                 };
 
-                await context.Campaigns.AddRangeAsync(campaigns);
-                await context.SaveChangesAsync();
-            }
-            if (!context.Donations.Any())
-            {
-                var users = context.Users.ToList();
-                var campaigns = context.Campaigns.ToList();
+            await context.Campaigns.AddRangeAsync(campaigns);
+            await context.SaveChangesAsync();
+        }
+        if (!context.Donations.Any())
+        {
+            var users = context.Users.ToList();
+            var campaigns = context.Campaigns.ToList();
 
-                if (users.Any() && campaigns.Any())
-                {
-                    var donations = new List<Donation>
+            if (users.Any() && campaigns.Any())
+            {
+                var donations = new List<Donation>
                     {
                         new()
                         {
@@ -78,9 +79,42 @@ public class Seed
                         }
                     };
 
-                    await context.Donations.AddRangeAsync(donations);
-                    await context.SaveChangesAsync();
-                }
+                await context.Donations.AddRangeAsync(donations);
+                await context.SaveChangesAsync();
+            }
+        }
+        if(!context.NewsUpdates.Any())
+        {
+            List<AppUser> users = [.. context.Users];
+
+            if (users.Any())
+            {
+                AppUser firstUser = users.First();
+
+                List<NewsUpdate> newsUpdates =
+                [
+                        new()
+                        {
+                            Title = "Ukraine Receives International Aid",
+                            Content = "Several countries have pledged support to Ukraine in its time of need...",
+                            ImageUrl = DEFAULT_IMAGE_URL,
+                            ReadingTimeInMinutes = 5,
+                            PostedAt = DateTime.UtcNow.AddDays(-1),
+                            UserId = firstUser.Id
+                        },
+                        new()
+                        {
+                            Title = "Rebuilding Efforts in War-Torn Areas",
+                            Content = "Communities are coming together to rebuild homes and infrastructure...",
+                            ImageUrl = DEFAULT_IMAGE_URL,
+                            ReadingTimeInMinutes = 4,
+                            PostedAt = DateTime.UtcNow,
+                            UserId = firstUser.Id
+                        }
+                    ];
+
+                await context.NewsUpdates.AddRangeAsync(newsUpdates);
+                await context.SaveChangesAsync();
             }
         }
     }
@@ -104,7 +138,7 @@ public class Seed
         {
             var newAdminUser = new AppUser()
             {
-                UserName = "teddysmithdev",
+                UserName = "bogsvity777",
                 Email = adminUserEmail,
                 EmailConfirmed = true,
                 PhoneNumber = "+380123456789",

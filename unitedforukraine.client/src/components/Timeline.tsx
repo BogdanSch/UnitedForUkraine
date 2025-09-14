@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { TimelineItem } from "../types";
-import { convertToReadableDate } from "../utils/dateHelper";
+import { convertToReadableDate } from "../utils/helpers/dateHelper";
 
 type TimelineProps = {
   timelines: TimelineItem[];

@@ -128,6 +128,7 @@ export type ContactFormData = {
 };
 
 export type NewsUpdateDto = {
+  id: number;
   title: string;
   content: string;
   imageUrl: string;

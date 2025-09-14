@@ -1,4 +1,4 @@
-import { UNDEFINED_DATE } from "../variables";
+import { UNDEFINED_DATE } from "../../variables";
 
 const options: Record<string, string> = {
   year: "numeric",

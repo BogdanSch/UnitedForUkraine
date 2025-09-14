@@ -79,7 +79,7 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
             return BadRequest(ModelState);
 
         if (id != updatedCampaignDto.Id)
-            return BadRequest(new { message = "IDs of the campaigns don't match!" });
+            return BadRequest(new { message = "The identifiers of the campaigns don't match!" });
 
         Campaign? targetCampaign = await _campaignRepository.GetCampaignByIdAsync(id);
 

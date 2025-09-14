@@ -18,3 +18,6 @@ export { default as CampaignItem } from "./campaigns/CampaignItem";
 export { default as CampaignsPaginator } from "./campaigns/CampaignsPaginator";
 export { default as ExternalAuthServicesButtons } from "./buttons/ExternalAuthServicesButtons";
 export { default as OrSeparator } from "./formElements/OrSeparator";
+export { default as NewsUpdatesPaginator } from "../components/newsUpdates/NewsUpdatesPaginator";
+export { default as SearchBar } from "./formElements/SearchBar";
+export { default as ThemeSwitchButton } from "./buttons/ThemeSwitchButton";

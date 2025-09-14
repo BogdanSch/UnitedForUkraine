@@ -5,7 +5,7 @@ import { Statistics } from "../../types";
 
 import { Card } from "../../components";
 import { formatMoney } from "../../utils/helpers/currencyHelper";
-import formatNumber from "../../utils/formatNumber";
+import formatNumber from "../../utils/helpers/formatNumber";
 
 const DEFAULT_STATISTICS: Statistics = {
   donationsCount: 0,

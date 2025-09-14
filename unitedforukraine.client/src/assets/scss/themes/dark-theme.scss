@@ -131,6 +131,9 @@
     &-label {
       color: $bg-light-gray;
     }
+    &-check {
+      color: $bg-light-gray;
+    }
   }
   .accordion {
     &-item {
@@ -161,6 +164,19 @@
       background-color: $accent-dark;
       border-color: $primary-transparent;
       border-width: 2px;
+    }
+  }
+  .auth {
+    &__interlink {
+      color: $white;
+    }
+  }
+  .separator {
+    &__line {
+      background-color: $text-light-gray;
+    }
+    &__text {
+      color: $text-light-gray;
     }
   }
 }

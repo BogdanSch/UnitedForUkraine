@@ -5,7 +5,7 @@ import { useLocalStorage } from "../hooks";
 import { API_URL } from "../variables";
 import { TokenDateDto, UserDto } from "../types";
 // import { refreshTokens } from "../utils/services/tokenService";
-import { convertToUTCDate } from "../utils/dateHelper";
+import { convertToUTCDate } from "../utils/helpers/dateHelper";
 
 interface IAuthContextProps {
   user: UserDto | null;
@@ -87,9 +87,12 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logoutUser = async (): Promise<void> => {
-    await protectedAxios.post(`${API_URL}/Auth/logout`);
-    removeUser();
-    removeAccessTokenExpirationTimeUTC();
+    try {
+      await protectedAxios.post(`${API_URL}/Auth/logout`);
+    } finally {
+      removeUser();
+      removeAccessTokenExpirationTimeUTC();
+    }
   };
 
   const isAuthenticated = () => {

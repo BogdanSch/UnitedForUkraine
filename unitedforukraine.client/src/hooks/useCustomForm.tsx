@@ -1,5 +1,5 @@
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
-import { convertDate } from "../utils/dateHelper";
+import { convertDate } from "../utils/helpers/dateHelper";
 import {
   deleteImageAsync,
   uploadImageAsync,
@@ -101,6 +101,7 @@ export const handleSelectWithDataTagChange = (
   setSelectData: Dispatch<SetStateAction<any>>
 ): void => {
   const select = e.target;
+
   const selectedOption = select.options[select.selectedIndex];
   const dataValue: string =
     selectedOption.getAttribute("data-value") ?? select.value;
