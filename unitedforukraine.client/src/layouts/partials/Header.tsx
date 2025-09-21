@@ -66,20 +66,20 @@ const Header: FC = () => {
           className="header__navbar collapse navbar-collapse"
           id="responsiveNavbar"
         >
-          <ul className="header__list navbar-nav ms-auto me-md-2 me-0">
+          <ul className="header__list navbar-nav ms-auto me-2 me-md-1">
             <li className="nav-item">
-              <Link className="nav-link me-lg-3" to="/home">
+              <Link className="nav-link me-lg-2" to="/home">
                 Home
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link me-lg-3" to="/about">
+              <Link className="nav-link me-lg-2" to="/about">
                 About
               </Link>
             </li>
             <li className="nav-item sub-menu dropdown">
               <Link
-                className="nav-link me-lg-3 dropdown-toggle"
+                className="nav-link me-lg-2 dropdown-toggle"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
                 to="/campaigns"
@@ -103,7 +103,7 @@ const Header: FC = () => {
             </li>
             <li className="nav-item sub-menu dropdown">
               <Link
-                className="nav-link me-lg-3 dropdown-toggle"
+                className="nav-link me-lg-2 dropdown-toggle"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
                 to="/newsUpdates"
@@ -126,18 +126,13 @@ const Header: FC = () => {
               </ul>
             </li>
             <li className="nav-item">
-              <Link className="nav-link me-lg-3" to="/contact">
+              <Link className="nav-link me-lg-2" to="/contact">
                 Contact
               </Link>
             </li>
-            {/* <li className="nav-item">
-              <Link className="nav-link me-lg-3" to="/blog">
-                Blog
-              </Link>
-            </li> */}
           </ul>
           <Link
-            className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"
+            className="btn btn-primary rounded-pill mb-2 mb-lg-0"
             to={`/campaigns`}
           >
             <span className="d-flex align-items-center">
@@ -170,7 +165,7 @@ const Header: FC = () => {
               </ul>
             </div>
           ) : (
-            <div className="header__auth-buttons card p-2">
+            <div className="header__auth-buttons card py-2 px-1">
               <Link className="btn btn-outline-secondary" to={`/auth/login`}>
                 Log in
               </Link>

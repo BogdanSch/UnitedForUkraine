@@ -3,7 +3,7 @@ import { convertDate } from "../utils/helpers/dateHelper";
 import {
   deleteImageAsync,
   uploadImageAsync,
-} from "../utils/helpers/imageHelper";
+} from "../utils/services/imageService";
 
 function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
   const handleChange = (
@@ -61,14 +61,14 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
   const handleImageChange = async (
     e: ChangeEvent<HTMLInputElement>,
     previousImageUrl: string,
-    setRequestError: React.Dispatch<React.SetStateAction<string>>
+    setRequestError: Dispatch<SetStateAction<string>>
   ): Promise<void> => {
     if (!setFormData) return;
+
     console.log(e.target.files);
     const file = e.target.files?.[0] || null;
 
     if (file) {
-      // setImageFile(file);
       const imageUrl: string = (await uploadImageAsync(file)) || "";
 
       console.log(imageUrl);

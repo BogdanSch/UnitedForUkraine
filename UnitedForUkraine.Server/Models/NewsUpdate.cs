@@ -7,7 +7,7 @@ namespace UnitedForUkraine.Server.Models
     {
         [Key]
         public int Id { get; set; }
-        [MaxLength(100)]
+        [StringLength(100, MinimumLength = 10)]
         public required string Title { get; set; }
         [MinLength(20)]
         public required string Content { get; set; }

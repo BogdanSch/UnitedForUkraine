@@ -40,12 +40,15 @@ builder.Services.AddScoped<IAuthTokenService, AuthTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
-builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
-builder.Services.Configure<FrontendSettings>(builder.Configuration.GetSection("FrontendSettings"));
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+IConfigurationSection stripeSettings = builder.Configuration.GetSection(nameof(StripeSettings));
+IConfigurationSection frontendSettings = builder.Configuration.GetSection(nameof(FrontendSettings));
 
-StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeSettings")["SecretKey"];
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(nameof(CloudinarySettings)));
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
+builder.Services.Configure<StripeSettings>(stripeSettings);
+builder.Services.Configure<FrontendSettings>(frontendSettings);
+
+StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
@@ -73,7 +76,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-IConfigurationSection frontendSettings = builder.Configuration.GetSection("FrontendSettings");
 app.UseCors(cors => cors
                   .WithOrigins(frontendSettings["Origin"]!)
                   .AllowAnyHeader()

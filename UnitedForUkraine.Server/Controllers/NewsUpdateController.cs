@@ -28,8 +28,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
     {
         NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(id);
 
-        if (newsUpdate is null)
-            return NotFound();
+        if (newsUpdate is null) return NotFound();
 
         NewsUpdateDto newsUpdateDto = newsUpdate.ToNewsUpdateDto();
 
@@ -51,7 +50,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         }
         catch (Exception)
         {
-            return BadRequest(new { message = "Error, we weren't able to create a new blog post! Please, try again later" });
+            return BadRequest(new { message = "Error, we weren't able to create a new news update! Please, try again later" });
         }
     }
     [HttpPut]

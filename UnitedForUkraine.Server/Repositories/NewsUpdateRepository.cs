@@ -14,7 +14,8 @@ namespace UnitedForUkraine.Server.Repositories
             IQueryable<NewsUpdate> newsUpdates = _context.NewsUpdates.Include(n => n.User).AsNoTracking();
             if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
             {
-                newsUpdates = newsUpdates.Where(n => n.Title.Contains(queryObject.SearchedQuery, StringComparison.OrdinalIgnoreCase));
+                string query = queryObject.SearchedQuery;
+                newsUpdates = newsUpdates.Where(n => n.Title.Contains(query, StringComparison.OrdinalIgnoreCase) || n.Content.Contains(query, StringComparison.OrdinalIgnoreCase));
             }
             if(!string.IsNullOrWhiteSpace(queryObject.SortOrder))
             {

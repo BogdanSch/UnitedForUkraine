@@ -16,10 +16,6 @@ body {
   @include flex-center;
 }
 
-h1 {
-  font-weight: $fw-super-bold;
-}
-
 h1,
 h2 {
   font-family: "Montserrat", sans-serif;
@@ -29,7 +25,9 @@ h2 {
     color: $primary;
   }
 }
-
+h1 {
+  font-weight: $fw-super-bold;
+}
 h3,
 h4,
 h5 {
@@ -257,7 +255,8 @@ section {
 }
 
 .btn {
-  padding: 12px 24px;
+  // padding: 0.75rem 1.5rem;
+  padding: 1rem 1.25rem;
   border-radius: 24px;
   transition: all 0.3s ease-in-out;
 

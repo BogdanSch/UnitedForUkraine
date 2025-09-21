@@ -12,3 +12,4 @@ export { default as UserStatisticsList } from "./donations/UserStatisticsList";
 export { default as UpdateUserProfileForm } from "./forms/dashboard/UpdateUserProfileForm";
 export { default as ContactForm } from "./forms/contact/ContactForm";
 export { default as NewsUpdatesList } from "./newsUpdates/NewsUpdatesList";
+export { default as CreateNewsUpdateForm } from "./forms/newsUpdates/CreateNewsUpdateForm";

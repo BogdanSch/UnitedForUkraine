@@ -21,15 +21,13 @@ namespace UnitedForUkraine.Server.Mappers
         }
         public static NewsUpdate FromCreateNewsUpdateDtoToNewsUpdate(this CreateNewsUpdateRequestDto newsUpdate)
         {
-            DateTime postedAt = DateSettings.ParseDate(newsUpdate.PostedAt);
-
             return new NewsUpdate()
             {
                 Title = newsUpdate.Title,
                 Content = newsUpdate.Content,
                 ImageUrl = newsUpdate.ImageUrl,
                 ReadingTimeInMinutes = newsUpdate.ReadingTimeInMinutes,
-                PostedAt = postedAt,
+                PostedAt = DateTime.UtcNow,
                 UserId = newsUpdate.AuthorId
             };
         }

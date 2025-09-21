@@ -33,9 +33,13 @@
     max-width: 600px;
     margin: 0;
     color: $dark-navy;
-    background-color: $bg-light-gray;
     align-self: center;
     justify-self: flex-end;
+
+    background-color: $pale-blue-glass;
+    box-shadow: $dark-shadow;
+    backdrop-filter: blur(3px);
+    border: 1px solid $primary-transparent;
 
     &:hover {
       transform: scale(1.5);
@@ -46,6 +50,7 @@
     font-weight: $fw-super-bold;
     .yellow {
       color: $secondary;
+      text-shadow: 4px 4px 10px rgba(8, 206, 175, 0.85);
     }
   }
   &__description {

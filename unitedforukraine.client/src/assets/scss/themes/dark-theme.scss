@@ -60,6 +60,15 @@
         border-radius: 40px;
       }
     }
+    &__card {
+      background: $dark-navy-transparent !important;
+      box-shadow: $light-shadow;
+    }
+    &__title {
+      .yellow {
+        text-shadow: 4px 4px 10px rgba(6, 99, 85, 0.85);
+      }
+    }
   }
   .heading,
   .sub-heading {

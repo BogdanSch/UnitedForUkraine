@@ -132,12 +132,20 @@ export type NewsUpdateDto = {
   title: string;
   content: string;
   imageUrl: string;
-  readingTimeMinutes: number;
+  readingTimeInMinutes: number;
   postedAt: string;
+  authorName: string;
 };
 
 export type PaginatedNewsUpdatesDto = {
   newsUpdates: NewsUpdateDto[];
   hasPreviousPage: boolean;
   hasNextPage: boolean;
+};
+
+export type CreateNewsUpdateRequestDto = {
+  title: string;
+  content: string;
+  imageUrl: string;
+  readingTimeInMinutes: number;
 };

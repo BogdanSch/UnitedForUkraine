@@ -119,7 +119,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                     </p>
                     <p className="card-text text-muted">
                       <strong>Reading Time:</strong>{" "}
-                      {newsUpdate.readingTimeMinutes} minutes
+                      {newsUpdate.readingTimeInMinutes} minutes
                     </p>
                     <p className="card-text text-muted">
                       <strong>Posted At:</strong>{" "}
