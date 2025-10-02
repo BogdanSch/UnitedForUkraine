@@ -29,6 +29,7 @@ export type CreateCampaignRequestDto = {
   startDate: string;
   endDate: string;
   imageUrl: string;
+  organizerId: string;
 };
 
 export type UpdateCampaignRequestDto = {
@@ -41,6 +42,12 @@ export type UpdateCampaignRequestDto = {
   startDate: string;
   endDate: string;
   imageUrl: string;
+};
+
+export type PaginatedCampaignsDto = {
+  campaigns: CampaignDto[];
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
 };
 
 export type DonationDto = {
@@ -148,4 +155,6 @@ export type CreateNewsUpdateRequestDto = {
   content: string;
   imageUrl: string;
   readingTimeInMinutes: number;
+  authorId: string;
+  campaignId: number;
 };

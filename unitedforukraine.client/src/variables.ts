@@ -11,3 +11,6 @@ export const DARK_THEME_CLASS_NAME: string = "dark-theme";
 export const UNDEFINED_DATE: string = "N/A";
 
 export const DEFAULT_PREVIEW_TEXT_LENGTH: number = 30;
+export const LOAD_MORE_SELECT_VALUE: string = "loadMore";
+
+export const DEFAULT_PAGE_INDEX: number = 1;

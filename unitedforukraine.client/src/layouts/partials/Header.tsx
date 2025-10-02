@@ -119,7 +119,7 @@ const Header: FC = () => {
                 {isAuthenticated() && isAdmin() && (
                   <li className="dropdown-menu__item">
                     <Link className="dropdown-item" to="/newsUpdates/create">
-                      Create a new update
+                      Create a new news update
                     </Link>
                   </li>
                 )}

@@ -18,3 +18,4 @@ export { default as Authentication } from "./auth/Authentication";
 export { default as UpdateUserProfile } from "./dashboard/UpdateUserProfile";
 export { default as Contact } from "./contact/Contact";
 export { default as NewsUpdatesIndex } from "./newsUpdates/NewsUpdatesIndex";
+export { default as NewsUpdateCreate } from "./newsUpdates/NewsUpdateCreate";

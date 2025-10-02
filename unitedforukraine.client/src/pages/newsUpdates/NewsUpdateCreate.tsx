@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { SectionHeadline } from "../../components";
-import { CreateCampaignsForm } from "../../containers";
+import { CreateNewsUpdateForm } from "../../containers";
 
 const CampaignsCreate: FC = () => {
   return (
@@ -11,9 +11,9 @@ const CampaignsCreate: FC = () => {
             className="mb-5"
             title="Create a new News Update"
             sectionIndicatorTitle="News"
-            description=""
+            description="Fill out the form below to add a new news update to the catalog."
           />
-          <CreateCampaignsForm />
+          <CreateNewsUpdateForm />
         </div>
       </div>
     </section>

@@ -26,10 +26,18 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
 
         return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
     }
+    //[HttpGet("completed")]
+    //public async Task<IActionResult> GetCompletedPaginatedCampaignsData()
+    //{
+    //    List<Campaign> completedCampaigns = await _campaignRepository.GetAllCompletedAsync();
+    //    List<CampaignDto> campainsList = [.. completedCampaigns.Select(c => c.ToCampaignDto())];
+
+    //    return Ok(new PaginatedCampaignsDto(campainsList));
+    //}
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCampaignDataById([FromRoute] int id)
     {
-        Campaign? targetCampaign = await _campaignRepository.GetCampaignByIdAsync(id);
+        Campaign? targetCampaign = await _campaignRepository.GetByIdAsync(id);
 
         if (targetCampaign == null)
             return NotFound();
@@ -45,7 +53,7 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         if (userId == Guid.Empty)
-            return BadRequest(new { message = "User's ID cannot be empty." });
+            return BadRequest(new { message = "User's Id can't be empty" });
 
         var campaigns = await _campaignRepository.GetAllUserSupportedCampaigns(userId.ToString()).ToListAsync();
         List<CampaignDto> campaignDtos = [.. campaigns.Select(c => c.ToCampaignDto())];
@@ -56,8 +64,7 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateCampaign([FromBody] CreateCampaignRequestDto createdCampaignDto)
     {
-        if(!ModelState.IsValid)
-            return BadRequest(ModelState);
+        if(!ModelState.IsValid) return BadRequest(ModelState);
 
         try
         {
@@ -75,13 +82,12 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> UpdateCampaign([FromRoute] int id, [FromBody] UpdateCampaignRequestDto updatedCampaignDto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
         if (id != updatedCampaignDto.Id)
             return BadRequest(new { message = "The identifiers of the campaigns don't match!" });
 
-        Campaign? targetCampaign = await _campaignRepository.GetCampaignByIdAsync(id);
+        Campaign? targetCampaign = await _campaignRepository.GetByIdAsync(id);
 
         if (targetCampaign == null)
             return NotFound();

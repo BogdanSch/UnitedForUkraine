@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { CampaignDto, TimelineItem } from "../../types";
+import { CampaignDto } from "../../types";
 import {
   CampaignActionButton,
   Image,
@@ -14,7 +14,8 @@ import {
   convertCampaignCategoryToString,
   convertCampaignStatusToString,
   fetchCampaignData,
-} from "../../utils/helpers/campaignHelper";
+  getCampaignTimelines,
+} from "../../utils/services/campaignService";
 import { convertCurrencyToString } from "../../utils/helpers/currencyHelper";
 
 const CampaignsDetail: FC = () => {
@@ -32,29 +33,10 @@ const CampaignsDetail: FC = () => {
         return;
       }
 
-      setCampaign(await fetchCampaignData(Number(id)));
+      setCampaign(data);
     };
     fetcher();
   }, [id]);
-
-  const getCampaignTimelines = (): TimelineItem[] => {
-    if (!campaign) return [];
-
-    let startDate: string = campaign ? campaign.startDate : "";
-    let endDate: string = campaign ? campaign.endDate : "";
-
-    return [
-      {
-        date: new Date(startDate).toLocaleDateString(),
-        description: "Start date",
-      },
-      {
-        date: new Date().toLocaleDateString(),
-        description: "Current date",
-      },
-      { date: new Date(endDate).toLocaleDateString(), description: "End date" },
-    ];
-  };
 
   return (
     <section className="campaigns-detail">
@@ -98,7 +80,9 @@ const CampaignsDetail: FC = () => {
                 />
               </div>
             </div>
-            <Timeline timelines={getCampaignTimelines()} />
+            {campaign && (
+              <Timeline timelines={getCampaignTimelines(campaign)} />
+            )}
             <div className="campaigns-detail__status">
               <span
                 className={`status ${convertCampaignStatusToString(

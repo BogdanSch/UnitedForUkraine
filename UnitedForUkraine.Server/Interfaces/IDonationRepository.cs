@@ -8,8 +8,9 @@ public interface IDonationRepository
     IQueryable<Donation> HandleDonationsFiltering(QueryObject queryObject, IQueryable<Donation> donations);
     Task<PaginatedList<Donation>> GetPaginatedDonationsAsync(QueryObject queryObject, int itemsPerPageCount);
     Task<PaginatedList<Donation>> GetPaginatedDonationsByCampaignId(int campaignId, int page, int itemsPerPageCount);
+    Task<PaginatedList<Donation>> GetPaginatedDonationsByNewsUpdate(NewsUpdate newsUpdate, int page, int itemsPerPageCount);
     Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, QueryObject queryObject, int itemsPerPageCount);
-    Task<Donation?> GetDonationByIdAsync(int id);
+    Task<Donation?> GetByIdAsync(int id);
     Task<int> GetTotalUserDonationsCountAsync(string? userId);
     Task<decimal> GetTotalUserDonationsAmountAsync(string? userId);
     Task<decimal> GetMostFrequentUserDonationAmountAsync();

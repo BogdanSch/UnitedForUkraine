@@ -40,6 +40,8 @@ builder.Services.AddScoped<IAuthTokenService, AuthTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddHostedService<CampaignBackgroundService>();
+
 IConfigurationSection stripeSettings = builder.Configuration.GetSection(nameof(StripeSettings));
 IConfigurationSection frontendSettings = builder.Configuration.GetSection(nameof(FrontendSettings));
 

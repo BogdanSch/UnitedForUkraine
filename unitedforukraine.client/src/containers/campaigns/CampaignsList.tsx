@@ -2,7 +2,7 @@
 import { protectedAxios } from "../../utils/axiosInstances";
 import { FC, useEffect, useState, useRef, FormEvent, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CampaignDto } from "../../types";
+import { CampaignDto, PaginatedCampaignsDto } from "../../types";
 import { CampaignCategory } from "../../types/enums";
 import { CampaignItem, CampaignsPaginator, SearchBar } from "../../components";
 import AuthContext from "../../contexts/AuthContext";
@@ -20,15 +20,21 @@ const CampaignsList: FC<CampaignsListProps> = ({
   showQueryCriteria,
   showUserCampaigns,
 }) => {
-  const [campaigns, setCampaigns] = useState<CampaignDto[]>([]);
+  const [paginatedCampaigns, setPaginatedCampaigns] =
+    useState<PaginatedCampaignsDto>({
+      campaigns: [],
+      hasNextPage: false,
+      hasPreviousPage: false,
+    });
+  // const [campaigns, setCampaigns] = useState<CampaignDto[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("date_dsc");
   const [filterCategory, setFilterCategory] = useState<CampaignCategory>(
     CampaignCategory.None
   );
   const [pageIndex, setPageIndex] = useState<number>(1);
-  const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
-  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+  // const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
+  // const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -47,7 +53,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
       if (showUserCampaigns) {
         requestUrl = `${API_URL}/campaigns/users/${user?.id}/supports`;
       } else {
-        requestUrl = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}&filterCategory=${filterCategory}`;
+        requestUrl = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}&filterName=campaignCategory&filterCategory=${filterCategory}`;
         if (searchQuery.length > 0)
           requestUrl += `&searchedQuery=${searchQuery}`;
       }
@@ -60,13 +66,16 @@ const CampaignsList: FC<CampaignsListProps> = ({
       let axiosInstance = showUserCampaigns ? protectedAxios : axios;
 
       try {
-        const { data } = await axiosInstance.request(options);
+        const { data } = await axiosInstance.request<PaginatedCampaignsDto>(
+          options
+        );
 
-        setCampaigns(data.campaigns || []);
-        setHasPreviousPage(data.hasPreviousPage);
-        setHasNextPage(data.hasNextPage);
+        setPaginatedCampaigns(data);
+        // setCampaigns(data.campaigns || []);
+        // setHasPreviousPage(data.hasPreviousPage);
+        // setHasNextPage(data.hasNextPage);
       } catch (error) {
-        console.error(error);
+        console.log(`Error fetching campaigns: ${error}`);
       }
     };
 
@@ -75,8 +84,8 @@ const CampaignsList: FC<CampaignsListProps> = ({
 
   const handleSearch = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    const searchInput: HTMLInputElement | null = searchInputRef.current;
 
+    const searchInput: HTMLInputElement | null = searchInputRef.current;
     if (!searchInput) return;
 
     setSearchQuery(searchInput.value);
@@ -133,19 +142,19 @@ const CampaignsList: FC<CampaignsListProps> = ({
         </form>
       )}
       <ul className="campaigns__list mt-5">
-        {campaigns.length > 0 ? (
-          campaigns.map((campaign: CampaignDto) => (
+        {paginatedCampaigns.campaigns.length > 0 ? (
+          paginatedCampaigns.campaigns.map((campaign: CampaignDto) => (
             <CampaignItem key={campaign.id} campaign={campaign} />
           ))
         ) : (
           <p className="text-center">No campaigns have been found.</p>
         )}
       </ul>
-      {showPaginationButtons && campaigns.length > 0 && (
+      {showPaginationButtons && paginatedCampaigns.campaigns.length > 0 && (
         <CampaignsPaginator
           currentPageIndex={pageIndex}
-          hasPreviousPage={hasPreviousPage}
-          hasNextPage={hasNextPage}
+          hasPreviousPage={paginatedCampaigns.hasPreviousPage}
+          hasNextPage={paginatedCampaigns.hasNextPage}
         />
       )}
     </>

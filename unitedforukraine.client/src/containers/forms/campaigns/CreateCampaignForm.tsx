@@ -1,7 +1,9 @@
 // import axios from "axios";
 import { protectedAxios } from "../../../utils/axiosInstances";
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCustomForm } from "../../../hooks";
+import AuthContext from "../../../contexts/AuthContext";
 import { ErrorAlert } from "../../../components";
 import { CampaignDto, CreateCampaignRequestDto } from "../../../types";
 import {
@@ -10,10 +12,11 @@ import {
   Currency,
 } from "../../../types/enums";
 import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../../variables";
-import { useCustomForm } from "../../../hooks";
 
 const CreateCampaignForm: FC = () => {
-  const [formData, setFormData] = useState<CreateCampaignRequestDto>({
+  const { user } = useContext(AuthContext);
+
+  const DEFAULT_FORM_DATA: CreateCampaignRequestDto = {
     title: "",
     description: "",
     goalAmount: 0,
@@ -23,7 +26,10 @@ const CreateCampaignForm: FC = () => {
     startDate: "",
     endDate: "",
     imageUrl: API_IMAGE_PLACEHOLDER_URL,
-  });
+    organizerId: user?.id || "",
+  };
+  const [formData, setFormData] =
+    useState<CreateCampaignRequestDto>(DEFAULT_FORM_DATA);
   const [errors, setErrors] = useState<Record<string, string>>({
     title: "",
     description: "",
@@ -97,17 +103,7 @@ const CreateCampaignForm: FC = () => {
   };
 
   const handleReset = (): void => {
-    setFormData({
-      title: "",
-      description: "",
-      goalAmount: 0,
-      status: CampaignStatus.Upcoming,
-      currency: Currency.UAH,
-      category: CampaignCategory.Education,
-      startDate: "",
-      endDate: "",
-      imageUrl: "",
-    });
+    setFormData(DEFAULT_FORM_DATA);
     setErrors({});
   };
 

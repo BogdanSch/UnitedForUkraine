@@ -57,8 +57,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> UpdateNewsUpdate([FromBody] UpdateNewsUpdateRequestDto updateRequestDto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
         NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(updateRequestDto.Id);
 

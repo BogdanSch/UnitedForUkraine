@@ -17,5 +17,6 @@ namespace UnitedForUkraine.Server.DTOs.Campaign
         public required string StartDate { get; set; }
         public required string EndDate { get; set; }
         public required string ImageUrl { get; set; }
+        public required string OrganizerId { get; set; }
     }
 }

@@ -17,7 +17,10 @@ namespace UnitedForUkraine.Server.Models
         public required DateTime PostedAt { get; set; }
 
         [ForeignKey(nameof(AppUser))]
-        public required string UserId { get; set; }
-        public AppUser? User { get; set; }
+        public required string AuthorId { get; set; }
+        public AppUser? Author { get; set; }
+        [ForeignKey(nameof(Campaign))]
+        public required int CampaignId { get; set; }
+        public Campaign? TargetCampaign { get; set; }
     }
 }

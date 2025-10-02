@@ -5,8 +5,7 @@ namespace UnitedForUkraine.Server.Models;
 
 public class AppUser : IdentityUser
 {
-    [MaxLength(80)]
-    [MinLength(1)]
+    [StringLength(80, MinimumLength = 1)]
     public string? City { get; set; } = string.Empty;
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; set; } 

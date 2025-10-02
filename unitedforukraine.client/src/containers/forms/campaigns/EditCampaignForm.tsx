@@ -6,7 +6,7 @@ import { API_URL } from "../../../variables";
 import { UpdateCampaignRequestDto } from "../../../types";
 import { CampaignCategory, CampaignStatus } from "../../../types/enums";
 import { ErrorAlert } from "../../../components/";
-import { fetchCampaignData } from "../../../utils/helpers/campaignHelper";
+import { fetchCampaignData } from "../../../utils/services/campaignService";
 import { useCustomForm } from "../../../hooks";
 
 interface EditCampaignFormProps {

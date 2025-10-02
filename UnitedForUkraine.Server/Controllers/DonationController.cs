@@ -29,7 +29,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetDontaionDataById(int id)
     {
-        Donation? targetDonation = await _donationRepository.GetDonationByIdAsync(id);
+        Donation? targetDonation = await _donationRepository.GetByIdAsync(id);
 
         if (targetDonation == null)
             return NotFound();
@@ -66,8 +66,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     [Authorize]
     public async Task<IActionResult> CreateDonation([FromBody] CreateDonationRequestDto createdDonationDto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
         try
         {

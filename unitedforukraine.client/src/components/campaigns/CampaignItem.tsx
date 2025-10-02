@@ -5,7 +5,7 @@ import { CampaignActionButton, Card, ProgressBar, ShareButton } from "..";
 import {
   convertCampaignCategoryToString,
   convertCampaignStatusToString,
-} from "../../utils/helpers/campaignHelper";
+} from "../../utils/services/campaignService";
 import {
   convertCurrencyToString,
   formatMoney,

@@ -11,6 +11,9 @@ const CampaignsCreate: FC = () => {
             title={"Create a new Campaign"}
             sectionIndicatorTitle={"Campaigns"}
             className="mb-5"
+            description={
+              "Fill out the form below to add a new campaign to the catalog."
+            }
           />
           <CreateCampaignsForm />
         </div>

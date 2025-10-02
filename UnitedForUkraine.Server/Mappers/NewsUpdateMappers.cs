@@ -28,7 +28,8 @@ namespace UnitedForUkraine.Server.Mappers
                 ImageUrl = newsUpdate.ImageUrl,
                 ReadingTimeInMinutes = newsUpdate.ReadingTimeInMinutes,
                 PostedAt = DateTime.UtcNow,
-                UserId = newsUpdate.AuthorId
+                AuthorId = newsUpdate.AuthorId,
+                CampaignId = newsUpdate.CampaignId
             };
         }
     }

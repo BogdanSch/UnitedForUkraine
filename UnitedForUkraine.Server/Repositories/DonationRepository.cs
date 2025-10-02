@@ -46,6 +46,11 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
         var donations = _context.Donations.Where(d => d.CampaignId == campaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
         return await PaginatedList<Donation>.CreateAsync(donations, page, itemsPerPageCount);
     }
+    public async Task<PaginatedList<Donation>> GetPaginatedDonationsByNewsUpdate(NewsUpdate newsUpdate, int page, int itemsPerPageCount)
+    {
+        var donations = _context.Donations.Where(d => d.CampaignId == newsUpdate.CampaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
+        return await PaginatedList<Donation>.CreateAsync(donations, page, itemsPerPageCount);
+    }
     public async Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, QueryObject queryObject, int itemsPerPageCount)
     {
         IQueryable<Donation> donations = _context.Donations.Where(d => d.UserId == userId).Include(d => d.User);
@@ -53,7 +58,7 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
 
         return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
-    public async Task<Donation?> GetDonationByIdAsync(int id)
+    public async Task<Donation?> GetByIdAsync(int id)
     {
         return await _context.Donations.Include(d => d.User).FirstOrDefaultAsync(dontaion => dontaion.Id == id);
     }
@@ -69,8 +74,7 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
         if (donation is not null)
         {
             _context.Donations.Remove(donation);
-            await SaveAsync();
-            return true;
+            return await SaveAsync();
         }
 
         return false;

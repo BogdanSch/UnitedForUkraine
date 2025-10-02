@@ -12,6 +12,7 @@ namespace UnitedForUkraine.Server.Repositories
         public async Task<PaginatedList<NewsUpdate>> GetPaginatedAsync(QueryObject queryObject, int itemsPerPageCount)
         {
             IQueryable<NewsUpdate> newsUpdates = _context.NewsUpdates.Include(n => n.User).AsNoTracking();
+
             if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
             {
                 string query = queryObject.SearchedQuery;

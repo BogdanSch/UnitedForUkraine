@@ -36,12 +36,12 @@ namespace UnitedForUkraine.Server.Controllers
         [Authorize]
         public async Task<IActionResult> CreateCheckoutSession(int createdDonationId)
         {
-            Donation? currentDonation = await _donationRepository.GetDonationByIdAsync(createdDonationId);
+            Donation? currentDonation = await _donationRepository.GetByIdAsync(createdDonationId);
 
             if (currentDonation == null)
                 return BadRequest(new { message = "Invalid donation data" });
 
-            Campaign? targetCampaign = await _campaignRepository.GetCampaignByIdAsync(currentDonation.CampaignId);
+            Campaign? targetCampaign = await _campaignRepository.GetByIdAsync(currentDonation.CampaignId);
 
             if (targetCampaign == null)
                 return BadRequest(new { message = "Invalid campaign data within the donation" });

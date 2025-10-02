@@ -1,4 +1,5 @@
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { LOAD_MORE_SELECT_VALUE } from "../variables";
 import { convertDate } from "../utils/helpers/dateHelper";
 import {
   deleteImageAsync,
@@ -48,9 +49,17 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
     }));
   };
 
-  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>): void => {
+  const handleSelectChange = (
+    e: ChangeEvent<HTMLSelectElement>,
+    loadMoreCallback?: () => void
+  ): void => {
     if (!setFormData) return;
     const { name, value } = e.target;
+
+    if (value === LOAD_MORE_SELECT_VALUE && loadMoreCallback) {
+      loadMoreCallback();
+      return;
+    }
 
     setFormData((prev: any) => ({
       ...prev,

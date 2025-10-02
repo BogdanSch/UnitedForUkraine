@@ -47,7 +47,7 @@ namespace UnitedForUkraine.Server.Controllers
                     if (donation is not null)
                     {
                         donation.Status = DonationStatus.Completed;
-                        Campaign? campaign = await _campaignRepository.GetCampaignByIdAsync(donation.CampaignId);
+                        Campaign? campaign = await _campaignRepository.GetByIdAsync(donation.CampaignId);
                         if (campaign is not null)
                         {
                             decimal convertedAmount = await

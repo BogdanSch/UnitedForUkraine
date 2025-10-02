@@ -11,5 +11,7 @@ namespace UnitedForUkraine.Server.DTOs.NewsUpdate
         public required string ImageUrl { get; init; }
         [Range(1, 60)]
         public required int ReadingTimeInMinutes { get; init; }
+        public required string AuthorId { get; init; }
+        public required int CampaignId { get; init; }
     }
 }

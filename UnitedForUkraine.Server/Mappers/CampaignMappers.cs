@@ -40,7 +40,8 @@ namespace UnitedForUkraine.Server.Mappers
                 Category = (CampaignCategory)newCampaign.Category,
                 StartDate = startDate,
                 EndDate = endDate,
-                ImageUrl = newCampaign.ImageUrl
+                ImageUrl = newCampaign.ImageUrl,
+                OrganizerId = newCampaign.OrganizerId
             };
         }
     }

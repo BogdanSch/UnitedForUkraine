@@ -7,8 +7,9 @@ using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Repositories;
 
-public class CampaignRepository(ApplicationDbContext context) : ICampaignRepository
+public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRepository> logger) : ICampaignRepository
 {
+    private readonly ILogger<CampaignRepository> _logger = logger;
     private readonly ApplicationDbContext _context = context;
     public async Task<PaginatedList<Campaign>> GetPaginatedCampaigns(QueryObject queryObject, int itemsPerPageCount)
     {
@@ -26,7 +27,7 @@ public class CampaignRepository(ApplicationDbContext context) : ICampaignReposit
                 "title_asc" => campaigns.OrderBy(c => c.Title),
                 "date_dsc" => campaigns.OrderByDescending(c => c.StartDate),
                 "mostFunded_dsc" => campaigns.OrderByDescending(c => c.RaisedAmount),
-                "nearGoal_dsc" => campaigns.OrderByDescending(c => c.RaisedAmount / c.GoalAmount),
+                "nearGoal_dsc" => campaigns.OrderByDescending(c => c.GoalAmount <= 0m ? 0m : c.RaisedAmount / c.GoalAmount),
                 "nearEnd_dsc" => campaigns.OrderByDescending(c => c.EndDate),
                 _ => campaigns.OrderByDescending(c => c.StartDate),
             };
@@ -36,15 +37,48 @@ public class CampaignRepository(ApplicationDbContext context) : ICampaignReposit
             campaigns = campaigns.OrderByDescending(c => c.StartDate);
         }
 
-        CampaignCategory category = (CampaignCategory)queryObject.FilterCategory;
-        if(category != CampaignCategory.None)
+        if (!string.IsNullOrWhiteSpace(queryObject.FilterName))
         {
-            campaigns = campaigns.Where(c => c.Category == category);
+            switch (queryObject.FilterName)
+            {
+                case "campaignCategory":
+                    CampaignCategory category = (CampaignCategory)queryObject.FilterCategory;
+                    if (category != CampaignCategory.None)
+                            campaigns = campaigns.Where(c => c.Category == category);
+                    break;
+                case "finishedCampaign":
+                    campaigns = campaigns.Where(c => c.Status == CampaignStatus.Completed);
+                    break;
+            }
         }
 
         return await PaginatedList<Campaign>.CreateAsync(campaigns, queryObject.Page, itemsPerPageCount);
     }
-    public async Task<Campaign?> GetCampaignByIdAsync(int id)
+    //public async Task<PaginatedList<Campaign>> GetCompletedPaginatedCampaigns()
+    //{
+    //}
+    public async Task<bool> UpdateExpiredCampaignsAsync()
+    {
+        DateTime currentDate = DateTime.Now;
+        List<Campaign> unmarkedFinishedCampaigns = await _context.Campaigns.Where(c => c.EndDate <= currentDate && c.Status == CampaignStatus.Ongoing).ToListAsync();
+
+        try
+        {
+            foreach (Campaign campaign in unmarkedFinishedCampaigns)
+            {
+                campaign.Status = CampaignStatus.Completed;
+                await UpdateAsync(campaign);
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"An exception has occured during updating the outdated campaigns: ${e.Message}");
+            return false;
+        }
+
+        return true;
+    }
+    public async Task<Campaign?> GetByIdAsync(int id)
     {
         return await _context.Campaigns.FirstOrDefaultAsync(campaign => campaign.Id == id);
     }

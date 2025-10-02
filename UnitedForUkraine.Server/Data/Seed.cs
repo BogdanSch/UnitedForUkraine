@@ -15,51 +15,56 @@ public class Seed
         var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await context.Database.MigrateAsync();
 
+        AppUser? firstUser = await context.Users.FirstOrDefaultAsync();
+
         if (!context.Campaigns.Any())
         {
-            List<Campaign> campaigns = new List<Campaign>
-                {
-                    new()
-                    {
-                        Title = "Medical Aid for Ukraine",
-                        Description = "Providing medical supplies and assistance to those in need.",
-                        GoalAmount = 100000m,
-                        RaisedAmount = 25000m,
-                        Currency = CurrencyType.USD,
-                        StartDate = DateTime.UtcNow.AddDays(-10),
-                        EndDate = DateTime.UtcNow.AddMonths(2),
-                        ImageUrl = DEFAULT_IMAGE_URL,
-                        Status = CampaignStatus.Ongoing
-                    },
-                    new()
-                    {
-                        Title = "Rebuild Schools Initiative",
-                        Description = "Helping rebuild educational facilities in war-affected areas.",
-                        GoalAmount = 50000m,
-                        RaisedAmount = 12000m,
-                        Currency = CurrencyType.UAH,
-                        StartDate = DateTime.UtcNow,
-                        EndDate = DateTime.UtcNow.AddMonths(4),
-                        ImageUrl = DEFAULT_IMAGE_URL,
-                        Status = CampaignStatus.Upcoming
-                    }
-                };
+            if(firstUser is not null)
+            {
+                List<Campaign> campaigns =
+                    [
+                        new()
+                        {
+                            Title = "Medical Aid for Ukraine",
+                            Description = "Providing medical supplies and assistance to those in need.",
+                            GoalAmount = 100000m,
+                            RaisedAmount = 25000m,
+                            Currency = CurrencyType.USD,
+                            StartDate = DateTime.UtcNow.AddDays(-10),
+                            EndDate = DateTime.UtcNow.AddMonths(2),
+                            ImageUrl = DEFAULT_IMAGE_URL,
+                            Status = CampaignStatus.Ongoing,
+                            OrganizerId = firstUser.Id
+                        },
+                        new()
+                        {
+                            Title = "Rebuild Schools Initiative",
+                            Description = "Helping rebuild educational facilities in war-affected areas.",
+                            GoalAmount = 50000m,
+                            RaisedAmount = 12000m,
+                            Currency = CurrencyType.UAH,
+                            StartDate = DateTime.UtcNow,
+                            EndDate = DateTime.UtcNow.AddMonths(4),
+                            ImageUrl = DEFAULT_IMAGE_URL,
+                            Status = CampaignStatus.Upcoming,
+                            OrganizerId = firstUser.Id
+                        }
+                    ];
 
-            await context.Campaigns.AddRangeAsync(campaigns);
-            await context.SaveChangesAsync();
+                await context.Campaigns.AddRangeAsync(campaigns);
+                await context.SaveChangesAsync();
+            }
         }
         if (!context.Donations.Any())
         {
-            var users = context.Users.ToList();
-            var campaigns = context.Campaigns.ToList();
-
-            if (users.Any() && campaigns.Any())
+            IQueryable<Campaign> campaigns = context.Campaigns;
+            if (firstUser is not null && campaigns.Any())
             {
                 var donations = new List<Donation>
                     {
                         new()
                         {
-                            UserId = users.First().Id,
+                            UserId = firstUser.Id,
                             CampaignId = campaigns.First().Id,
                             Amount = 100m,
                             Currency = CurrencyType.USD,
@@ -69,7 +74,7 @@ public class Seed
                         },
                         new()
                         {
-                            UserId = users.Last().Id,
+                            UserId = firstUser.Id,
                             CampaignId = campaigns.Last().Id,
                             Amount = 50m,
                             Currency = CurrencyType.EUR,
@@ -87,10 +92,8 @@ public class Seed
         {
             List<AppUser> users = [.. context.Users];
 
-            if (users.Any())
+            if (firstUser is not null)
             {
-                AppUser firstUser = users.First();
-
                 List<NewsUpdate> newsUpdates =
                 [
                         new()
@@ -100,7 +103,8 @@ public class Seed
                             ImageUrl = DEFAULT_IMAGE_URL,
                             ReadingTimeInMinutes = 5,
                             PostedAt = DateTime.UtcNow.AddDays(-1),
-                            UserId = firstUser.Id
+                            AuthorId = firstUser.Id, 
+                            CampaignId = 1
                         },
                         new()
                         {
@@ -109,7 +113,8 @@ public class Seed
                             ImageUrl = DEFAULT_IMAGE_URL,
                             ReadingTimeInMinutes = 4,
                             PostedAt = DateTime.UtcNow,
-                            UserId = firstUser.Id
+                            AuthorId = firstUser.Id,
+                            CampaignId = 2
                         }
                     ];
 
