@@ -53,7 +53,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
       if (showUserCampaigns) {
         requestUrl = `${API_URL}/campaigns/users/${user?.id}/supports`;
       } else {
-        requestUrl = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}&filterName=campaignCategory&filterCategory=${filterCategory}`;
+        requestUrl = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}&filterName=campaignCategory&filterCategories=${filterCategory}`;
         if (searchQuery.length > 0)
           requestUrl += `&searchedQuery=${searchQuery}`;
       }

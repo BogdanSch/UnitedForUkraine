@@ -16,7 +16,7 @@ namespace UnitedForUkraine.Server.Mappers
                 ImageUrl = newsUpdate.ImageUrl,
                 ReadingTimeInMinutes = newsUpdate.ReadingTimeInMinutes,
                 PostedAt = newsUpdate.PostedAt.ToString(DateSettings.DEFAULT_DATE_FORMAT),
-                AuthorName = newsUpdate.User?.UserName ?? "N/A"
+                AuthorName = newsUpdate.Author?.UserName ?? "N/A"
             };
         }
         public static NewsUpdate FromCreateNewsUpdateDtoToNewsUpdate(this CreateNewsUpdateRequestDto newsUpdate)

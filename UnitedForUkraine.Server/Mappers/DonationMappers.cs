@@ -14,7 +14,7 @@ namespace UnitedForUkraine.Server.Mappers
                 Id = donation.Id,
                 UserId = donation.UserId,
                 CampaignId = donation.CampaignId,
-                UserName = donation.User.UserName!,
+                UserName = donation.User?.UserName!,
                 Amount = donation.Amount,
                 Currency = (int)donation.Currency,
                 PaymentMethod = (int)donation.PaymentMethod,

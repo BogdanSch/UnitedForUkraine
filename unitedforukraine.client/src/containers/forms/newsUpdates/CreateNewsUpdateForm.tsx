@@ -16,7 +16,7 @@ import {
   DEFAULT_PAGE_INDEX,
   LOAD_MORE_SELECT_VALUE,
 } from "../../../variables";
-import { fetchAllCompletedCampaigns } from "../../../utils/services/campaignService";
+import { fetchAllActiveAndCompletedCampaigns } from "../../../utils/services/campaignService";
 
 const CreateNewsUpdateForm: FC = () => {
   const { user } = useContext(AuthContext);
@@ -52,7 +52,7 @@ const CreateNewsUpdateForm: FC = () => {
     useCustomForm(setFormData);
 
   useEffect(() => {
-    fetchAllCompletedCampaigns(pageIndex)
+    fetchAllActiveAndCompletedCampaigns(pageIndex)
       .then((data) => {
         setFinishedPaginatedCampaigns({
           campaigns: finishedPaginatedCampaigns.campaigns.concat(
@@ -79,20 +79,20 @@ const CreateNewsUpdateForm: FC = () => {
     setErrors({});
     const newErrors: Record<string, string> = {};
 
-    if (formData.title.length >= 10) {
+    if (formData.title.length < 10) {
       newErrors.title = "The title must be at least 10 characters long";
     }
-    if (formData.title.length < 101) {
+    if (formData.title.length > 101) {
       newErrors.title = "The title must be at most 100 characters long";
     }
-    if (formData.content.length >= 20) {
+    if (formData.content.length < 20) {
       newErrors.content = "The description must be at least 20 characters long";
     }
-    if (formData.readingTimeInMinutes > 0) {
+    if (formData.readingTimeInMinutes <= 0) {
       newErrors.readingTimeInMinutes =
         "The reading time must be greater than 0";
     }
-    if (formData.readingTimeInMinutes <= 60) {
+    if (formData.readingTimeInMinutes >= 60) {
       newErrors.readingTimeInMinutes =
         "The reading time must be at most 60 minutes";
     }
@@ -107,7 +107,7 @@ const CreateNewsUpdateForm: FC = () => {
 
     try {
       const { data } = await protectedAxios.post<NewsUpdateDto>(
-        `${API_URL}/newsUpdate`,
+        `${API_URL}/newsUpdates`,
         formData
       );
 

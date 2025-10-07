@@ -13,6 +13,6 @@ public interface ICampaignRepository
     Task<Campaign> DeleteAsync(int id);
     Task<bool> UpdateAsync(Campaign campaign);
     Task<bool> SaveAsync();
-    IQueryable<Campaign> GetAllUserSupportedCampaigns(string? userId);
+    IQueryable<Campaign?> GetAllUserSupportedCampaigns(string? userId);
     Task<int> GetAllUserSupportedCampaignsCount(string? userId);
 }

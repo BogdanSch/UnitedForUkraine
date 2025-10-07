@@ -6,6 +6,6 @@ public class QueryObject
     public string? SearchedQuery { get; set; }
     public string? SortOrder { get; set; }
     public string? FilterName { get; set; }
-    public int FilterCategory { get; set; } = 0;
+    public string FilterCategories { get; set; } = string.Empty;
 }
 

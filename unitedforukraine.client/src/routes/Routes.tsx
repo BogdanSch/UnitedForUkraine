@@ -73,15 +73,6 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <NewsUpdatesIndex /> },
-      // { path: "detail/:id", element: <CampaignDetail /> },
-      // {
-      //   path: "edit/:id",
-      //   element: (
-      //     <ProtectedRoute requireAdmin>
-      //       <CampaignEdit />
-      //     </ProtectedRoute>
-      //   ),
-      // },
       {
         path: "create",
         element: (

@@ -96,7 +96,9 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
             .FirstOrDefaultAsync();
-        return popularCity ?? POPULAR_DONATIONS_CITY_NAME;
+        if (string.IsNullOrWhiteSpace(popularCity))
+            return POPULAR_DONATIONS_CITY_NAME;
+        return popularCity;
     }
     private IQueryable<Donation> GetDonationsQuery(string? userId)
     {

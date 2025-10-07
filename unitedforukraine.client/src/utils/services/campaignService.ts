@@ -3,12 +3,12 @@ import { API_URL } from "../../variables";
 import { CampaignCategory, CampaignStatus } from "../../types/enums";
 import { CampaignDto, PaginatedCampaignsDto, TimelineItem } from "../../types";
 
-export const fetchAllCompletedCampaigns = async (
+export const fetchAllActiveAndCompletedCampaigns = async (
   page: number
 ): Promise<PaginatedCampaignsDto> => {
   try {
     const { data } = await axios.get<PaginatedCampaignsDto>(
-      `${API_URL}/campaigns?page=${page}&filterName=finishedCampaign`
+      `${API_URL}/campaigns?page=${page}&filterName=campaignStatus&filterStatuses=${CampaignStatus.Ongoing}+${CampaignStatus.Completed}`
     );
     return data;
   } catch (error) {

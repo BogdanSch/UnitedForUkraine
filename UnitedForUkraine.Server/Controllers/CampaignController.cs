@@ -26,14 +26,6 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
 
         return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
     }
-    //[HttpGet("completed")]
-    //public async Task<IActionResult> GetCompletedPaginatedCampaignsData()
-    //{
-    //    List<Campaign> completedCampaigns = await _campaignRepository.GetAllCompletedAsync();
-    //    List<CampaignDto> campainsList = [.. completedCampaigns.Select(c => c.ToCampaignDto())];
-
-    //    return Ok(new PaginatedCampaignsDto(campainsList));
-    //}
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCampaignDataById([FromRoute] int id)
     {

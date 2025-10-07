@@ -37,21 +37,17 @@ namespace UnitedForUkraine.Server.Controllers
         public async Task<IActionResult> CreateCheckoutSession(int createdDonationId)
         {
             Donation? currentDonation = await _donationRepository.GetByIdAsync(createdDonationId);
-
-            if (currentDonation == null)
+            if (currentDonation is null)
                 return BadRequest(new { message = "Invalid donation data" });
 
             Campaign? targetCampaign = await _campaignRepository.GetByIdAsync(currentDonation.CampaignId);
-
-            if (targetCampaign == null)
+            if (targetCampaign is null)
                 return BadRequest(new { message = "Invalid campaign data within the donation" });
-
             if(targetCampaign.Status != CampaignStatus.Ongoing)
                 return BadRequest(new { message = "Campaign is not active for donations" } );
 
             AppUser? contributor = await _userManager.FindByIdAsync(currentDonation.UserId);
-
-            if(contributor == null)
+            if(contributor is null)
                 return BadRequest(new { message = "Invalid user data" });
 
             string requestOrigin = _frontendSettings.Origin;
@@ -69,8 +65,8 @@ namespace UnitedForUkraine.Server.Controllers
                             Currency = Enum.GetName(currentDonation.Currency)?.ToLower() ?? DEFAULT_STRIPE_CURRENCY,
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
-                                Name = currentDonation.Campaign.Title,
-                                Description = currentDonation.Campaign.Description,
+                                Name = targetCampaign.Title,
+                                Description = targetCampaign.Description,
                             },
                         },
                         Quantity = 1,

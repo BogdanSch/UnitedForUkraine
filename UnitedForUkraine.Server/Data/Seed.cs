@@ -21,7 +21,7 @@ public class Seed
         {
             if(firstUser is not null)
             {
-                List<Campaign> campaigns =
+                List<Campaign> newCampaigns =
                     [
                         new()
                         {
@@ -51,17 +51,17 @@ public class Seed
                         }
                     ];
 
-                await context.Campaigns.AddRangeAsync(campaigns);
+                await context.Campaigns.AddRangeAsync(newCampaigns);
                 await context.SaveChangesAsync();
             }
         }
+
+        List<Campaign> campaigns = await context.Campaigns.AsNoTracking().ToListAsync();
         if (!context.Donations.Any())
         {
-            IQueryable<Campaign> campaigns = context.Campaigns;
             if (firstUser is not null && campaigns.Any())
             {
-                var donations = new List<Donation>
-                    {
+                List<Donation> donations = [
                         new()
                         {
                             UserId = firstUser.Id,
@@ -82,7 +82,7 @@ public class Seed
                             PaymentMethod = PaymentMethod.PayPal,
                             Status = DonationStatus.Pending
                         }
-                    };
+                    ];
 
                 await context.Donations.AddRangeAsync(donations);
                 await context.SaveChangesAsync();
@@ -90,9 +90,7 @@ public class Seed
         }
         if(!context.NewsUpdates.Any())
         {
-            List<AppUser> users = [.. context.Users];
-
-            if (firstUser is not null)
+            if (firstUser is not null && campaigns.Any())
             {
                 List<NewsUpdate> newsUpdates =
                 [
@@ -104,7 +102,7 @@ public class Seed
                             ReadingTimeInMinutes = 5,
                             PostedAt = DateTime.UtcNow.AddDays(-1),
                             AuthorId = firstUser.Id, 
-                            CampaignId = 1
+                            CampaignId = campaigns.First().Id
                         },
                         new()
                         {
@@ -114,7 +112,7 @@ public class Seed
                             ReadingTimeInMinutes = 4,
                             PostedAt = DateTime.UtcNow,
                             AuthorId = firstUser.Id,
-                            CampaignId = 2
+                            CampaignId = campaigns.Last().Id
                         }
                     ];
 

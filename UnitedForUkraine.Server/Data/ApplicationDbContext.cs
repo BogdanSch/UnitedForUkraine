@@ -6,7 +6,30 @@ namespace UnitedForUkraine.Server.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<AppUser>(options)
 {
-    public DbSet<Campaign> Campaigns { get; set; }
-    public DbSet<Donation> Donations { get; set; }
-    public DbSet<NewsUpdate> NewsUpdates { get; set; }
+    public DbSet<Address> Addresses => Set<Address>();
+    public DbSet<Campaign> Campaigns => Set<Campaign>();
+    public DbSet<Donation> Donations => Set<Donation>();
+    public DbSet<NewsUpdate> NewsUpdates => Set<NewsUpdate>();
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<Campaign>()
+            .HasOne(c => c.Organizer)
+            .WithMany()
+            .HasForeignKey(c => c.OrganizerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Donation>()
+            .HasOne(d => d.User)
+            .WithMany()
+            .HasForeignKey(d => d.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Donation>()
+            .HasOne(d => d.Campaign)
+            .WithMany()
+            .HasForeignKey(d => d.CampaignId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }

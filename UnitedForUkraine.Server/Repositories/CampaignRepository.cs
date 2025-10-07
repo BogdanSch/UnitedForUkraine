@@ -4,6 +4,7 @@ using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace UnitedForUkraine.Server.Repositories;
 
@@ -37,26 +38,38 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
             campaigns = campaigns.OrderByDescending(c => c.StartDate);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryObject.FilterName))
+        if (!string.IsNullOrWhiteSpace(queryObject.FilterName) && !string.IsNullOrWhiteSpace(queryObject.FilterCategories))
         {
+            string[] categories = [.. queryObject.FilterCategories.Split('+', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray()];
+
             switch (queryObject.FilterName)
             {
                 case "campaignCategory":
-                    CampaignCategory category = (CampaignCategory)queryObject.FilterCategory;
-                    if (category != CampaignCategory.None)
-                            campaigns = campaigns.Where(c => c.Category == category);
+                    CampaignCategory[] requiredCategories = [.. categories.Select(c =>
+                    {
+                        if (Enum.TryParse<CampaignCategory>(c, out CampaignCategory campaignCategory))
+                            return campaignCategory;
+                        return CampaignCategory.None;
+                    })];
+
+                    if (!requiredCategories.Contains(CampaignCategory.None))
+                        campaigns = campaigns.Where(c => requiredCategories.Contains(c.Category));
                     break;
-                case "finishedCampaign":
-                    campaigns = campaigns.Where(c => c.Status == CampaignStatus.Completed);
+                case "campaignStatus":
+                    CampaignStatus[] requiredStatuses = [.. categories.Select(c =>
+                    {
+                        if (Enum.TryParse<CampaignStatus>(c, out CampaignStatus campaignStatus))
+                            return campaignStatus;
+                        return CampaignStatus.Upcoming;
+                    })];
+
+                    campaigns = campaigns.Where(c => requiredStatuses.Contains(c.Status));
                     break;
             }
         }
 
         return await PaginatedList<Campaign>.CreateAsync(campaigns, queryObject.Page, itemsPerPageCount);
     }
-    //public async Task<PaginatedList<Campaign>> GetCompletedPaginatedCampaigns()
-    //{
-    //}
     public async Task<bool> UpdateExpiredCampaignsAsync()
     {
         DateTime currentDate = DateTime.Now;
@@ -113,7 +126,7 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         int saved = await _context.SaveChangesAsync();
         return saved > 0;
     }
-    public IQueryable<Campaign> GetAllUserSupportedCampaigns(string? userId)
+    public IQueryable<Campaign?> GetAllUserSupportedCampaigns(string? userId)
     {
         return _context.Donations.Where(d => d.UserId == userId)
             .Select(d => d.Campaign)
