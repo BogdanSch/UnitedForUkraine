@@ -22,8 +22,5 @@ namespace UnitedForUkraine.Server.Models
         public string ImageUrl { get; set; } = "https://placehold.co/600x400/EEE/31343C";
         public CampaignStatus Status { get; set; } = CampaignStatus.Upcoming;
         public CampaignCategory Category { get; set; } = CampaignCategory.Education;
-        [ForeignKey(nameof(AppUser))]
-        public required string OrganizerId { get; set; }
-        public AppUser? Organizer { get; set; }
     }
 }

@@ -9,4 +9,5 @@ public class AppUser : IdentityUser
     public string? City { get; set; } = string.Empty;
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; set; } 
+    //public DateTime RegisteredAtUtc { get; set; } = DateTime.UtcNow;
 }

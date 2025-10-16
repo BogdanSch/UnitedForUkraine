@@ -1,17 +1,17 @@
 ﻿namespace UnitedForUkraine.Server.DTOs.Campaign;
 
-public class CampaignDto
+public record CampaignDto
 {
-    public required int Id { get; set; }
-    public required string Title { get; set; }
-    public required string Description { get; set; }
-    public required decimal GoalAmount { get; set; }
-    public required decimal RaisedAmount { get; set; }
-    public required int Status { get; set; }
-    public required int Category { get; set; }
-    public required int Currency { get; set; }
-    public required string StartDate { get; set; }
-    public required string EndDate { get; set; }
-    public required string ImageUrl { get; set; }
+    public required int Id { get; init; }
+    public required string Title { get; init; }
+    public required string Description { get; init; }
+    public required decimal GoalAmount { get; init; }
+    public required decimal RaisedAmount { get; init; }
+    public required int Status { get; init; }
+    public required int Category { get; init; }
+    public required int Currency { get; init; }
+    public required string StartDate { get; init; }
+    public required string EndDate { get; init; }
+    public required string ImageUrl { get; init; }
 }
 

@@ -27,7 +27,6 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
     public async Task<IActionResult> GetNewsUpdateDataById([FromRoute] int id)
     {
         NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(id);
-
         if (newsUpdate is null) return NotFound();
 
         NewsUpdateDto newsUpdateDto = newsUpdate.ToNewsUpdateDto();
@@ -50,7 +49,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         }
         catch (Exception)
         {
-            return BadRequest(new { message = "Error, we weren't able to create a new news update! Please, try again later" });
+            return BadRequest(new { message = "Error, we couldn't create a new news update! Please, try again later" });
         }
     }
     [HttpPut]
