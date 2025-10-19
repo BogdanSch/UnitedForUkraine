@@ -11,10 +11,10 @@ public interface IDonationRepository
     Task<PaginatedList<Donation>> GetPaginatedDonationsByNewsUpdate(NewsUpdate newsUpdate, int page, int itemsPerPageCount);
     Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, QueryObject queryObject, int itemsPerPageCount);
     Task<Donation?> GetByIdAsync(int id);
-    Task<int> GetTotalUserDonationsCountAsync(string? userId);
-    Task<decimal> GetTotalUserDonationsAmountAsync(string? userId);
+    Task<int> GetTotalDonationsCountAsync(string? userId = null);
+    Task<decimal> GetTotalDonationsAmountAsync(string? userId = null);
+    Task<int> GetAverageDonationsAmountAsync(string? userId = null);
     Task<decimal> GetMostFrequentUserDonationAmountAsync();
-    Task<int> GetAverageUserDonationsAmountAsync(string? userId);
     Task<decimal> GetSmallestDonationAmountAsync(string? userId);
     Task<decimal> GetBiggestDonationAmountAsync(string? userId);
     Task<int> GetUniqueDonorsCountAsync();

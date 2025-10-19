@@ -86,9 +86,9 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
         DateTime currentPeriod = DateTime.UtcNow.AddMonths(-1);
         FoundationDonationsStatisticsDto statisticsDto = new()
         {
-            DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(null),
-            TotalDonationsAmount = await _donationRepository.GetTotalUserDonationsAmountAsync(null),
-            AverageDonationsAmount = await _donationRepository.GetAverageUserDonationsAmountAsync(null),
+            DonationsCount = await _donationRepository.GetTotalDonationsCountAsync(),
+            TotalDonationsAmount = await _donationRepository.GetTotalDonationsAmountAsync(),
+            AverageDonationsAmount = await _donationRepository.GetAverageDonationsAmountAsync(),
             MostFrequentDonationAmount = await _donationRepository.GetMostFrequentUserDonationAmountAsync(),
             UniqueDonorsCount = await _donationRepository.GetUniqueDonorsCountAsync(),
             CityWithMostDonations = await _donationRepository.GetCityWithMostDonationsAsync(),
@@ -110,9 +110,9 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
 
         UserDonationsStatisticsDto statisticsDto = new()
         {
-            DonationsCount = await _donationRepository.GetTotalUserDonationsCountAsync(donorId),
-            TotalDonationsAmount = await _donationRepository.GetTotalUserDonationsAmountAsync(donorId),
-            AverageDonationsAmount = await _donationRepository.GetAverageUserDonationsAmountAsync(donorId),
+            DonationsCount = await _donationRepository.GetTotalDonationsCountAsync(donorId),
+            TotalDonationsAmount = await _donationRepository.GetTotalDonationsAmountAsync(donorId),
+            AverageDonationsAmount = await _donationRepository.GetAverageDonationsAmountAsync(donorId),
             SmallestDonationAmount = await _donationRepository.GetSmallestDonationAmountAsync(donorId),
             BiggestDonationAmount = await _donationRepository.GetBiggestDonationAmountAsync(donorId),
             SupportedCampaignsCount = await _campaignRepository.GetAllUserSupportedCampaignsCount(donorId),

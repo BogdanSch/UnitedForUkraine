@@ -26,6 +26,7 @@ namespace UnitedForUkraine.Server.Repositories
                     "date_asc" => newsUpdates.OrderBy(c => c.PostedAt),
                     "readingTime_asc" => newsUpdates.OrderBy(c => c.ReadingTimeInMinutes),
                     "readingTime_dsc" => newsUpdates.OrderByDescending(c => c.ReadingTimeInMinutes),
+                    "viewsCount_dsc" => newsUpdates.OrderByDescending(c => c.ViewsCount),
                     _ => newsUpdates.OrderByDescending(n => n.PostedAt)
                 };
             }

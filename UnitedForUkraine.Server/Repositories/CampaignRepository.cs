@@ -85,7 +85,28 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         }
         catch (Exception e)
         {
-            _logger.LogError($"An exception has occured during updating the outdated campaigns: ${e.Message}");
+            _logger.LogError($"An error has occured when updating the expired campaigns: ${e.Message}");
+            return false;
+        }
+
+        return true;
+    }
+    public async Task<bool> UpdateJustStartedCampaignsAsync()
+    {
+        DateTime currentDate = DateTime.Now;
+        List<Campaign> unmarkedStartedCampaigns = await _context.Campaigns.Where(c => c.StartDate <= currentDate && c.Status == CampaignStatus.Upcoming).ToListAsync();
+
+        try
+        {
+            foreach (Campaign campaign in unmarkedStartedCampaigns)
+            {
+                campaign.Status = CampaignStatus.Ongoing;
+                await UpdateAsync(campaign);
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"An error has occured when updating the just started campaigns: ${e.Message}");
             return false;
         }
 

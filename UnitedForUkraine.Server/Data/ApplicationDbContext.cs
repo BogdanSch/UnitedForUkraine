@@ -24,18 +24,18 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(d => d.Campaign)
             .WithMany()
             .HasForeignKey(d => d.CampaignId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Entity<Address>()
-            .HasOne(a => a.User)
-            .WithMany()
-            .HasForeignKey(a => a.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<NewsUpdate>()
             .HasOne(n => n.TargetCampaign)
             .WithMany()
             .HasForeignKey(n => n.CampaignId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Address>()
+            .HasOne(a => a.User)
+            .WithMany()
+            .HasForeignKey(a => a.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

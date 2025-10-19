@@ -7,8 +7,8 @@ public interface ICampaignRepository
 {
     Task<PaginatedList<Campaign>> GetPaginatedCampaigns(QueryObject queryObject, int itemsPerPageCount);
     Task<bool> UpdateExpiredCampaignsAsync();
+    Task<bool> UpdateJustStartedCampaignsAsync();
     Task<Campaign?> GetByIdAsync(int id);
-    //Task<List<Campaign>> GetAllCompletedAsync();
     Task AddAsync(Campaign campaign);
     Task<Campaign> DeleteAsync(int id);
     Task<bool> UpdateAsync(Campaign campaign);

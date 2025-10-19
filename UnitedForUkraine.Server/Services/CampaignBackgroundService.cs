@@ -14,6 +14,7 @@ namespace UnitedForUkraine.Server.Services
                 ICampaignRepository _campaignRepository = scope.ServiceProvider.GetRequiredService<ICampaignRepository>();
 
                 await _campaignRepository.UpdateExpiredCampaignsAsync();
+                await _campaignRepository.UpdateJustStartedCampaignsAsync();
                 await Task.Delay(TimeSpan.FromHours(2), stoppingToken);
             }
         }

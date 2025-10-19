@@ -1,6 +1,6 @@
 ﻿using FluentEmail.Core;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
-using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Services
 {

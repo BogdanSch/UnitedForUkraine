@@ -1,4 +1,4 @@
-﻿using UnitedForUkraine.Server.Models;
+﻿using UnitedForUkraine.Server.Helpers;
 
 namespace UnitedForUkraine.Server.Interfaces
 {

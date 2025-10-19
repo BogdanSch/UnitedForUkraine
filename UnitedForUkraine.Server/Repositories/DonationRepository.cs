@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
@@ -9,7 +10,7 @@ namespace UnitedForUkraine.Server.Repositories;
 
 public class DonationRepository(ApplicationDbContext context, ICurrencyConverterService currencyConverterService) : IDonationRepository
 {
-    public const string POPULAR_DONATIONS_CITY_NAME = "Kharkiv";
+    public const string DEFAULT_CITY_NAME = "Kharkiv";
     public const string DEFAULT_FREQUENT_DONOR_NAME = "bogsvity777";
     public const int DEFAULT_FREQUENT_DONOR_COUNT = 100;
     private readonly ApplicationDbContext _context = context;
@@ -36,7 +37,7 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     }
     public async Task<PaginatedList<Donation>> GetPaginatedDonationsAsync(QueryObject queryObject, int itemsPerPageCount)
     {
-        IQueryable<Donation> donations = _context.Donations.Include(d => d.User);
+        IQueryable<Donation> donations = _context.Donations.Include(d => d.User).AsQueryable();
         donations = HandleDonationsFiltering(queryObject, donations);
 
         return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
@@ -91,13 +92,15 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     }
     public async Task<string> GetCityWithMostDonationsAsync()
     {
-        var popularCity = await _context.Donations.Include(d => d.User)
-            .GroupBy(d => d.User.City)
+        string? popularCity = await _context.Donations.Include(d => d.User)
+            .Include(d => d.User.UserAddress)
+            .GroupBy(d => d.User.UserAddress == null ? DEFAULT_CITY_NAME : (d.User.UserAddress.City ?? DEFAULT_CITY_NAME))
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
             .FirstOrDefaultAsync();
         if (string.IsNullOrWhiteSpace(popularCity))
-            return POPULAR_DONATIONS_CITY_NAME;
+            return DEFAULT_CITY_NAME;
+
         return popularCity;
     }
     private IQueryable<Donation> GetDonationsQuery(string? userId)
@@ -109,22 +112,12 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
         }
         return query;
     }
-    public async Task<int> GetTotalUserDonationsCountAsync(string? userId) => await GetDonationsQuery(userId).CountAsync();
-    public async Task<decimal> GetTotalUserDonationsAmountAsync(string? userId)
+    public async Task<int> GetTotalDonationsCountAsync(string? userId = null) => await GetDonationsQuery(userId).CountAsync();
+    public async Task<decimal> GetTotalDonationsAmountAsync(string? userId = null)
     {
-        IQueryable<Donation> donations;
-
-        if (userId == null)
-        {
-            donations = _context.Donations.AsQueryable();
-        }
-        else
-        {
-            donations = _context.Donations.Where(d => d.UserId == userId);
-        }
+        IQueryable<Donation> donations = GetDonationsQuery(userId);
 
         var temp = donations.Select(d => new { d.Amount, d.Currency }).ToList();
-
         var tasks = temp.Select(async donation =>
             {
                 if (donation.Currency == CurrencyType.UAH)
@@ -137,8 +130,16 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
             });
 
         decimal[] converted = await Task.WhenAll(tasks);
-
         return converted.Sum();
+    }
+    public async Task<int> GetAverageDonationsAmountAsync(string? userId = null)
+    {
+        int totalDonationsCount = await GetTotalDonationsCountAsync(userId);
+        decimal totalDonationsAmount = await GetTotalDonationsAmountAsync(userId);
+
+        if (totalDonationsCount == 0) return 0;
+
+        return (int)Math.Round(totalDonationsAmount / totalDonationsCount);
     }
     public async Task<decimal> GetMostFrequentUserDonationAmountAsync()
     {
@@ -146,15 +147,6 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
             .FirstOrDefaultAsync();
-    }
-    public async Task<int> GetAverageUserDonationsAmountAsync(string? userId)
-    {
-        int totalDonationsCount = await GetTotalUserDonationsCountAsync(userId);
-        decimal totalDonationsAmount = await GetTotalUserDonationsAmountAsync(userId);
-
-        if (totalDonationsCount == 0) return 0;
-
-        return (int)Math.Round(totalDonationsAmount / totalDonationsCount);
     }
     public async Task<decimal> GetSmallestDonationAmountAsync(string? userId)
     {
@@ -180,15 +172,15 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
         if (!donations.Any())
             return decimal.Zero;
 
-        Donation? smallestDonation = await donations.OrderByDescending(d => d.Amount).FirstOrDefaultAsync();
+        Donation? biggestDonation = await donations.OrderByDescending(d => d.Amount).FirstOrDefaultAsync();
 
-        if (smallestDonation is null)
+        if (biggestDonation is null)
             return decimal.Zero;
 
-        string from = Enum.GetName(smallestDonation.Currency)!;
+        string from = Enum.GetName(biggestDonation.Currency)!;
         string to = Enum.GetName(CurrencyType.UAH)!;
 
-        return await _currencyConverterService.ConvertCurrency(smallestDonation.Amount, from, to);
+        return await _currencyConverterService.ConvertCurrency(biggestDonation.Amount, from, to);
     }
     public async Task<int> GetUniqueDonorsCountAsync()
     {
