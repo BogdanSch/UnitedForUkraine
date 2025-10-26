@@ -66,7 +66,8 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     [Authorize]
     public async Task<IActionResult> CreateDonation([FromBody] CreateDonationRequestDto createdDonationDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
 
         try
         {
@@ -77,7 +78,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
         }
         catch (Exception)
         {
-            return BadRequest();
+            return BadRequest(new { message = "We couldn't create the new donation. Try again later" });
         }
     }
     [HttpGet("statistics")]

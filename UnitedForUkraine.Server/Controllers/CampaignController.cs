@@ -45,11 +45,9 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         if (userId == Guid.Empty)
-            return BadRequest(new { message = "User's Id can't be empty" });
+            return BadRequest(new { message = "The user id can't be empty" });
 
-        var campaigns = await _campaignRepository.GetAllUserSupportedCampaigns(userId.ToString()).ToListAsync();
-        List<CampaignDto> campaignDtos = [.. campaigns.Select(c => c.ToCampaignDto())];
-
+        List<CampaignDto> campaignDtos = await _campaignRepository.GetAllUserSupportedCampaignsAsync(userId.ToString());
         return Ok(new { Campaigns = campaignDtos });
     }
     [HttpPost]
@@ -80,8 +78,7 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
             return BadRequest(new { message = "The identifiers of the campaigns don't match!" });
 
         Campaign? targetCampaign = await _campaignRepository.GetByIdAsync(id);
-
-        if (targetCampaign == null)
+        if (targetCampaign is null)
             return NotFound();
 
         try
@@ -89,6 +86,7 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
             (var startDate, var endDate) = DateSettings.ParseStartAndEndDate(updatedCampaignDto.StartDate, updatedCampaignDto.EndDate);
 
             targetCampaign.Title = updatedCampaignDto.Title;
+            targetCampaign.Slogan = updatedCampaignDto.Slogan;
             targetCampaign.Description = updatedCampaignDto.Description;
             targetCampaign.GoalAmount = updatedCampaignDto.GoalAmount;
             targetCampaign.Status = (CampaignStatus)updatedCampaignDto.Status;

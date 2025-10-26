@@ -25,10 +25,17 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
   const [formData, setFormData] = useState<CreateDonationRequestDto>({
     userId: "",
     amount: 1,
+    notes: "",
     currency: Currency.UAH,
     paymentMethod: PaymentMethod.CreditCard,
     campaignId: campaignId,
   });
+
+  const [validationErrors, setValidationErrors] = useState<Record<string, any>>(
+    { amount: "" }
+  );
+  const [requestError, setRequestError] = useState<string>("");
+  const { handleChange, handleSelectChange } = useCustomForm(setFormData);
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -37,27 +44,19 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
     }));
   }, [user]);
 
-  const [validationErrors, setValidationErrors] = useState<Record<string, any>>(
-    {
-      amount: "",
-    }
-  );
-
-  const [requestError, setRequestError] = useState<string>("");
-  const { handleChange, handleSelectChange } = useCustomForm(setFormData);
-
   const isValid = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (formData.amount <= 0) {
-      newErrors.amount = "Amount must be greater than 0";
-    }
-    if (formData.amount > 10e12) {
-      newErrors.amount = "Amount must be smaller than one trillion!";
-    }
     if (formData.userId.length === 0) {
       navigate("/auth/login");
       return false;
+    }
+
+    const newErrors: Record<string, string> = {};
+
+    if (formData.amount <= 0) {
+      newErrors.amount = "Amount must be greater than zero";
+    }
+    if (formData.amount > 10e12) {
+      newErrors.amount = "Amount must be smaller than one trillion!";
     }
 
     setValidationErrors(newErrors);
@@ -98,13 +97,11 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
         `${API_URL}/donations/`,
         formData
       );
-
       console.log(data);
 
       if (!data.id) {
         throw new Error("Donation creation failed");
       }
-
       await createPaymentSession(data.id);
     } catch (error) {
       setRequestError("Failed to make a donation. Please, try again later!");
@@ -116,6 +113,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
     setFormData({
       userId: user?.id ?? "",
       amount: 1,
+      notes: "",
       currency: Currency.UAH,
       paymentMethod: PaymentMethod.CreditCard,
       campaignId: campaignId,
@@ -152,7 +150,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="amount" className="form-label">
-          Donation Amount
+          Choose your donation amount*
         </label>
         <Input
           type="number"
@@ -184,8 +182,8 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
         )}
       </div>
       <div className="mb-3">
-        <label htmlFor="amount" className="form-label">
-          Select your currency
+        <label htmlFor="currency" className="form-label">
+          Select your currency*
         </label>
         <select
           id="currency"
@@ -205,8 +203,8 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
         </select>
       </div>
       <div className="mb-3">
-        <label htmlFor="amount" className="form-label">
-          Select your payment method
+        <label htmlFor="paymentMethod" className="form-label">
+          Select your payment method*
         </label>
         <select
           id="paymentMethod"
@@ -227,6 +225,20 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
               </option>
             ))}
         </select>
+      </div>
+      <div className="mb-3">
+        <label htmlFor="notes" className="form-label">
+          Type any wishes if you want to
+        </label>
+        <Input
+          id="notes"
+          name="notes"
+          className="form-select"
+          aria-label="User notes input"
+          value={formData.notes}
+          onChange={handleChange}
+          isRequired={false}
+        />
       </div>
       <div className="form-buttons">
         <button type="submit" className="btn btn-primary">

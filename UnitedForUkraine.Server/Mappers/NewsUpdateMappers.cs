@@ -11,10 +11,13 @@ namespace UnitedForUkraine.Server.Mappers
             return new NewsUpdateDto()
             {
                 Id = newsUpdate.Id,
+                TargetCampaignId = newsUpdate.CampaignId,
                 Title = newsUpdate.Title,
+                KeyWords = newsUpdate.KeyWords,
                 Content = newsUpdate.Content,
                 ImageUrl = newsUpdate.ImageUrl,
                 ReadingTimeInMinutes = newsUpdate.ReadingTimeInMinutes,
+                ViewsCount = newsUpdate.ViewsCount,
                 PostedAt = newsUpdate.PostedAt.ToString(DateSettings.DEFAULT_DATE_FORMAT),
                 AuthorName = newsUpdate.Author?.UserName ?? "N/A"
             };
@@ -24,12 +27,13 @@ namespace UnitedForUkraine.Server.Mappers
             return new NewsUpdate()
             {
                 Title = newsUpdate.Title,
+                KeyWords = string.Empty,
                 Content = newsUpdate.Content,
                 ImageUrl = newsUpdate.ImageUrl,
                 ReadingTimeInMinutes = newsUpdate.ReadingTimeInMinutes,
                 PostedAt = DateTime.UtcNow,
                 AuthorId = newsUpdate.AuthorId,
-                CampaignId = newsUpdate.CampaignId
+                CampaignId = newsUpdate.CampaignId,
             };
         }
     }

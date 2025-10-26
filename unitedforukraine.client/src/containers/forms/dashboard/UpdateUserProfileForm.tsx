@@ -10,19 +10,27 @@ import { API_URL } from "../../../variables";
 
 const UpdateUserProfileForm: FC = () => {
   const navigate = useNavigate();
+
   const { user, refreshUserData } = useContext(AuthContext);
   const [formData, setFormData] = useState<UpdateUserProfileDto>({
     userName: user?.userName || "",
     phoneNumber: user?.phoneNumber || "",
-    city: user?.city || "",
+    updatedAddress: {
+      city: "",
+      region: "",
+      country: "",
+      street: "",
+      postalCode: "",
+    },
   });
+  const { handleChange } = useCustomForm(setFormData);
+
   const [errors, setErrors] = useState<Record<string, string>>({
     userName: "",
     phoneNumber: "",
     city: "",
   });
   const [requestError, setRequestError] = useState<string>("");
-  const { handleChange } = useCustomForm(setFormData);
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
@@ -55,30 +63,41 @@ const UpdateUserProfileForm: FC = () => {
     setFormData({
       userName: user?.userName || "",
       phoneNumber: user?.phoneNumber || "",
-      city: user?.city || "",
+      updatedAddress: {
+        city: "",
+        region: "",
+        country: "",
+        street: "",
+        postalCode: "",
+      },
     });
-    setErrors({
-      userName: "",
-      phoneNumber: "",
-      city: "",
-    });
+    setErrors({});
   }
 
   const isValid = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (formData.userName.trim().length < 1)
-      newErrors.userName = "User name should be at least 1 character long";
+      newErrors.userName = "The user name should be at least 1 character long";
     if (formData.phoneNumber.length < 7)
       newErrors.phoneNumber =
-        "Phone number should be at least 7 characters long";
+        "The phone number should be at least 7 characters long";
     else if (formData.phoneNumber.length > 40)
       newErrors.phoneNumber =
-        "Phone number should not be longer than 40 characters";
-    if (formData.city.trim().length < 1)
-      newErrors.phoneNumber = "Phone number should be longer than 1 characters";
-    else if (formData.city.trim().length > 80)
-      newErrors.city = "City should not be longer than 80 characters";
+        "The phone number should not be longer than 40 characters";
+    if (formData.updatedAddress.city.trim().length > 100)
+      newErrors.city = "The city name should be shorter than 100 characters";
+    if (formData.updatedAddress.country.trim().length > 80)
+      newErrors.country =
+        "The country name should be shorter than 80 characters";
+    if (formData.updatedAddress.region.trim().length > 100)
+      newErrors.region =
+        "The region name should be shorter than 100 characters";
+    if (formData.updatedAddress.street.trim().length > 120)
+      newErrors.street =
+        "The street name should be shorter than 120 characters";
+    if (formData.updatedAddress.postalCode.trim().length > 20)
+      newErrors.street = "The postal code should be shorter than 20 characters";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -96,7 +115,7 @@ const UpdateUserProfileForm: FC = () => {
       )}
       <div className="mb-3">
         <label htmlFor="userName" className="form-label">
-          User name
+          Your user name
         </label>
         <Input
           name="userName"
@@ -109,7 +128,7 @@ const UpdateUserProfileForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="phoneNumber" className="form-label">
-          Phone number
+          Your phone number
         </label>
         <Input
           name="phoneNumber"
@@ -121,17 +140,69 @@ const UpdateUserProfileForm: FC = () => {
         {errors.phoneNumber && <ErrorAlert errorMessage={errors.phoneNumber} />}
       </div>
       <div className="mb-3">
-        <label htmlFor="city" className="form-label">
-          City name
+        <label htmlFor="country" className="form-label">
+          Your country name
         </label>
         <Input
-          name="city"
+          name="updatedAddress.country"
+          id="country"
+          value={formData.updatedAddress.country}
+          onChange={handleChange}
+          isRequired={true}
+        />
+        {errors.country && <ErrorAlert errorMessage={errors.country} />}
+      </div>
+      <div className="mb-3">
+        <label htmlFor="region" className="form-label">
+          Your region name
+        </label>
+        <Input
+          name="updatedAddress.region"
+          id="region"
+          value={formData.updatedAddress.region}
+          onChange={handleChange}
+          isRequired={true}
+        />
+        {errors.region && <ErrorAlert errorMessage={errors.region} />}
+      </div>
+      <div className="mb-3">
+        <label htmlFor="city" className="form-label">
+          Your city name
+        </label>
+        <Input
+          name="updatedAddress.city"
           id="city"
-          value={formData.city}
+          value={formData.updatedAddress.city}
           onChange={handleChange}
           isRequired={true}
         />
         {errors.city && <ErrorAlert errorMessage={errors.city} />}
+      </div>
+      <div className="mb-3">
+        <label htmlFor="street" className="form-label">
+          Your street name
+        </label>
+        <Input
+          name="updatedAddress.street"
+          id="street"
+          value={formData.updatedAddress.street}
+          onChange={handleChange}
+          isRequired={true}
+        />
+        {errors.street && <ErrorAlert errorMessage={errors.street} />}
+      </div>
+      <div className="mb-3">
+        <label htmlFor="postalCode" className="form-label">
+          Your postal code
+        </label>
+        <Input
+          name="updatedAddress.postalCode"
+          id="postalCode"
+          value={formData.updatedAddress.postalCode}
+          onChange={handleChange}
+          isRequired={true}
+        />
+        {errors.postalCode && <ErrorAlert errorMessage={errors.postalCode} />}
       </div>
       <div className="form-buttons mt-2">
         <button type="submit" className="btn btn-secondary">

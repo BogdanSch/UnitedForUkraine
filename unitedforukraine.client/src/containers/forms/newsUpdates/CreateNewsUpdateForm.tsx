@@ -23,6 +23,7 @@ const CreateNewsUpdateForm: FC = () => {
 
   const DEFAULT_FORM_DATA: CreateNewsUpdateRequestDto = {
     title: "",
+    keyWords: "",
     content: "",
     imageUrl: API_IMAGE_PLACEHOLDER_URL,
     readingTimeInMinutes: 0,
@@ -39,7 +40,7 @@ const CreateNewsUpdateForm: FC = () => {
   });
   const [requestError, setRequestError] = useState<string>("");
 
-  const [finishedPaginatedCampaigns, setFinishedPaginatedCampaigns] =
+  const [paginatedCampaigns, setPaginatedCampaigns] =
     useState<PaginatedCampaignsDto>({
       campaigns: [],
       hasNextPage: false,
@@ -54,24 +55,22 @@ const CreateNewsUpdateForm: FC = () => {
   useEffect(() => {
     fetchAllActiveAndCompletedCampaigns(pageIndex)
       .then((data) => {
-        setFinishedPaginatedCampaigns({
-          campaigns: finishedPaginatedCampaigns.campaigns.concat(
-            data.campaigns
-          ),
+        setPaginatedCampaigns({
+          campaigns: paginatedCampaigns.campaigns.concat(data.campaigns),
           hasNextPage: data.hasNextPage,
           hasPreviousPage: data.hasPreviousPage,
         });
       })
       .catch((error) => {
         setRequestError(
-          "Failed to load finished campaigns. Please, try again later!"
+          "Failed to load related campaigns. Please, try again later!"
         );
-        console.log(`Error fetching finished campaigns: ${error}`);
+        console.log(`Error fetching  campaigns: ${error}`);
       });
   }, [pageIndex]);
 
   const loadMoreCompletedCampaigns = async (): Promise<void> => {
-    if (finishedPaginatedCampaigns.hasNextPage)
+    if (paginatedCampaigns.hasNextPage)
       setPageIndex((prevPageIndex) => prevPageIndex + 1);
   };
 
@@ -81,12 +80,16 @@ const CreateNewsUpdateForm: FC = () => {
 
     if (formData.title.length < 10) {
       newErrors.title = "The title must be at least 10 characters long";
+    } else if (formData.title.length > 255) {
+      newErrors.title = "The title must be at most 255 characters long";
     }
-    if (formData.title.length > 101) {
-      newErrors.title = "The title must be at most 100 characters long";
+    if (formData.keyWords.length < 10) {
+      newErrors.title = "The key words must be at least 10 characters long";
+    } else if (formData.keyWords.length > 180) {
+      newErrors.title = "The key words must be at most 180 characters long";
     }
     if (formData.content.length < 20) {
-      newErrors.content = "The description must be at least 20 characters long";
+      newErrors.content = "The content must be at least 20 characters long";
     }
     if (formData.readingTimeInMinutes <= 0) {
       newErrors.readingTimeInMinutes =
@@ -110,11 +113,10 @@ const CreateNewsUpdateForm: FC = () => {
         `${API_URL}/newsUpdates`,
         formData
       );
-
       console.log(data);
 
       if (!data.id) {
-        throw new Error("Campaign creation failed");
+        throw new Error("News update creation failed");
       }
 
       navigate(`/newsUpdates/detail/${data.id}`);
@@ -140,7 +142,7 @@ const CreateNewsUpdateForm: FC = () => {
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="title" className="form-label">
-          News Update Title
+          News update title
         </label>
         <Input
           type="text"
@@ -148,25 +150,37 @@ const CreateNewsUpdateForm: FC = () => {
           name="title"
           value={formData.title}
           onChange={handleChange}
-          minLength={10}
-          maxLength={100}
-          placeholder="News update title"
+          placeholder="Enter news update title"
           isRequired
         />
         {errors.title && <ErrorAlert errorMessage={errors.title} />}
       </div>
       <div className="mb-3">
+        <label htmlFor="keyWords" className="form-label">
+          News update key words
+        </label>
+        <Input
+          type="text"
+          id="keyWords"
+          name="keyWords"
+          value={formData.keyWords}
+          onChange={handleChange}
+          placeholder="Enter key words, separate them with a comma:"
+          isRequired
+        />
+        {errors.keyWords && <ErrorAlert errorMessage={errors.keyWords} />}
+      </div>
+      <div className="mb-3">
         <label htmlFor="content" className="form-label">
-          News Update Content
+          News update content
         </label>
         <textarea
-          rows={5}
+          rows={8}
           className="form-control"
           id="content"
           name="content"
           value={formData.content}
           onChange={handleChange}
-          minLength={20}
           placeholder="News update content"
           required
         />
@@ -174,7 +188,7 @@ const CreateNewsUpdateForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="readingTimeInMinutes" className="form-label">
-          News Update Reading Time In Minutes
+          News update reading time in minutes
         </label>
         <Input
           type="number"
@@ -182,12 +196,14 @@ const CreateNewsUpdateForm: FC = () => {
           name="readingTimeInMinutes"
           value={formData.readingTimeInMinutes}
           onChange={handleChange}
-          placeholder="News update reading time"
+          placeholder="Enter news update reading time in minutes"
           min={1}
           max={100}
           isRequired={true}
         />
-        {errors.goalAmount && <ErrorAlert errorMessage={errors.goalAmount} />}
+        {errors.readingTimeInMinutes && (
+          <ErrorAlert errorMessage={errors.readingTimeInMinutes} />
+        )}
       </div>
       <div className="mb-3">
         <label htmlFor="campaignId" className="form-label">
@@ -201,7 +217,7 @@ const CreateNewsUpdateForm: FC = () => {
           value={formData.campaignId}
           onChange={(e) => handleSelectChange(e, loadMoreCompletedCampaigns)}
         >
-          {finishedPaginatedCampaigns.campaigns.map((campaign) => {
+          {paginatedCampaigns.campaigns.map((campaign) => {
             return (
               <option key={campaign.title} value={campaign.id}>
                 {campaign.title}
@@ -211,7 +227,7 @@ const CreateNewsUpdateForm: FC = () => {
           <option
             id="loadMoreOption"
             value={LOAD_MORE_SELECT_VALUE}
-            // onClick={loadMoreCompletedCampaigns}
+            disabled={!paginatedCampaigns.hasNextPage}
           >
             Load more
           </option>
@@ -219,7 +235,7 @@ const CreateNewsUpdateForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="image" className="form-label">
-          News Update Preview Image
+          News update preview image
         </label>
         <input
           className="form-control"

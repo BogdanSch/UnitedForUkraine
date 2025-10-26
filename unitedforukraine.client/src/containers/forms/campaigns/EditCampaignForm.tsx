@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../variables";
 import { UpdateCampaignRequestDto } from "../../../types";
 import { CampaignCategory, CampaignStatus } from "../../../types/enums";
-import { ErrorAlert } from "../../../components/";
+import { ErrorAlert, Input } from "../../../components/";
 import { fetchCampaignData } from "../../../utils/services/campaignService";
 import { useCustomForm } from "../../../hooks";
 
@@ -14,9 +14,10 @@ interface EditCampaignFormProps {
 }
 
 const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
-  const [formData, setFormData] = useState<UpdateCampaignRequestDto>({
+  const DEFAULT_FORM_DATA: UpdateCampaignRequestDto = {
     id: id,
     title: "",
+    slogan: "",
     description: "",
     goalAmount: 0,
     status: CampaignStatus.Upcoming,
@@ -24,9 +25,13 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
     startDate: "",
     endDate: "",
     imageUrl: "",
-  });
+  };
+
+  const [formData, setFormData] =
+    useState<UpdateCampaignRequestDto>(DEFAULT_FORM_DATA);
   const [errors, setErrors] = useState<Record<string, string>>({
     title: "",
+    slogan: "",
     description: "",
     goalAmount: "",
     startDate: "",
@@ -42,19 +47,15 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
   } = useCustomForm(setFormData);
 
   useEffect(() => {
-    const fetcher = async () => {
-      const data = await fetchCampaignData(Number(id));
-
-      if (!data) {
+    fetchCampaignData(Number(id))
+      .then((data) => {
+        if (!data) throw new Error("Invalid response from server");
+        setFormData(data);
+      })
+      .catch(() => {
         navigate("/notFound");
-        return;
-      }
-
-      setFormData(data);
-    };
-
-    fetcher();
-  }, [id]);
+      });
+  }, [id, navigate]);
 
   const isValid = (): boolean => {
     setErrors({});
@@ -64,6 +65,9 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       newErrors.title = "The title must be at least 10 characters long";
     } else if (formData.title.length > 265) {
       newErrors.title = "The title must be at most 265 characters long";
+    }
+    if (formData.slogan.length > 60) {
+      newErrors.slogan = "The slogan must be at most 60 characters long";
     }
     if (formData.description.length < 20) {
       newErrors.description =
@@ -91,12 +95,9 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
         `${API_URL}/campaigns/${formData.id}`,
         formData
       );
-
       console.log(response);
 
-      if (response.status !== 204) {
-        throw new Error("Campaign updating failed!");
-      }
+      if (response.status !== 204) throw new Error("Campaign updating failed!");
 
       navigate(`/campaigns/detail/${formData.id}`);
     } catch (error) {
@@ -112,17 +113,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
   };
 
   const handleReset = (): void => {
-    setFormData({
-      id: id,
-      title: "",
-      description: "",
-      goalAmount: 0,
-      status: CampaignStatus.Upcoming,
-      category: CampaignCategory.Education,
-      startDate: "",
-      endDate: "",
-      imageUrl: "",
-    });
+    setFormData(DEFAULT_FORM_DATA);
     setErrors({});
   };
 
@@ -135,20 +126,35 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="title" className="form-label">
-          Campaign Title
+          Campaign title
         </label>
-        <input
+        <Input
           type="text"
-          className="form-control"
           id="title"
           name="title"
           value={formData.title}
           onChange={handleChange}
           minLength={10}
           placeholder="Campaign title"
-          required
+          isRequired={true}
         />
         {errors.title && <ErrorAlert errorMessage={errors.title} />}
+      </div>
+      <div className="mb-3">
+        <label htmlFor="slogan" className="form-label">
+          Campaign slogan
+        </label>
+        <Input
+          type="text"
+          id="slogan"
+          name="slogan"
+          value={formData.slogan}
+          onChange={handleChange}
+          minLength={10}
+          placeholder="Campaign slogan"
+          isRequired={true}
+        />
+        {errors.slogan && <ErrorAlert errorMessage={errors.slogan} />}
       </div>
       <div className="mb-3">
         <label htmlFor="description" className="form-label">
@@ -171,16 +177,15 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
         <label htmlFor="goalAmount" className="form-label">
           Campaign Goal Amount
         </label>
-        <input
+        <Input
           type="number"
-          className="form-control"
           id="goalAmount"
           name="goalAmount"
           value={formData.goalAmount}
           onChange={handleChange}
           placeholder="Campaign goal amount"
           min={0}
-          required
+          isRequired={true}
         />
         {errors.goalAmount && <ErrorAlert errorMessage={errors.goalAmount} />}
       </div>
@@ -236,15 +241,14 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
         <label htmlFor="startDate" className="form-label">
           Campaign Start Date
         </label>
-        <input
+        <Input
           type="date"
-          className="form-control"
           id="startDate"
           name="startDate"
           value={formData.startDate}
           onChange={handleDateChange}
           placeholder="Campaign start date"
-          required
+          isRequired={true}
         />
         {errors.startDate && <ErrorAlert errorMessage={errors.startDate} />}
       </div>
@@ -252,15 +256,14 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
         <label htmlFor="endDate" className="form-label">
           Campaign End Date
         </label>
-        <input
+        <Input
           type="date"
-          className="form-control"
           id="endDate"
           name="endDate"
           value={formData.endDate}
           onChange={handleDateChange}
           placeholder="Campaign end date"
-          required
+          isRequired={true}
         />
         {errors.endDate && <ErrorAlert errorMessage={errors.endDate} />}
       </div>
@@ -269,7 +272,6 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           Campaign Image
         </label>
         <input
-          className="form-control"
           type="file"
           id="image"
           name="image"

@@ -1,6 +1,6 @@
-namespace UnitedForUkraine.Server.Mappers;
+namespace UnitedForUkraine.Server.Extensions;
 
-public static class StringMappers
+public static class StringExtensions
 {
     public static string FirstCharacterToUpper(this string input)
     {

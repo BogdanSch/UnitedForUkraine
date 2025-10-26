@@ -10,6 +10,7 @@ using System.Text;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.DTOs.Token;
 using UnitedForUkraine.Server.DTOs.User;
+using UnitedForUkraine.Server.Extensions;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
@@ -142,7 +143,7 @@ namespace UnitedForUkraine.Server.Controllers
             HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
 
             if(string.IsNullOrWhiteSpace(refreshToken))
-                return Unauthorized(new { message = "Empty refresh token" });
+                return Unauthorized(new { message = "The refresh token was empty" });
 
             AppUser? user = await _userService.GetUserByRefreshTokenAsync(refreshToken);
             if (user is null)
@@ -179,7 +180,7 @@ namespace UnitedForUkraine.Server.Controllers
 
             AppUser? user = await _userManager.FindByEmailAsync(registerDto.Email);
             if (user is not null)
-                return Conflict(new { message = "Email address's already in use. Please, try a different one" });
+                return Conflict(new { message = "The email address is already in use. Please, try a different one" });
 
             AppUser? newUser = await _userService.GetOrCreateUserAsync(registerDto.Email, registerDto.UserName, registerDto.PhoneNumber, registerDto.Password);
             if (newUser is null)
@@ -225,7 +226,6 @@ namespace UnitedForUkraine.Server.Controllers
                 return BadRequest(ModelState);
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized(new { message = "Invalid user confirmation token" });
 
@@ -237,7 +237,12 @@ namespace UnitedForUkraine.Server.Controllers
             {
                 appUser.UserName = updateProfileDto.UserName;
                 appUser.PhoneNumber = updateProfileDto.PhoneNumber;
-                appUser.City = updateProfileDto.City;
+
+                appUser.Address.Country = updateProfileDto.UpdatedAddress.Country;
+                appUser.Address.City = updateProfileDto.UpdatedAddress.City;
+                appUser.Address.Region = updateProfileDto.UpdatedAddress.Region;
+                appUser.Address.Street = updateProfileDto.UpdatedAddress.Street;
+                appUser.Address.PostalCode = updateProfileDto.UpdatedAddress.PostalCode;
 
                 IdentityResult result = await _userManager.UpdateAsync(appUser);
                 if (!result.Succeeded)
@@ -272,7 +277,7 @@ namespace UnitedForUkraine.Server.Controllers
                 Email = appUser.Email!,
                 UserName = appUser.UserName!,
                 PhoneNumber = appUser.PhoneNumber ?? string.Empty,
-                City = appUser.City ?? string.Empty,
+                Address = appUser.Address.ToAddressDto(),
                 IsAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin)
             };
             return Ok(userDto);

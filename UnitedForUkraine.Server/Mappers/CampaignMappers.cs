@@ -14,6 +14,7 @@ namespace UnitedForUkraine.Server.Mappers
             {
                 Id = campaign.Id,
                 Title = campaign.Title,
+                Slogan = campaign.Slogan,
                 Description = campaign.Description,
                 GoalAmount = campaign.GoalAmount,
                 RaisedAmount = campaign.RaisedAmount,
@@ -22,7 +23,8 @@ namespace UnitedForUkraine.Server.Mappers
                 Category = (int)campaign.Category,
                 StartDate = campaign.StartDate.ToString(DateSettings.DEFAULT_DATE_FORMAT),
                 EndDate = campaign.EndDate.ToString(DateSettings.DEFAULT_DATE_FORMAT),
-                ImageUrl = campaign.ImageUrl
+                ImageUrl = campaign.ImageUrl,
+                DonorsCount = campaign.DonorsCount
             };
         }
         public static Campaign FromCreateCampaignDtoToCampaign(this CreateCampaignRequestDto newCampaign)
@@ -32,6 +34,7 @@ namespace UnitedForUkraine.Server.Mappers
             return new Campaign
             {
                 Title = newCampaign.Title,
+                Slogan = newCampaign.Slogan,
                 Description = newCampaign.Description,
                 GoalAmount = newCampaign.GoalAmount,
                 RaisedAmount = 0,

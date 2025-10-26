@@ -93,8 +93,8 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     public async Task<string> GetCityWithMostDonationsAsync()
     {
         string? popularCity = await _context.Donations.Include(d => d.User)
-            .Include(d => d.User.UserAddress)
-            .GroupBy(d => d.User.UserAddress == null ? DEFAULT_CITY_NAME : (d.User.UserAddress.City ?? DEFAULT_CITY_NAME))
+            .Include(d => d.User.Address)
+            .GroupBy(d => d.User.Address == null ? DEFAULT_CITY_NAME : (d.User.Address.City ?? DEFAULT_CITY_NAME))
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
             .FirstOrDefaultAsync();

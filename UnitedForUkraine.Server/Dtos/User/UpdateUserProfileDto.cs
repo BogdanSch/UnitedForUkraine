@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UnitedForUkraine.Server.DTOs.Address;
 
 namespace UnitedForUkraine.Server.DTOs.User
 {
@@ -10,9 +11,6 @@ namespace UnitedForUkraine.Server.DTOs.User
         [DataType(DataType.PhoneNumber)]
         [StringLength(40, ErrorMessage = "The phone number must be between 7 and 40 characters long.", MinimumLength = 7)]
         public string PhoneNumber { get; set; } = string.Empty;
-        [DataType(DataType.Text)]
-        [MaxLength(80)]
-        [MinLength(1)]
-        public string City { get; set; } = string.Empty;
+        public required UpdateAddressRequestDto UpdatedAddress;
     }
 }

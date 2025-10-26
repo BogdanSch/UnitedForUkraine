@@ -2,18 +2,17 @@
 
 namespace UnitedForUkraine.Server.DTOs.Donation
 {
-    public class CreateDonationRequestDto
+    public record CreateDonationRequestDto
     {
-        [MinLength(2)]
-        public string UserId { get; set; } = string.Empty;
-        public string UserName { get; set; } = string.Empty;
+        public required string UserId { get; init; }
+        public required int CampaignId { get; init; }
 
         [DataType(DataType.Currency)]
         [Range(1, 10e12)]
-        public decimal Amount { get; set; }
-        public int Currency { get; set; }
-        public int PaymentMethod { get; set; }
-        //public int Status { get; set; }
-        public required int CampaignId { get; set; }
+        public decimal Amount { get; init; }
+        [DataType(DataType.Text)]
+        public string Notes { get; init; } = string.Empty;
+        public required int Currency { get; init; }
+        public required int PaymentMethod { get; init; }
     }
 }

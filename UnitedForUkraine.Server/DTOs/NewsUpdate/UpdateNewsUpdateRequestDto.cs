@@ -7,10 +7,12 @@ namespace UnitedForUkraine.Server.DTOs.NewsUpdate
         public required int Id { get; init; }
         [StringLength(100, MinimumLength = 10)]
         public required string Title { get; init; }
+        [StringLength(180, MinimumLength = 10)]
+        public required string KeyWords { get; init; }
         [MinLength(20)]
         public required string Content { get; init; }
-        public string? ImageUrl { get; init; }
         [Range(1, 60)]
         public required int ReadingTimeInMinutes { get; init; }
+        public string? ImageUrl { get; init; }
     }
 }

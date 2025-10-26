@@ -11,7 +11,7 @@ public class Receipt
     public required int ReceiptNumber { get; set; }
     public CurrencyType Currency { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
-    public required DateTime PaymentDate { get; set; }
+    public required DateTime IssuedAt { get; set; }
     public required string IssuerName { get; set; }
     [ForeignKey(nameof(Donation))]
     public required int DonationId { get; set; }

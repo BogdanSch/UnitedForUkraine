@@ -10,7 +10,7 @@ public class AppUser : IdentityUser
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; set; }
     [ForeignKey(nameof(Address))]
-    public int UserAddressId { get; set; }
-    public Address? UserAddress { get; set; }
+    public int AddressId { get; set; }
+    public Address Address { get; set; } = null!;
     public required DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
 }

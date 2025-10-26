@@ -19,7 +19,9 @@ namespace UnitedForUkraine.Server.Services
             {
                 UserName = userName,
                 Email = email,
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                RegisteredAt = DateTime.UtcNow,
+                Address = new Address()
             };
 
             IdentityResult result;

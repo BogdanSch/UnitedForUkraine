@@ -1,4 +1,5 @@
-﻿using UnitedForUkraine.Server.Helpers;
+﻿using UnitedForUkraine.Server.DTOs.Campaign;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Interfaces;
@@ -13,6 +14,6 @@ public interface ICampaignRepository
     Task<Campaign> DeleteAsync(int id);
     Task<bool> UpdateAsync(Campaign campaign);
     Task<bool> SaveAsync();
-    IQueryable<Campaign?> GetAllUserSupportedCampaigns(string? userId);
+    Task<List<CampaignDto>> GetAllUserSupportedCampaignsAsync(string? userId);
     Task<int> GetAllUserSupportedCampaignsCount(string? userId);
 }

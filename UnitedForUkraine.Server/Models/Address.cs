@@ -7,14 +7,15 @@ public class Address
 {
     [Key]
     public int Id { get; set; }
-    public string? Country { get; set; } = string.Empty;
-    public string? Region { get; set; } = string.Empty;
-    public string? City { get; set; } = string.Empty;
+    [StringLength(80)]
+    public string? Country { get; set; } = null;
+    [StringLength(100)]
+    public string? Region { get; set; } = null;
+    [StringLength(100)]
+    public string? City { get; set; } = null;
+    [StringLength(120)]
     public string? Street { get; set; } = string.Empty;
+    [StringLength(20)]
     public string? PostalCode { get; set; } = string.Empty;
-
-    [ForeignKey(nameof(AppUser))]
-    public string UserId { get; set; } = string.Empty;
-    public AppUser? User { get; set; }
 }
 

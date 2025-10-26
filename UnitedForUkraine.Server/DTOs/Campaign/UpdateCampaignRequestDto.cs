@@ -5,9 +5,11 @@ namespace UnitedForUkraine.Server.DTOs.Campaign
     public class UpdateCampaignRequestDto
     {
         public int Id { get; set; }
-        [MaxLength(265, ErrorMessage = "Title can't be over 265 over characters")]
+        [MaxLength(255, ErrorMessage = "Title can't be over 265 over characters")]
         [MinLength(10, ErrorMessage = "Title can't be less than 10 characters")]
         public required string Title { get; set; }
+        [MaxLength(60, ErrorMessage = "Slogan can't be over 60 over characters")]
+        public required string Slogan { get; init; }
         [MinLength(20, ErrorMessage = "Description can't be less less than 20 characters")]
         public required string Description { get; set; }
         [Range(1, 10e18)]

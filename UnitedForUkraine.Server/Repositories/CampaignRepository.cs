@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
+using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
+using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -147,14 +149,22 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         int saved = await _context.SaveChangesAsync();
         return saved > 0;
     }
-    public IQueryable<Campaign?> GetAllUserSupportedCampaigns(string? userId)
+    private IQueryable<Campaign> GetAllUserSupportedCampaigns(string userId)
     {
         return _context.Donations.Where(d => d.UserId == userId)
             .Select(d => d.Campaign)
             .Distinct();
     }
+    public async Task<List<CampaignDto>> GetAllUserSupportedCampaignsAsync(string? userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+            return [];
+        return await GetAllUserSupportedCampaigns(userId).Select(c => c.ToCampaignDto()).ToListAsync();
+    }
     public async Task<int> GetAllUserSupportedCampaignsCount(string? userId)
     {
+        if (string.IsNullOrWhiteSpace(userId))
+            return 0;
         return await GetAllUserSupportedCampaigns(userId).CountAsync();
     }
 }

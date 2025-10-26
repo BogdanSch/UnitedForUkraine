@@ -14,7 +14,8 @@ namespace UnitedForUkraine.Server.Mappers
                 Id = donation.Id,
                 UserId = donation.UserId,
                 CampaignId = donation.CampaignId,
-                UserName = donation.User?.UserName!,
+                UserName = donation.User.UserName!,
+                Notes = donation.Notes ?? string.Empty,
                 Amount = donation.Amount,
                 Currency = (int)donation.Currency,
                 PaymentMethod = (int)donation.PaymentMethod,
@@ -32,7 +33,8 @@ namespace UnitedForUkraine.Server.Mappers
                 Currency = (CurrencyType)newDonation.Currency,
                 PaymentMethod = (PaymentMethod)newDonation.PaymentMethod,
                 Status = DonationStatus.Pending,
-                PaymentDate = DateTime.UtcNow
+                PaymentDate = DateTime.UtcNow,
+                Notes = newDonation.Notes
             };
         }
     }

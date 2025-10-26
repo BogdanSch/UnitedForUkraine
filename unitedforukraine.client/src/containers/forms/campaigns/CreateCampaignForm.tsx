@@ -1,10 +1,8 @@
-// import axios from "axios";
 import { protectedAxios } from "../../../utils/axiosInstances";
-import { FC, FormEvent, useContext, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCustomForm } from "../../../hooks";
-import AuthContext from "../../../contexts/AuthContext";
-import { ErrorAlert } from "../../../components";
+import { ErrorAlert, Input } from "../../../components";
 import { CampaignDto, CreateCampaignRequestDto } from "../../../types";
 import {
   CampaignCategory,
@@ -14,10 +12,9 @@ import {
 import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../../variables";
 
 const CreateCampaignForm: FC = () => {
-  const { user } = useContext(AuthContext);
-
   const DEFAULT_FORM_DATA: CreateCampaignRequestDto = {
     title: "",
+    slogan: "",
     description: "",
     goalAmount: 0,
     status: CampaignStatus.Upcoming,
@@ -26,12 +23,12 @@ const CreateCampaignForm: FC = () => {
     startDate: "",
     endDate: "",
     imageUrl: API_IMAGE_PLACEHOLDER_URL,
-    organizerId: user?.id || "",
   };
   const [formData, setFormData] =
     useState<CreateCampaignRequestDto>(DEFAULT_FORM_DATA);
   const [errors, setErrors] = useState<Record<string, string>>({
     title: "",
+    slogan: "",
     description: "",
     goalAmount: "",
     startDate: "",
@@ -52,25 +49,23 @@ const CreateCampaignForm: FC = () => {
 
     if (formData.title.length < 10) {
       newErrors.title = "The title must be at least 10 characters long";
+    } else if (formData.title.length > 255) {
+      newErrors.title = "The title must be at most 255 characters long";
     }
-    if (formData.title.length > 265) {
-      newErrors.title = "The title must be at most 265 characters long";
+    if (formData.slogan.length > 60) {
+      newErrors.slogan = "The slogan must be at most 60 characters long";
     }
     if (formData.description.length < 20) {
       newErrors.description =
         "The description must be at least 20 characters long";
     }
-    if (formData.goalAmount < 0) {
+    if (formData.goalAmount <= 0) {
       newErrors.goalAmount = "The goal amount must be greater than 0";
-    }
-    // if (new Date(formData.startDate) < new Date()) {
-    //   newErrors.startDate = "The start date must be in the future or today";
-    // }
-    if (new Date(formData.endDate) <= new Date()) {
-      newErrors.endDate = "The end date must be in the future or today";
     }
     if (new Date(formData.startDate) > new Date(formData.endDate)) {
       newErrors.endDate = "The end date must be after the start date";
+    } else if (new Date(formData.endDate) <= new Date()) {
+      newErrors.endDate = "The end date must be in the future or today";
     }
 
     setErrors(newErrors);
@@ -86,12 +81,9 @@ const CreateCampaignForm: FC = () => {
         `${API_URL}/campaigns`,
         formData
       );
-
       console.log(data);
 
-      if (!data.id) {
-        throw new Error("Campaign creation failed");
-      }
+      if (!data.id) throw new Error("Invalid response from server");
 
       navigate(`/campaigns/detail/${data.id}`);
     } catch (error) {
@@ -118,18 +110,33 @@ const CreateCampaignForm: FC = () => {
         <label htmlFor="title" className="form-label">
           Campaign Title
         </label>
-        <input
+        <Input
           type="text"
-          className="form-control"
           id="title"
           name="title"
           value={formData.title}
           onChange={handleChange}
           minLength={10}
           placeholder="Campaign title"
-          required
+          isRequired={true}
         />
         {errors.title && <ErrorAlert errorMessage={errors.title} />}
+      </div>
+      <div className="mb-3">
+        <label htmlFor="slogan" className="form-label">
+          Campaign Slogan
+        </label>
+        <Input
+          type="text"
+          className="form-control"
+          id="slogan"
+          name="slogan"
+          value={formData.slogan}
+          onChange={handleChange}
+          placeholder="Campaign slogan"
+          isRequired={true}
+        />
+        {errors.slogan && <ErrorAlert errorMessage={errors.slogan} />}
       </div>
       <div className="mb-3">
         <label htmlFor="description" className="form-label">
@@ -152,7 +159,7 @@ const CreateCampaignForm: FC = () => {
         <label htmlFor="goalAmount" className="form-label">
           Campaign Goal Amount
         </label>
-        <input
+        <Input
           type="number"
           className="form-control"
           id="goalAmount"
@@ -161,7 +168,7 @@ const CreateCampaignForm: FC = () => {
           onChange={handleChange}
           placeholder="Campaign goal amount"
           min={0}
-          required
+          isRequired={true}
         />
         {errors.goalAmount && <ErrorAlert errorMessage={errors.goalAmount} />}
       </div>
@@ -244,7 +251,7 @@ const CreateCampaignForm: FC = () => {
         <label htmlFor="startDate" className="form-label">
           Campaign Start Date
         </label>
-        <input
+        <Input
           type="date"
           className="form-control"
           id="startDate"
@@ -252,7 +259,7 @@ const CreateCampaignForm: FC = () => {
           value={formData.startDate}
           onChange={handleDateChange}
           placeholder="Campaign start date"
-          required
+          isRequired={true}
         />
         {errors.startDate && <ErrorAlert errorMessage={errors.startDate} />}
       </div>
@@ -260,7 +267,7 @@ const CreateCampaignForm: FC = () => {
         <label htmlFor="endDate" className="form-label">
           Campaign End Date
         </label>
-        <input
+        <Input
           type="date"
           className="form-control"
           id="endDate"
@@ -268,7 +275,7 @@ const CreateCampaignForm: FC = () => {
           value={formData.endDate}
           onChange={handleDateChange}
           placeholder="Campaign end date"
-          required
+          isRequired={true}
         />
         {errors.endDate && <ErrorAlert errorMessage={errors.endDate} />}
       </div>

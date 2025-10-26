@@ -8,36 +8,13 @@ import {
 export type CampaignDto = {
   id: number;
   title: string;
+  slogan: string;
   description: string;
   goalAmount: number;
   raisedAmount: number;
+  donorsCount: number;
   status: CampaignStatus;
   currency: Currency;
-  category: CampaignCategory;
-  startDate: string;
-  endDate: string;
-  imageUrl: string;
-};
-
-export type CreateCampaignRequestDto = {
-  title: string;
-  description: string;
-  goalAmount: number;
-  status: CampaignStatus;
-  category: CampaignCategory;
-  currency: Currency;
-  startDate: string;
-  endDate: string;
-  imageUrl: string;
-  organizerId: string;
-};
-
-export type UpdateCampaignRequestDto = {
-  id: number;
-  title: string;
-  description: string;
-  goalAmount: number;
-  status: CampaignStatus;
   category: CampaignCategory;
   startDate: string;
   endDate: string;
@@ -50,24 +27,52 @@ export type PaginatedCampaignsDto = {
   hasNextPage: boolean;
 };
 
+export type CreateCampaignRequestDto = {
+  title: string;
+  slogan: string;
+  description: string;
+  goalAmount: number;
+  status: CampaignStatus;
+  currency: Currency;
+  category: CampaignCategory;
+  startDate: string;
+  endDate: string;
+  imageUrl: string;
+};
+
+export type UpdateCampaignRequestDto = {
+  id: number;
+  title: string;
+  slogan: string;
+  description: string;
+  goalAmount: number;
+  status: CampaignStatus;
+  category: CampaignCategory;
+  startDate: string;
+  endDate: string;
+  imageUrl: string;
+};
+
 export type DonationDto = {
   id: number;
   userId: number;
   userName: string;
   amount: number;
+  notes: string;
   currency: number;
-  paymentDate: string;
   paymentMethod: string;
   status: number;
+  paymentDate: string;
   campaignId: number;
 };
 
 export type CreateDonationRequestDto = {
   userId: string;
+  campaignId: number;
   amount: number;
+  notes: string;
   currency: Currency;
   paymentMethod: PaymentMethod;
-  campaignId: number;
 };
 
 export type ImageDto = {
@@ -77,19 +82,29 @@ export type ImageDto = {
   description?: string;
 };
 
+export interface AddressDto {
+  country: string;
+  region: string;
+  city: string;
+  street: string;
+  postalCode: string;
+}
+export interface UpdateAddressRequestDto extends AddressDto {}
+
 export type UserDto = {
   id: string;
   userName: string;
   email: string;
   phoneNumber: string;
-  city: string;
+  address: AddressDto;
+  registeredAt: string;
   isAdmin: boolean;
 };
 
 export type UpdateUserProfileDto = {
   userName: string;
   phoneNumber: string;
-  city: string;
+  updatedAddress: UpdateAddressRequestDto;
 };
 
 export type Statistics = {
@@ -137,11 +152,13 @@ export type ContactFormData = {
 export type NewsUpdateDto = {
   id: number;
   title: string;
+  keyWords: string;
   content: string;
   imageUrl: string;
   readingTimeInMinutes: number;
   postedAt: string;
   authorName: string;
+  targetCampaign: CampaignDto;
 };
 
 export type PaginatedNewsUpdatesDto = {
@@ -152,9 +169,20 @@ export type PaginatedNewsUpdatesDto = {
 
 export type CreateNewsUpdateRequestDto = {
   title: string;
+  keyWords: string;
   content: string;
   imageUrl: string;
   readingTimeInMinutes: number;
   authorId: string;
   campaignId: number;
 };
+
+// export type UpdateNewsUpdateRequestDto = {
+//   title: string;
+//   keyWords: string;
+//   content: string;
+//   imageUrl: string;
+//   readingTimeInMinutes: number;
+//   authorId: string;
+//   campaignId: number;
+// };
