@@ -24,6 +24,6 @@ namespace UnitedForUkraine.Server.Models
         public AppUser Author { get; set; } = null!;
         [ForeignKey(nameof(Campaign))]
         public required int CampaignId { get; set; }
-        public Campaign? TargetCampaign { get; set; } = null!;
+        public Campaign TargetCampaign { get; set; } = null!;
     }
 }

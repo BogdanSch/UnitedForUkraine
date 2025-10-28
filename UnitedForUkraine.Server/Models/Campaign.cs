@@ -25,6 +25,6 @@ namespace UnitedForUkraine.Server.Models
         public required DateTime EndDate { get; set; }
         public string ImageUrl { get; set; } = "https://placehold.co/600x400/EEE/31343C";
         public int DonorsCount { get; set; } = 0;
-        public ICollection<Donation> Donations { get; } = [];
+        public ICollection<Donation> Donations { get; set; } = [];
     }
 }

@@ -278,6 +278,7 @@ namespace UnitedForUkraine.Server.Controllers
                 UserName = appUser.UserName!,
                 PhoneNumber = appUser.PhoneNumber ?? string.Empty,
                 Address = appUser.Address.ToAddressDto(),
+                RegisteredAt = appUser.RegisteredAt.ToString(DateSettings.DEFAULT_DATE_FORMAT),
                 IsAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin)
             };
             return Ok(userDto);

@@ -22,7 +22,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         builder.Entity<Donation>()
             .HasOne(d => d.Campaign)
-            .WithMany()
+            .WithMany(c => c.Donations)
             .HasForeignKey(d => d.CampaignId)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -32,10 +32,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(n => n.CampaignId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<Address>()
-            .HasOne(a => a.User)
-            .WithMany()
-            .HasForeignKey(a => a.UserId)
+        builder.Entity<AppUser>()
+            .HasOne(a => a.Address)
+            .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
