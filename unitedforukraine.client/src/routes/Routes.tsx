@@ -24,6 +24,7 @@ import {
   Contact,
   NewsUpdatesIndex,
   NewsUpdateCreate,
+  CampaignLabIndex,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -67,6 +68,11 @@ export const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: "labs",
+    element: <MainLayout />,
+    children: [{ path: "campaigns", element: <CampaignLabIndex /> }],
   },
   {
     path: "/newsUpdates",

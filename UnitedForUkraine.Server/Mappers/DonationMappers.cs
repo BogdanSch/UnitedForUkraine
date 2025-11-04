@@ -20,7 +20,8 @@ namespace UnitedForUkraine.Server.Mappers
                 Currency = (int)donation.Currency,
                 PaymentMethod = (int)donation.PaymentMethod,
                 Status = (int)donation.Status,
-                PaymentDate = donation.PaymentDate.ToString(DateSettings.DEFAULT_DATE_FORMAT)
+                PaymentDate = donation.PaymentDate.ToString(DateSettings.DEFAULT_DATE_FORMAT),
+                CheckoutSessionId = donation.CheckoutSessionId ?? string.Empty
             };
         }
         public static Donation FromCreateDonationDtoToDonation(this CreateDonationRequestDto newDonation)

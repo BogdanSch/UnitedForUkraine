@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UnitedForUkraine.Server.Data;
+using UnitedForUkraine.Server.Data.Enums;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
 
@@ -10,6 +12,12 @@ namespace UnitedForUkraine.Server.Services
     {
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly ILogger<UserService> _logger = logger;
+
+        public async Task<PaginatedList<AppUser>> GetPaginatedUsersAsync(QueryObject queryObject, int itemsPerPageCount)
+        {
+            IOrderedQueryable<AppUser> users = _userManager.Users.AsNoTracking().OrderByDescending(u => u.RegisteredAt);
+            return await PaginatedList<AppUser>.CreateAsync(users, queryObject.Page, itemsPerPageCount);
+        }
         public async Task<AppUser?> GetOrCreateUserAsync(string email, string userName, string phoneNumber, string? password)
         {
             AppUser? user = await _userManager.FindByEmailAsync(email);

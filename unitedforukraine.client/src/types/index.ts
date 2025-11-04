@@ -64,6 +64,7 @@ export type DonationDto = {
   status: number;
   paymentDate: string;
   campaignId: number;
+  checkoutSessionId: string;
 };
 
 export type CreateDonationRequestDto = {

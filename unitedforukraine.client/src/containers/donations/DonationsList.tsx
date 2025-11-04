@@ -7,13 +7,13 @@ import { DonationDto } from "../../types";
 import { convertDonationCurrencyToString } from "../../utils/helpers/donationHelper";
 import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
 
-interface IDonationListProps {
+interface IDonationsListProps {
   campaignId?: number;
   showUserDonations: boolean;
   showQueryCriteria: boolean;
 }
 
-const DonationsList: FC<IDonationListProps> = ({
+const DonationsList: FC<IDonationsListProps> = ({
   campaignId,
   showUserDonations,
   showQueryCriteria,
@@ -97,9 +97,9 @@ const DonationsList: FC<IDonationListProps> = ({
           </div>
         </form>
       )}
-      <ul className="donations-list mt-4">
-        {donations.length > 0 ? (
-          donations.map((donation: DonationDto) => (
+      {donations.length > 0 ? (
+        <ul className="donations-list mt-4">
+          {donations.map((donation: DonationDto) => (
             <li
               className="donations-list__item card p-3"
               key={`donations-${donation.id}`}
@@ -118,14 +118,15 @@ const DonationsList: FC<IDonationListProps> = ({
                 </span>
               </div>
             </li>
-          ))
-        ) : (
-          <p className="text-center mt-4">
-            There are no donations yet. But you can change this situation by
-            supporting one of our campaigns!
-          </p>
-        )}
-      </ul>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-center mt-4">
+          There are no donations yet. But you can change this situation by
+          supporting one of our campaigns!
+        </p>
+      )}
+
       {donations.length > 0 && (
         <button
           className={`btn btn-secondary ${hasNextPage ? "" : "disabled"}`}

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Claims;
 using System.Text;
 using UnitedForUkraine.Server.Data;
+using UnitedForUkraine.Server.DTOs.NewsUpdate;
 using UnitedForUkraine.Server.DTOs.Token;
 using UnitedForUkraine.Server.DTOs.User;
 using UnitedForUkraine.Server.Extensions;
@@ -16,6 +17,7 @@ using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
+using UnitedForUkraine.Server.Repositories;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -23,6 +25,8 @@ namespace UnitedForUkraine.Server.Controllers
     [ApiController]
     public class AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService, IEmailService emailService, ILogger<AuthController> logger, IUserService userService) : ControllerBase
     {
+        private const int NUMBER_OF_ITEMS_PER_PAGE = 6;
+
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly SignInManager<AppUser> _signInManager = signInManager;
         private readonly IAuthTokenService _authTokenService = authTokenService;
@@ -271,17 +275,18 @@ namespace UnitedForUkraine.Server.Controllers
             if (appUser is null)
                 return Unauthorized(new { message = "User was not found" });
 
-            UserDto userDto = new()
-            {
-                Id = appUser.Id,
-                Email = appUser.Email!,
-                UserName = appUser.UserName!,
-                PhoneNumber = appUser.PhoneNumber ?? string.Empty,
-                Address = appUser.Address.ToAddressDto(),
-                RegisteredAt = appUser.RegisteredAt.ToString(DateSettings.DEFAULT_DATE_FORMAT),
-                IsAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin)
-            };
+            UserDto userDto = appUser.ToDto();
+            userDto.IsAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin);
+
             return Ok(userDto);
+        }
+        [HttpGet("users")]
+        public async Task<IActionResult> GetPaginatedAppUsers([FromQuery] QueryObject queryObject)
+        {
+            PaginatedList<AppUser> paginatedUsers = await _userService.GetPaginatedUsersAsync(queryObject, NUMBER_OF_ITEMS_PER_PAGE);
+            List<UserDto> newsUpdateDtos = [.. paginatedUsers.Select(u => u.ToDto())];
+
+            return Ok(new PaginatedUsersDto(newsUpdateDtos, paginatedUsers.HasPreviousPage, paginatedUsers.HasNextPage));
         }
         [HttpPost("logout")]
         [Authorize]

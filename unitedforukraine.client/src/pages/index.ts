@@ -6,6 +6,7 @@ export { default as RegisterPage } from "./auth/RegisterPage";
 export { default as SuccessfulRegistration } from "./auth/SuccessfulRegistration";
 export { default as VerifyRegistration } from "./auth/VerifyRegistration";
 export { default as CampaignIndex } from "./campaigns/CampaignsIndex";
+export { default as CampaignLabIndex } from "./campaigns/CampaignsLabIndex";
 export { default as CampaignDetail } from "./campaigns/CampaignsDetail";
 export { default as CampaignCreate } from "./campaigns/CampaignsCreate";
 export { default as CampaignEdit } from "./campaigns/CampaignsEdit";

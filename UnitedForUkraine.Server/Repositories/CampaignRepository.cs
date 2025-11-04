@@ -6,7 +6,6 @@ using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace UnitedForUkraine.Server.Repositories;
 
@@ -16,7 +15,7 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
     private readonly ApplicationDbContext _context = context;
     public async Task<PaginatedList<Campaign>> GetPaginatedCampaigns(QueryObject queryObject, int itemsPerPageCount)
     {
-        var campaigns = _context.Campaigns.AsNoTracking();
+        IQueryable<Campaign> campaigns = _context.Campaigns.AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
         {

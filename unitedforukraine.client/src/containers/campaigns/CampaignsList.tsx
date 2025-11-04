@@ -26,22 +26,17 @@ const CampaignsList: FC<CampaignsListProps> = ({
       hasNextPage: false,
       hasPreviousPage: false,
     });
-  // const [campaigns, setCampaigns] = useState<CampaignDto[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("date_dsc");
   const [filterCategory, setFilterCategory] = useState<CampaignCategory>(
     CampaignCategory.None
   );
   const [pageIndex, setPageIndex] = useState<number>(1);
-  // const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
-  // const [hasNextPage, setHasNextPage] = useState<boolean>(false);
-
-  const searchInputRef = useRef<HTMLInputElement | null>(null);
-
-  const [searchParams] = useSearchParams();
-  const page = searchParams.get("page");
 
   const { user } = useContext(AuthContext);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get("page");
 
   useEffect(() => {
     const currentPage: number = Number(page) > 0 ? Number(page) : 1;
@@ -141,15 +136,15 @@ const CampaignsList: FC<CampaignsListProps> = ({
           </div>
         </form>
       )}
-      <ul className="campaigns__list mt-5">
-        {paginatedCampaigns.campaigns.length > 0 ? (
-          paginatedCampaigns.campaigns.map((campaign: CampaignDto) => (
+      {paginatedCampaigns.campaigns.length > 0 ? (
+        <ul className="campaigns__list mt-5">
+          {paginatedCampaigns.campaigns.map((campaign: CampaignDto) => (
             <CampaignItem key={campaign.id} campaign={campaign} />
-          ))
-        ) : (
-          <p className="text-center">No campaigns have been found.</p>
-        )}
-      </ul>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-center">No campaigns have been found.</p>
+      )}
       {showPaginationButtons && paginatedCampaigns.campaigns.length > 0 && (
         <CampaignsPaginator
           currentPageIndex={pageIndex}
