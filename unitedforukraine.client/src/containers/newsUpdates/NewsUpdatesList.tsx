@@ -2,7 +2,7 @@ import axios from "axios";
 import { Link, useSearchParams } from "react-router-dom";
 import { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
-import { Card, NewsUpdatesPaginator, SearchBar } from "../../components";
+import { Card, Paginator, SearchBar } from "../../components";
 import { PaginatedNewsUpdatesDto } from "../../types";
 import { API_URL } from "../../variables";
 import { convertToReadableDate } from "../../utils/helpers/dateHelper";
@@ -135,7 +135,8 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
         )}
       </ul>
       {showPaginationButtons && paginatedNewsUpdates.newsUpdates.length > 0 && (
-        <NewsUpdatesPaginator
+        <Paginator
+          linkPath={"/newsUpdates"}
           currentPageIndex={pageIndex}
           hasPreviousPage={paginatedNewsUpdates.hasPreviousPage}
           hasNextPage={paginatedNewsUpdates.hasNextPage}

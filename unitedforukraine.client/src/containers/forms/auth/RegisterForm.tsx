@@ -10,6 +10,15 @@ import {
   PasswordInput,
 } from "../../../components";
 import { useAuthForm } from "../../../hooks";
+import { RegisterUserDto } from "../../../types";
+
+const getDefaultData = (clientUri: string): RegisterUserDto => ({
+  userName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  confirmEmailClientUri: clientUri,
+});
 
 const RegisterForm: FC = () => {
   const clientUri: string = `${window.location.origin}/auth/verifyRegistration`;
@@ -23,14 +32,7 @@ const RegisterForm: FC = () => {
     validateForm,
     setFormData,
     setErrors,
-  } = useAuthForm({
-    userName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    phoneNumber: "",
-    confirmEmailClientUri: clientUri,
-  });
+  } = useAuthForm(getDefaultData(clientUri));
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -58,20 +60,12 @@ const RegisterForm: FC = () => {
   };
 
   const handleReset = (): void => {
-    setFormData({
-      userName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      phoneNumber: "",
-      confirmEmailClientUri: clientUri,
-    });
+    setFormData(getDefaultData(clientUri));
     setErrors({
       userName: "",
       email: "",
       password: "",
       confirmPassword: "",
-      phoneNumber: "",
     });
   };
 
@@ -127,7 +121,7 @@ const RegisterForm: FC = () => {
           </div>
         )}
       </div>
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <label htmlFor="email" className="form-label">
           Phone number*
         </label>
@@ -152,7 +146,7 @@ const RegisterForm: FC = () => {
             country code, e.g., +380931234567.
           </div>
         )}
-      </div>
+      </div> */}
       <div className="mb-3">
         <label htmlFor="password" className="form-label">
           Password*

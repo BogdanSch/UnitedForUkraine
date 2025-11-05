@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Claims;
 using System.Text;
 using UnitedForUkraine.Server.Data;
-using UnitedForUkraine.Server.DTOs.NewsUpdate;
 using UnitedForUkraine.Server.DTOs.Token;
 using UnitedForUkraine.Server.DTOs.User;
 using UnitedForUkraine.Server.Extensions;
@@ -17,7 +16,6 @@ using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.Repositories;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -48,7 +46,6 @@ namespace UnitedForUkraine.Server.Controllers
             AppUser? user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user is null)
                 return BadRequest(new { message = "Invalid email" });
-
             if (!await _userManager.IsEmailConfirmedAsync(user))
                 return Unauthorized(new { message = "Email is not confirmed. Please, check your inbox" });
 
@@ -64,7 +61,6 @@ namespace UnitedForUkraine.Server.Controllers
             await _userManager.UpdateAsync(user);
 
             _authTokenService.SetTokensInsideCookie(token, HttpContext);
-
             TokenDateDto tokenDateDto = new()
             {
                 // AccessToken = token.AccessTokenValue,
@@ -114,7 +110,6 @@ namespace UnitedForUkraine.Server.Controllers
             AppUser? user = await _userService.GetOrCreateUserAsync(
                 email,
                 userPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
-                userPrincipal.FindFirstValue(ClaimTypes.MobilePhone) ?? string.Empty,
                 null);
             if (user is null)
                 return Unauthorized(new { message = $"{authScheme} authentication failed, because we weren't able to create a new user" });
@@ -186,7 +181,7 @@ namespace UnitedForUkraine.Server.Controllers
             if (user is not null)
                 return Conflict(new { message = "The email address is already in use. Please, try a different one" });
 
-            AppUser? newUser = await _userService.GetOrCreateUserAsync(registerDto.Email, registerDto.UserName, registerDto.PhoneNumber, registerDto.Password);
+            AppUser? newUser = await _userService.GetOrCreateUserAsync(registerDto.Email, registerDto.UserName, registerDto.Password);
             if (newUser is null)
                 return BadRequest(new { message = "An error has occurred during registration. Please, try again later" });
 
@@ -233,7 +228,7 @@ namespace UnitedForUkraine.Server.Controllers
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized(new { message = "Invalid user confirmation token" });
 
-            AppUser? appUser = await _userManager.FindByIdAsync(userId);
+            AppUser? appUser = await _userService.GetByIdAsync(userId);
             if (appUser is null)
                 return Unauthorized(new { message = "User was not found" });
 
@@ -271,7 +266,7 @@ namespace UnitedForUkraine.Server.Controllers
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized(new { message = "Invalid user confirmation token" });
 
-            AppUser? appUser = await _userManager.FindByIdAsync(userId);
+            AppUser? appUser = await _userService.GetByIdAsync(userId);
             if (appUser is null)
                 return Unauthorized(new { message = "User was not found" });
 

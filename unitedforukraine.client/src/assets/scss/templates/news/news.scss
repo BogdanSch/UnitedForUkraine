@@ -33,11 +33,4 @@
     column-gap: 0.75rem;
     row-gap: 0.5rem;
   }
-  &__paginator {
-    &-nav {
-      @include flex-row;
-      justify-content: center;
-      align-items: center;
-    }
-  }
 }

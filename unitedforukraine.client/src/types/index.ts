@@ -102,6 +102,20 @@ export type UserDto = {
   isAdmin: boolean;
 };
 
+export type RegisterUserDto = {
+  userName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  confirmEmailClientUri: string;
+};
+
+export type PaginatedUsersDto = {
+  users: UserDto[];
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+};
+
 export type UpdateUserProfileDto = {
   userName: string;
   phoneNumber: string;

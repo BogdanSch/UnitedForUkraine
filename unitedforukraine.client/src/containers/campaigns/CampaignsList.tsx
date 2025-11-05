@@ -4,7 +4,7 @@ import { FC, useEffect, useState, useRef, FormEvent, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CampaignDto, PaginatedCampaignsDto } from "../../types";
 import { CampaignCategory } from "../../types/enums";
-import { CampaignItem, CampaignsPaginator, SearchBar } from "../../components";
+import { CampaignItem, Paginator, SearchBar } from "../../components";
 import AuthContext from "../../contexts/AuthContext";
 import { API_URL } from "../../variables";
 import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
@@ -146,7 +146,8 @@ const CampaignsList: FC<CampaignsListProps> = ({
         <p className="text-center">No campaigns have been found.</p>
       )}
       {showPaginationButtons && paginatedCampaigns.campaigns.length > 0 && (
-        <CampaignsPaginator
+        <Paginator
+          linkPath={"/campaigns"}
           currentPageIndex={pageIndex}
           hasPreviousPage={paginatedCampaigns.hasPreviousPage}
           hasNextPage={paginatedCampaigns.hasNextPage}

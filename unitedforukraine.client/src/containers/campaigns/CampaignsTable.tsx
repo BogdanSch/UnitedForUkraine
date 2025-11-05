@@ -1,7 +1,7 @@
 import axios from "axios";
 import { type FC, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CampaignsPaginator } from "../../components";
+import { Paginator } from "../../components";
 import { CampaignDto, PaginatedCampaignsDto } from "../../types";
 import { API_URL } from "../../variables";
 import { convertToReadableDate } from "../../utils/helpers/dateHelper";
@@ -44,48 +44,55 @@ const CampaignsTable: FC<CampaignsTableProps> = ({ showPaginationButtons }) => {
   return (
     <>
       {paginatedCampaigns.campaigns.length > 0 ? (
-        <table className="table table-dark mt-4">
-          <thead>
-            <tr>
-              <th scope="col">Ідентифікатор кампанії</th>
-              <th scope="col">Заголовок</th>
-              <th scope="col">Гасло</th>
-              <th scope="col">Опис</th>
-              <th scope="col">Цільова кількість грошей</th>
-              <th scope="col">Набрана кількість грошей</th>
-              <th scope="col">Валюта</th>
-              <th scope="col">Дата початку</th>
-              <th scope="col">Дата закінчення</th>
-              <th scope="col">Посилання на зображення обкладинки</th>
-              <th scope="col">Стан</th>
-              <th scope="col">Категорія</th>
-              <th scope="col">Кількість донорів</th>
-              <th scope="col">Перегляд донатів кампанії</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedCampaigns.campaigns.map((campaign: CampaignDto) => (
-              <tr key={campaign.id}>
-                <th scope="row">{campaign.id}</th>
-                <td>{campaign.title}</td>
-                <td>{campaign.slogan}</td>
-                <td>{campaign.description}</td>
-                <td>{campaign.goalAmount}</td>
-                <td>{campaign.raisedAmount}</td>
-                <td>{campaign.currency}</td>
-                <td>{convertToReadableDate(campaign.startDate)}</td>
-                <td>{convertToReadableDate(campaign.endDate)}</td>
-                <td>{campaign.imageUrl}</td>
-                <td>{campaign.status}</td>
-                <td>{campaign.category}</td>
-                <td>{campaign.donorsCount}</td>
-                <td>
-                  <a href="">Переглянути</a>
-                </td>
+        <div className="table-wrap">
+          <table className="table table-dark mt-4">
+            <thead>
+              <tr>
+                <th scope="col">Ідентифікатор кампанії</th>
+                <th scope="col">Заголовок</th>
+                <th scope="col">Гасло</th>
+                <th scope="col">Опис</th>
+                <th scope="col">Цільова кількість грошей</th>
+                <th scope="col">Набрана кількість грошей</th>
+                <th scope="col">Валюта</th>
+                <th scope="col">Дата початку</th>
+                <th scope="col">Дата закінчення</th>
+                <th scope="col">Посилання на зображення обкладинки</th>
+                <th scope="col">Стан</th>
+                <th scope="col">Категорія</th>
+                <th scope="col">Кількість донорів</th>
+                <th scope="col">Перегляд донатів кампанії</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {paginatedCampaigns.campaigns.map((campaign: CampaignDto) => (
+                <tr key={campaign.id}>
+                  <th scope="row">{campaign.id}</th>
+                  <td>{campaign.title}</td>
+                  <td>{campaign.slogan}</td>
+                  <td>{campaign.description}</td>
+                  <td>{campaign.goalAmount}</td>
+                  <td>{campaign.raisedAmount}</td>
+                  <td>{campaign.currency}</td>
+                  <td>{convertToReadableDate(campaign.startDate)}</td>
+                  <td>{convertToReadableDate(campaign.endDate)}</td>
+                  <td>{campaign.imageUrl}</td>
+                  <td>{campaign.status}</td>
+                  <td>{campaign.category}</td>
+                  <td>{campaign.donorsCount}</td>
+                  <td>
+                    <a
+                      className="btn btn-light"
+                      href={`/labs/donations?campaignId=${campaign.id}`}
+                    >
+                      Переглянути
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <p className="text-center">No campaigns have been found.</p>
       )}
@@ -93,10 +100,11 @@ const CampaignsTable: FC<CampaignsTableProps> = ({ showPaginationButtons }) => {
         paginatedCampaigns.campaigns.length > 0 &&
         paginatedCampaigns.hasNextPage &&
         paginatedCampaigns.hasPreviousPage && (
-          <CampaignsPaginator
+          <Paginator
             currentPageIndex={pageIndex}
             hasPreviousPage={paginatedCampaigns.hasPreviousPage}
             hasNextPage={paginatedCampaigns.hasNextPage}
+            linkPath={"/campaigns"}
           />
         )}
     </>

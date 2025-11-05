@@ -11,8 +11,11 @@ const Timeline: FC<TimelineProps> = ({ timelines }) => {
     <div className="row mt-5 mb-4">
       <div className="col">
         <div className="timeline-steps">
-          {timelines.map((timeline: TimelineItem) => (
-            <div className="timeline-step mb-0" key={timeline.date}>
+          {timelines.map((timeline: TimelineItem, index) => (
+            <div
+              className="timeline-step mb-0"
+              key={`${timeline.date}-${index}`}
+            >
               <div className="timeline-content">
                 <div className="inner-circle"></div>
                 <p className="h6 mt-3 mb-1">

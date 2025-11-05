@@ -452,3 +452,24 @@ section {
     }
   }
 }
+
+.paginator {
+  @include flex-row();
+  justify-content: center;
+  align-items: center;
+  column-gap: 0;
+  &-nav {
+    @include flex-row;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.table {
+  &-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+  // max-width: 100%;
+  // overflow: hidden;
+}

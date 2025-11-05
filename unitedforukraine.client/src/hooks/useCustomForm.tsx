@@ -32,6 +32,22 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
       }));
     }
   };
+  const handleNestedChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    if (!setFormData) return;
+    const { name, value } = e.target;
+
+    setFormData((prev: any) => {
+      const keys = name.split(".");
+      const [parent, child] = keys;
+      return {
+        ...prev,
+        [parent]: {
+          ...(prev as any)[parent],
+          [child]: value,
+        },
+      };
+    });
+  };
 
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (!setFormData) return;
@@ -48,7 +64,6 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
       [name]: formattedDate,
     }));
   };
-
   const handleSelectChange = (
     e: ChangeEvent<HTMLSelectElement>,
     loadMoreCallback?: () => void
@@ -66,7 +81,6 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
       [name]: Number(value),
     }));
   };
-
   const handleImageChange = async (
     e: ChangeEvent<HTMLInputElement>,
     previousImageUrl: string,
@@ -99,6 +113,7 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
 
   return {
     handleChange,
+    handleNestedChange,
     handleSelectChange,
     handleDateChange,
     handleImageChange,

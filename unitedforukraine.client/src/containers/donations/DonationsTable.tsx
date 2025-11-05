@@ -4,13 +4,13 @@ import { API_URL } from "../../variables";
 import { DonationDto } from "../../types";
 
 interface IDonationsTableProps {
-  campaignId?: number;
-  userId?: string;
+  campaignId: string | null;
+  userId: string | null;
 }
 
 const DonationsTable: FC<IDonationsTableProps> = ({ campaignId, userId }) => {
   const [donations, setDonations] = useState<DonationDto[]>([]);
-  const [sortOrder, setSortOrder] = useState<string>("date_dsc");
+  const [sortOrder] = useState<string>("date_dsc");
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [currentDonationsPage, setCurrentDonationsPage] = useState<number>(1);
 
@@ -20,7 +20,9 @@ const DonationsTable: FC<IDonationsTableProps> = ({ campaignId, userId }) => {
     if (campaignId) {
       requestUrl = `${API_URL}/donations/campaign/${campaignId}?page=${currentDonationsPage}`;
     } else if (userId) {
-      requestUrl = `${API_URL}/donations/user/${userId}?page=${currentDonationsPage}&sortOrder=${sortOrder}`;
+      requestUrl = `${API_URL}/donations/user/${decodeURIComponent(
+        userId
+      )}?page=${currentDonationsPage}&sortOrder=${sortOrder}`;
     } else {
       requestUrl = `${API_URL}/donations?page=${currentDonationsPage}&sortOrder=${sortOrder}`;
     }
@@ -43,38 +45,40 @@ const DonationsTable: FC<IDonationsTableProps> = ({ campaignId, userId }) => {
   return (
     <>
       {donations.length > 0 ? (
-        <table className="table table-dark mt-4">
-          <thead>
-            <tr>
-              <th scope="col">Ідентифікатор донату</th>
-              <th scope="col">Сума</th>
-              <th scope="col">Валюта</th>
-              <th scope="col">Дата оплати</th>
-              <th scope="col">Метод оплати</th>
-              <th scope="col">Стан</th>
-              <th scope="col">Побажання</th>
-              <th scope="col">Номер сесії оплати</th>
-              <th scope="col">Ідентифікатор користувача</th>
-              <th scope="col">Ідентифікатор кампанії</th>
-            </tr>
-          </thead>
-          <tbody>
-            {donations.map((donation: DonationDto) => (
-              <tr key={`donations-${donation.id}`}>
-                <td>{donation.id}</td>
-                <td>{donation.amount}</td>
-                <td>{donation.currency}</td>
-                <td>{donation.paymentDate}</td>
-                <td>{donation.paymentMethod}</td>
-                <td>{donation.status}</td>
-                <td>{donation.notes}</td>
-                <td>{donation.checkoutSessionId}</td>
-                <td>{donation.userId}</td>
-                <td>{donation.campaignId}</td>
+        <div className="table-wrap">
+          <table className="table table-dark mt-4">
+            <thead>
+              <tr>
+                <th scope="col">Ідентифікатор донату</th>
+                <th scope="col">Сума</th>
+                <th scope="col">Валюта</th>
+                <th scope="col">Дата оплати</th>
+                <th scope="col">Метод оплати</th>
+                <th scope="col">Стан</th>
+                <th scope="col">Побажання</th>
+                <th scope="col">Номер сесії оплати</th>
+                <th scope="col">Ідентифікатор користувача</th>
+                <th scope="col">Ідентифікатор кампанії</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {donations.map((donation: DonationDto) => (
+                <tr key={`donations-${donation.id}`}>
+                  <td>{donation.id}</td>
+                  <td>{donation.amount}</td>
+                  <td>{donation.currency}</td>
+                  <td>{donation.paymentDate}</td>
+                  <td>{donation.paymentMethod}</td>
+                  <td>{donation.status}</td>
+                  <td>{donation.notes}</td>
+                  <td>{donation.checkoutSessionId}</td>
+                  <td>{donation.userId}</td>
+                  <td>{donation.campaignId}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <p className="text-center mt-4">
           There are no donations yet. But you can change this situation by

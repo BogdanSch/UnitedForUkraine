@@ -6,7 +6,7 @@ namespace UnitedForUkraine.Server.Models;
 
 public class AppUser : IdentityUser
 {
-    [StringLength(80, MinimumLength = 1)]
+    [StringLength(512, ErrorMessage = "Refresh token must be at most 512 characters long")]
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; set; }
     [ForeignKey(nameof(Address))]

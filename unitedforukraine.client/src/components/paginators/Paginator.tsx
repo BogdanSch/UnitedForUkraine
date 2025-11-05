@@ -1,28 +1,27 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
-type CampaignsPaginatorProps = {
+type PaginatorProps = {
+  linkPath: string;
   currentPageIndex: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
 };
 
-const CampaignsPaginator: FC<CampaignsPaginatorProps> = ({
+const Paginator: FC<PaginatorProps> = ({
+  linkPath,
   currentPageIndex,
   hasNextPage,
   hasPreviousPage,
 }) => {
   return (
-    <nav
-      className="campaigns__paginator-nav"
-      aria-label="Page navigation example"
-    >
-      <ul className="campaigns__paginator pagination">
+    <nav className="paginator-nav" aria-label="List navigation">
+      <ul className="paginator pagination">
         <li className="page-item">
           <Link
             className={`page-link ${hasPreviousPage ? "" : "disabled"}`}
             to={{
-              pathname: "/campaigns",
+              pathname: linkPath,
               search: `?page=${currentPageIndex - 1}`,
             }}
           >
@@ -33,7 +32,7 @@ const CampaignsPaginator: FC<CampaignsPaginatorProps> = ({
           <Link
             className={`page-link ${hasNextPage ? "" : "disabled"}`}
             to={{
-              pathname: "/campaigns",
+              pathname: linkPath,
               search: `?page=${currentPageIndex + 1}`,
             }}
           >
@@ -45,4 +44,4 @@ const CampaignsPaginator: FC<CampaignsPaginatorProps> = ({
   );
 };
 
-export default CampaignsPaginator;
+export default Paginator;

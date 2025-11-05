@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useCustomForm from "./useCustomForm";
 
-const MIN_PASSWORD_LENGTH = 7;
+const MIN_PASSWORD_LENGTH: number = 7;
 
 const emailValidation = /(.+)@(.+){2,}\.(.+){2,}/;
 const upperCaseLettersValidation = /[A-Z]/g;
@@ -19,7 +19,6 @@ export default function useAuthForm(initialState: Record<string, any>) {
 
     if (!formData.email.match(emailValidation))
       newErrors.email = "Invalid email format!";
-
     if (formData.password.length < MIN_PASSWORD_LENGTH) {
       newErrors.password = `Password should be at least ${MIN_PASSWORD_LENGTH} characters long!`;
     } else if (!formData.password.match(upperCaseLettersValidation)) {
@@ -28,13 +27,9 @@ export default function useAuthForm(initialState: Record<string, any>) {
     } else if (!formData.password.match(numbersValidation)) {
       newErrors.password = "Password should contain at least three digits!";
     }
-
     if (isRegisterPage && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords should be identical!";
     }
-    if (isRegisterPage && formData.phoneNumber.length < 7)
-      newErrors.phoneNumber =
-        "Phone number should be at least 7 characters long!";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

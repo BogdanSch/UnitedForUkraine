@@ -11,7 +11,7 @@ namespace UnitedForUkraine.Server.Repositories
         private readonly ApplicationDbContext _context = context;
         public async Task<PaginatedList<NewsUpdate>> GetPaginatedAsync(QueryObject queryObject, int itemsPerPageCount)
         {
-            IQueryable<NewsUpdate> newsUpdates = _context.NewsUpdates.Include(n => n.Author).AsNoTracking();
+            IQueryable<NewsUpdate> newsUpdates = _context.NewsUpdates.Include(n => n.Author).Include(n => n.TargetCampaign).AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
             {
@@ -37,7 +37,7 @@ namespace UnitedForUkraine.Server.Repositories
             
             return await PaginatedList<NewsUpdate>.CreateAsync(newsUpdates, queryObject.Page, itemsPerPageCount);
         }
-        public async Task<NewsUpdate?> GetByIdAsync(int id) => await _context.NewsUpdates.FirstOrDefaultAsync(n => n.Id == id);
+        public async Task<NewsUpdate?> GetByIdAsync(int id) => await _context.NewsUpdates.Include(n => n.Author).Include(n => n.TargetCampaign).FirstOrDefaultAsync(n => n.Id == id);
         public async Task AddAsync(NewsUpdate newsUpdate)
         {
             await _context.NewsUpdates.AddAsync(newsUpdate);

@@ -90,13 +90,6 @@
       flex-wrap: wrap;
     }
   }
-  &__paginator {
-    // margin: 0 auto;
-    @include flex-row();
-    justify-content: center;
-    align-items: center;
-    column-gap: 0;
-  }
 }
 
 @media screen and (max-width: 48rem) {

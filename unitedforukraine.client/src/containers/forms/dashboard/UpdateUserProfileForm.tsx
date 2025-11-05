@@ -23,7 +23,7 @@ const UpdateUserProfileForm: FC = () => {
       postalCode: "",
     },
   });
-  const { handleChange } = useCustomForm(setFormData);
+  const { handleChange, handleNestedChange } = useCustomForm(setFormData);
 
   const [errors, setErrors] = useState<Record<string, string>>({
     userName: "",
@@ -138,6 +138,10 @@ const UpdateUserProfileForm: FC = () => {
           isRequired={true}
         />
         {errors.phoneNumber && <ErrorAlert errorMessage={errors.phoneNumber} />}
+        <div id="phoneNumberHelp" className="form-text">
+          Phone number must be between 7 and 40 characters long. Include country
+          code, e.g., +380931234567.
+        </div>
       </div>
       <div className="mb-3">
         <label htmlFor="country" className="form-label">
@@ -147,7 +151,7 @@ const UpdateUserProfileForm: FC = () => {
           name="updatedAddress.country"
           id="country"
           value={formData.updatedAddress.country}
-          onChange={handleChange}
+          onChange={handleNestedChange}
           isRequired={true}
         />
         {errors.country && <ErrorAlert errorMessage={errors.country} />}
@@ -160,7 +164,7 @@ const UpdateUserProfileForm: FC = () => {
           name="updatedAddress.region"
           id="region"
           value={formData.updatedAddress.region}
-          onChange={handleChange}
+          onChange={handleNestedChange}
           isRequired={true}
         />
         {errors.region && <ErrorAlert errorMessage={errors.region} />}
@@ -173,7 +177,7 @@ const UpdateUserProfileForm: FC = () => {
           name="updatedAddress.city"
           id="city"
           value={formData.updatedAddress.city}
-          onChange={handleChange}
+          onChange={handleNestedChange}
           isRequired={true}
         />
         {errors.city && <ErrorAlert errorMessage={errors.city} />}
@@ -186,7 +190,7 @@ const UpdateUserProfileForm: FC = () => {
           name="updatedAddress.street"
           id="street"
           value={formData.updatedAddress.street}
-          onChange={handleChange}
+          onChange={handleNestedChange}
           isRequired={true}
         />
         {errors.street && <ErrorAlert errorMessage={errors.street} />}
@@ -199,7 +203,7 @@ const UpdateUserProfileForm: FC = () => {
           name="updatedAddress.postalCode"
           id="postalCode"
           value={formData.updatedAddress.postalCode}
-          onChange={handleChange}
+          onChange={handleNestedChange}
           isRequired={true}
         />
         {errors.postalCode && <ErrorAlert errorMessage={errors.postalCode} />}

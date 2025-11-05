@@ -49,7 +49,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
         return Ok(new PaginatedDonationsDto(donationDtos, paginatedDonations.HasNextPage));
     }
     [HttpGet("user/{userId:guid}")]
-    [Authorize]
+    //[Authorize]
     public async Task<IActionResult> GetPaginatedUserDonations(Guid userId, [FromQuery] QueryObject queryObject)
     {
         if (!ModelState.IsValid)

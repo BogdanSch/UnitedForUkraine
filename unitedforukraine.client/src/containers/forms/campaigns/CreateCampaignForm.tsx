@@ -11,21 +11,23 @@ import {
 } from "../../../types/enums";
 import { API_URL, API_IMAGE_PLACEHOLDER_URL } from "../../../variables";
 
+const getDefaultData = (): CreateCampaignRequestDto => ({
+  title: "",
+  slogan: "",
+  description: "",
+  goalAmount: 0,
+  status: CampaignStatus.Upcoming,
+  currency: Currency.UAH,
+  category: CampaignCategory.Education,
+  startDate: "",
+  endDate: "",
+  imageUrl: API_IMAGE_PLACEHOLDER_URL,
+});
+
 const CreateCampaignForm: FC = () => {
-  const DEFAULT_FORM_DATA: CreateCampaignRequestDto = {
-    title: "",
-    slogan: "",
-    description: "",
-    goalAmount: 0,
-    status: CampaignStatus.Upcoming,
-    currency: Currency.UAH,
-    category: CampaignCategory.Education,
-    startDate: "",
-    endDate: "",
-    imageUrl: API_IMAGE_PLACEHOLDER_URL,
-  };
-  const [formData, setFormData] =
-    useState<CreateCampaignRequestDto>(DEFAULT_FORM_DATA);
+  const [formData, setFormData] = useState<CreateCampaignRequestDto>(
+    getDefaultData()
+  );
   const [errors, setErrors] = useState<Record<string, string>>({
     title: "",
     slogan: "",
@@ -95,7 +97,7 @@ const CreateCampaignForm: FC = () => {
   };
 
   const handleReset = (): void => {
-    setFormData(DEFAULT_FORM_DATA);
+    setFormData(getDefaultData());
     setErrors({});
   };
 

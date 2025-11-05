@@ -18,21 +18,28 @@ interface IDonateFormProps {
   campaignId: number;
 }
 
+const getDefaultData = (
+  userId: string,
+  campaignId: number
+): CreateDonationRequestDto => ({
+  userId: userId,
+  amount: 1,
+  notes: "",
+  currency: Currency.UAH,
+  paymentMethod: PaymentMethod.CreditCard,
+  campaignId: campaignId,
+});
+
 const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
-  const [formData, setFormData] = useState<CreateDonationRequestDto>({
-    userId: "",
-    amount: 1,
-    notes: "",
-    currency: Currency.UAH,
-    paymentMethod: PaymentMethod.CreditCard,
-    campaignId: campaignId,
-  });
+  const [formData, setFormData] = useState<CreateDonationRequestDto>(
+    getDefaultData("", campaignId)
+  );
 
   const [validationErrors, setValidationErrors] = useState<Record<string, any>>(
-    { amount: "" }
+    {}
   );
   const [requestError, setRequestError] = useState<string>("");
   const { handleChange, handleSelectChange } = useCustomForm(setFormData);
@@ -99,9 +106,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
       );
       console.log(data);
 
-      if (!data.id) {
-        throw new Error("Donation creation failed");
-      }
+      if (!data.id) throw new Error("Donation creation failed");
       await createPaymentSession(data.id);
     } catch (error) {
       setRequestError("Failed to make a donation. Please, try again later!");
@@ -110,14 +115,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
   };
 
   const handleReset = (): void => {
-    setFormData({
-      userId: user?.id ?? "",
-      amount: 1,
-      notes: "",
-      currency: Currency.UAH,
-      paymentMethod: PaymentMethod.CreditCard,
-      campaignId: campaignId,
-    });
+    setFormData(getDefaultData(user?.id ?? "", campaignId));
     setValidationErrors({ amount: "" });
   };
 
