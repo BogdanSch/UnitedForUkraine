@@ -43,9 +43,30 @@ const Dashboard: FC = () => {
                   Your contact number:{" "}
                   <strong>{user?.phoneNumber ?? "Unknown"}</strong>
                 </li>
-                <li className="dashboard__item">
-                  Your city: <strong>{user?.city || "Unknown"}</strong>
-                </li>
+                {user?.address && (
+                  <>
+                    <li className="dashboard__item">
+                      Your country:{" "}
+                      <strong>{user.address.country || "Unknown"}</strong>
+                    </li>
+                    <li className="dashboard__item">
+                      Your region:{" "}
+                      <strong>{user.address.region || "Unknown"}</strong>
+                    </li>
+                    <li className="dashboard__item">
+                      Your city:{" "}
+                      <strong>{user.address.city || "Unknown"}</strong>
+                    </li>
+                    <li className="dashboard__item">
+                      Your street:{" "}
+                      <strong>{user.address.street || "Unknown"}</strong>
+                    </li>
+                    <li className="dashboard__item">
+                      Your postal code:{" "}
+                      <strong>{user.address.postalCode || "Unknown"}</strong>
+                    </li>
+                  </>
+                )}
               </ul>
             </Card>
           </div>

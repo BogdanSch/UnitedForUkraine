@@ -84,13 +84,20 @@ export type ImageDto = {
 };
 
 export interface AddressDto {
+  id: number;
   country: string;
   region: string;
   city: string;
   street: string;
   postalCode: string;
 }
-export interface UpdateAddressRequestDto extends AddressDto {}
+export interface UpdateAddressRequestDto {
+  country: string;
+  region: string;
+  city: string;
+  street: string;
+  postalCode: string;
+}
 
 export type UserDto = {
   id: string;

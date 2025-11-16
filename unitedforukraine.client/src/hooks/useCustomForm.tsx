@@ -35,18 +35,16 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
   const handleNestedChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (!setFormData) return;
     const { name, value } = e.target;
+    const keys = name.split(".");
+    const [parent, child] = keys;
 
-    setFormData((prev: any) => {
-      const keys = name.split(".");
-      const [parent, child] = keys;
-      return {
-        ...prev,
-        [parent]: {
-          ...(prev as any)[parent],
-          [child]: value,
-        },
-      };
-    });
+    setFormData((prev: any) => ({
+      ...prev,
+      [parent]: {
+        ...prev[parent],
+        [child]: value,
+      },
+    }));
   };
 
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>): void => {

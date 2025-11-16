@@ -76,9 +76,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
         `${API_URL}/payments/${donationId}`
       );
 
-      if (!data.redirectUrl) {
-        throw new Error("Payment session failed!");
-      }
+      if (!data.redirectUrl) throw new Error("Payment session failed!");
 
       console.log(data.redirectUrl);
 

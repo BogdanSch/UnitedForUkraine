@@ -1,15 +1,12 @@
-// import axios from "axios";
 import { protectedAxios } from "../utils/axiosInstances/index";
 import { FC, createContext, useState, useEffect, useMemo } from "react";
 import { useLocalStorage } from "../hooks";
 import { API_URL } from "../variables";
 import { TokenDateDto, UserDto } from "../types";
-// import { refreshTokens } from "../utils/services/tokenService";
 import { convertToUTCDate } from "../utils/helpers/dateHelper";
 
 interface IAuthContextProps {
   user: UserDto | null;
-  // accessToken: string | null;
   authenticateUser: (tokenDate: TokenDateDto) => Promise<void>;
   logoutUser: () => Promise<void>;
   isAuthenticated: () => boolean;
@@ -23,7 +20,6 @@ type AuthProviderProps = {
 
 const AuthContext = createContext<IAuthContextProps>({
   user: null,
-  // accessToken: null,
   authenticateUser: async () => {},
   logoutUser: async () => {},
   isAuthenticated: () => false,

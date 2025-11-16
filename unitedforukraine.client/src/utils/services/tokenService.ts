@@ -16,8 +16,7 @@ export const refreshTokens = async (): Promise<void> => {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log(
-        "Error while refreshing tokens:",
-        error.response?.data.message
+        `Error while refreshing tokens: ${error.response?.data.message}`
       );
       localStorage.setItem("accessTokenExpirationTimeUTC", "");
     }

@@ -140,7 +140,6 @@ namespace UnitedForUkraine.Server.Controllers
         {
             //HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken);
             HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
-
             if(string.IsNullOrWhiteSpace(refreshToken))
                 return Unauthorized(new { message = "The refresh token was empty" });
 
@@ -166,7 +165,6 @@ namespace UnitedForUkraine.Server.Controllers
                 AccessTokenExpirationTime = token.AccessTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT),
                 RefreshTokenExpirationTime = token.RefreshTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT)
             };
-
             return Ok(tokenDateDto);
         }
         [HttpPost("register")]
@@ -219,7 +217,7 @@ namespace UnitedForUkraine.Server.Controllers
         }
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateUserProfileInfo([FromBody] UpdateUserProfileDto updateProfileDto)
+        public async Task<IActionResult> UpdateUserProfile([FromBody] UpdateUserProfileDto updateProfileDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -243,19 +241,15 @@ namespace UnitedForUkraine.Server.Controllers
                 appUser.Address.Street = updateProfileDto.UpdatedAddress.Street;
                 appUser.Address.PostalCode = updateProfileDto.UpdatedAddress.PostalCode;
 
-                IdentityResult result = await _userManager.UpdateAsync(appUser);
-                if (!result.Succeeded)
-                {
-                    string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
-                    return BadRequest(new { message = $"An error has occurred during profile update: {errorMessage}" });
-                }
+                bool isUpdated = await _userService.UpdateAsync(appUser);
 
-                return Ok(new { message = "Profile updated successfully" });
+                if (isUpdated) return Ok(new { message = "Profile information was successfully updated" });
+                return BadRequest(new { message = "An error has occurred during the profile update. Please, try again later" });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, message: $"Error updating profile for user {userId}");
-                return Unauthorized(new { message = "Something weird has happened on our side" });
+                return BadRequest(new { message = "An error has occurred during the profile update. Please, try again later" });
             }
         }
         [HttpGet("userInfo")]

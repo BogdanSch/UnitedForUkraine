@@ -8,9 +8,10 @@ using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Services
 {
-    public class UserService(UserManager<AppUser> userManager, ILogger<UserService> logger) : IUserService
+    public class UserService(UserManager<AppUser> userManager, ApplicationDbContext context, ILogger<UserService> logger) : IUserService
     {
         private readonly UserManager<AppUser> _userManager = userManager;
+        private readonly ApplicationDbContext _context = context;
         private readonly ILogger<UserService> _logger = logger;
 
         public async Task<PaginatedList<AppUser>> GetPaginatedUsersAsync(QueryObject queryObject, int itemsPerPageCount)
@@ -61,6 +62,17 @@ namespace UnitedForUkraine.Server.Services
         {
             if(string.IsNullOrWhiteSpace(id)) return null;
             return await _userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id == id);
+        }
+        public async Task<bool> UpdateAsync(AppUser user)
+        {
+            IdentityResult result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
+                _logger.LogError($"An error has occurred during updating user profile: {errorMessage}");
+                return false;
+            }
+            return true;
         }
     }
 }

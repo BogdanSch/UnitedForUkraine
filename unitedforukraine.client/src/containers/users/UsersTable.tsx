@@ -31,7 +31,6 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
       try {
         const { data } = await axios.get<PaginatedUsersDto>(requestUrl);
         console.log(data);
-
         setPaginatedUsers(data);
       } catch (error) {
         console.log(`Error fetching campaigns: ${error}`);
@@ -53,6 +52,7 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
                 <th scope="col">Номер телефону</th>
                 <th scope="col">Дата реєстрації</th>
                 <th scope="col">Ім'я</th>
+                <th scope="col">Ідентифікатор адреси</th>
                 <th scope="col">Країна</th>
                 <th scope="col">Регіон</th>
                 <th scope="col">Місто</th>
@@ -69,6 +69,7 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
                   <td>{user.phoneNumber}</td>
                   <td>{user.registeredAt}</td>
                   <td>{user.userName}</td>
+                  <td>{user.address.id}</td>
                   <td>{user.address.country}</td>
                   <td>{user.address.region}</td>
                   <td>{user.address.city}</td>

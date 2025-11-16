@@ -10,10 +10,10 @@ public static class AppUserMappers
     {
         Id = user.Id,
         Email = user.Email!,
-        UserName = user.UserName ?? string.Empty,
+        UserName = user.UserName!,
         PhoneNumber = user.PhoneNumber ?? string.Empty,
         RegisteredAt = user.RegisteredAt.ToString(DateSettings.DEFAULT_DATE_FORMAT),
-        Address = user.Address.ToAddressDto(),
+        Address = user.Address.ToDto(),
         IsAdmin = false
     };
 }

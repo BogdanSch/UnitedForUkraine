@@ -54,7 +54,7 @@ const HomePage: FC = () => {
                 stronger.
               </p>
               <Link className="btn btn-primary" to="/about">
-                Read more.
+                Read more
               </Link>
             </div>
             <Image

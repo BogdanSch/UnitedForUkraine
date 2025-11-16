@@ -9,5 +9,6 @@ namespace UnitedForUkraine.Server.Interfaces
         Task<AppUser?> GetOrCreateUserAsync(string email, string userName, string? password);
         Task<AppUser?> GetUserByRefreshTokenAsync(string refreshToken);
         Task<AppUser?> GetByIdAsync(string id);
+        Task<bool> UpdateAsync(AppUser user);
     }
 }

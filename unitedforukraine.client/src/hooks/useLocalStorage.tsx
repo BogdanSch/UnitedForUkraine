@@ -6,7 +6,7 @@ function useLocalStorage<T>(
 ): [T, React.Dispatch<React.SetStateAction<T>>, () => void] {
   const [value, setValue] = useState<T>(() => {
     const jsonValue = localStorage.getItem(key);
-    if (jsonValue != null) return JSON.parse(jsonValue) as T;
+    if (jsonValue) return JSON.parse(jsonValue) as T;
     return defaultValue;
   });
 

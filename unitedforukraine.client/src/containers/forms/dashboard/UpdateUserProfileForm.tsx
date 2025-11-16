@@ -16,20 +16,16 @@ const UpdateUserProfileForm: FC = () => {
     userName: user?.userName || "",
     phoneNumber: user?.phoneNumber || "",
     updatedAddress: {
-      city: "",
-      region: "",
-      country: "",
-      street: "",
-      postalCode: "",
+      city: user?.address.city || "",
+      region: user?.address.region || "",
+      country: user?.address.country || "",
+      street: user?.address.street || "",
+      postalCode: user?.address.postalCode || "",
     },
   });
   const { handleChange, handleNestedChange } = useCustomForm(setFormData);
 
-  const [errors, setErrors] = useState<Record<string, string>>({
-    userName: "",
-    phoneNumber: "",
-    city: "",
-  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [requestError, setRequestError] = useState<string>("");
 
   async function handleSubmit(

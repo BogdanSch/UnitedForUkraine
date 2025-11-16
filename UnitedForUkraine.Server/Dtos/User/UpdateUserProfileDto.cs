@@ -11,6 +11,6 @@ namespace UnitedForUkraine.Server.DTOs.User
         [DataType(DataType.PhoneNumber)]
         [StringLength(40, ErrorMessage = "The phone number must be at most 40 characters long.")]
         public string PhoneNumber { get; set; } = string.Empty;
-        public required UpdateAddressRequestDto UpdatedAddress;
+        public required UpdateAddressRequestDto UpdatedAddress { get; set; }
     }
 }
