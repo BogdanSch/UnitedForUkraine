@@ -158,6 +158,16 @@ const Header: FC = () => {
                     My profile
                   </Link>
                 </li>
+                <li>
+                  <Link className="dropdown-item" to={`/dashboard/users`}>
+                    Users list
+                  </Link>
+                </li>
+                <li>
+                  <Link className="dropdown-item" to={`/dashboard/donations`}>
+                    Donations list
+                  </Link>
+                </li>
                 <hr className="dropdown-divider" />
                 <li>
                   <SignOutForm />

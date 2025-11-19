@@ -10,6 +10,7 @@ import {
   convertCurrencyToString,
   formatMoney,
 } from "../../utils/helpers/currencyHelper";
+import formatNumber from "../../utils/helpers/formatNumber";
 
 interface ICampaignItemProps {
   campaign: CampaignDto;
@@ -29,9 +30,13 @@ const CampaignItem: FC<ICampaignItemProps> = ({ campaign }) => {
           className="campaigns__item-link"
         >
           <h3 className="card-title">{campaign.title}</h3>
+          <p className="card-text text-muted mb-1">{campaign.slogan}</p>
           <ul className="card-category">
             <li className="card-category__item">
               {convertCampaignCategoryToString(campaign.category)}
+            </li>
+            <li className="card-category__item">
+              {formatNumber(campaign.donorsCount)} donors
             </li>
           </ul>
           <p className="card-text text-muted">{campaign.description}</p>

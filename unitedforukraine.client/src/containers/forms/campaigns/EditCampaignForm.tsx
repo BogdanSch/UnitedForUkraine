@@ -29,14 +29,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
 
   const [formData, setFormData] =
     useState<UpdateCampaignRequestDto>(DEFAULT_FORM_DATA);
-  const [errors, setErrors] = useState<Record<string, string>>({
-    title: "",
-    slogan: "",
-    description: "",
-    goalAmount: "",
-    startDate: "",
-    endDate: "",
-  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [requestError, setRequestError] = useState<string>("");
   const navigate = useNavigate();
   const {
@@ -272,6 +265,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           Campaign Image
         </label>
         <input
+          className="form-control"
           type="file"
           id="image"
           name="image"

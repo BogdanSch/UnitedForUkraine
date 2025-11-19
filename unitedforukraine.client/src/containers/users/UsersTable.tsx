@@ -58,7 +58,7 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
                 <th scope="col">Місто</th>
                 <th scope="col">Вулиця</th>
                 <th scope="col">Поштовий індекс</th>
-                <th scope="col">Перегляд донатів користувача</th>
+                {/* <th scope="col">Перегляд донатів користувача</th> */}
               </tr>
             </thead>
             <tbody>
@@ -75,7 +75,7 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
                   <td>{user.address.city}</td>
                   <td>{user.address.street}</td>
                   <td>{user.address.postalCode}</td>
-                  <td>
+                  {/* <td>
                     <a
                       className="btn btn-light"
                       href={`/labs/donations?userId=${encodeURIComponent(
@@ -84,7 +84,7 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
                     >
                       Переглянути
                     </a>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

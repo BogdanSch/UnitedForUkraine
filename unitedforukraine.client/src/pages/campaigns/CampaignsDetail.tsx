@@ -46,7 +46,8 @@ const CampaignsDetail: FC = () => {
             <ul className="campaigns-detail__buttons-list">
               <li className="campaigns-detail__buttons-item">
                 <Link className="btn btn-primary" to={`/campaigns/edit/${id}`}>
-                  Edit this Campaign
+                  <span>Edit this Campaign</span>
+                  <i className="bi bi-pencil-square"></i>
                 </Link>
               </li>
               <li className="campaigns-detail__button-item">
@@ -61,7 +62,10 @@ const CampaignsDetail: FC = () => {
           />
           <div className="campaigns-detail__info card p-5 mb-4">
             <div className="text-content">
-              <h1 className="heading mb-2">{campaign?.title}</h1>
+              <h1 className="heading mb-0">{campaign?.title}</h1>
+              <p className="campaigns-detail__description mb-3">
+                {campaign?.slogan}
+              </p>
               <div className="campaigns-detail__category">
                 <ul className="campaigns-detail__list">
                   <li className="campaigns-detail__item">
@@ -111,14 +115,23 @@ const CampaignsDetail: FC = () => {
                   requiredAmount={campaign?.goalAmount || 0}
                 />
               </div>
-              <ShareButton
-                relativeUrl={`/campaigns/detail/${id}`}
-                campaignTitle={campaign?.title ?? ""}
-                campaignGoalAmount={campaign?.goalAmount ?? 0}
-                campaignRaisedAmount={campaign?.raisedAmount ?? 0}
-              />
+              <div className="campaigns-detail__buttons mt-3">
+                <CampaignActionButton
+                  campaignId={campaign?.id!}
+                  campaignStatus={campaign?.status!}
+                />
+                <ShareButton
+                  relativeUrl={`/campaigns/detail/${id}`}
+                  campaignTitle={campaign?.title ?? ""}
+                  campaignGoalAmount={campaign?.goalAmount ?? 0}
+                  campaignRaisedAmount={campaign?.raisedAmount ?? 0}
+                />
+              </div>
             </div>
           </div>
+          <h3 className="mt-5 sub-heading">
+            {campaign?.donorsCount} donors contributed
+          </h3>
           <DonationsList
             campaignId={Number(id)}
             showUserDonations={false}

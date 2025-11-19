@@ -8,9 +8,10 @@ const protectedAxios = axios.create({
 
 protectedAxios.interceptors.request.use(
   async (config) => {
-    const accessTokenExpirationTimeUTC: string = JSON.parse(
-      localStorage.getItem("accessTokenExpirationTimeUTC") || ""
-    );
+    let accessTokenExpirationTimeUTC: string = "";
+    const value = localStorage.getItem("accessTokenExpirationTimeUTC");
+
+    if (value) accessTokenExpirationTimeUTC = value;
 
     const nowUtc = new Date().getTime();
     const expiryUtc = new Date(accessTokenExpirationTimeUTC)?.getTime();

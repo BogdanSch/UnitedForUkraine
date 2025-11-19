@@ -26,6 +26,4 @@ export { default as Contact } from "./contact/Contact";
 export { default as NewsUpdatesIndex } from "./newsUpdates/NewsUpdatesIndex";
 export { default as NewsUpdateCreate } from "./newsUpdates/NewsUpdateCreate";
 
-export { default as Labwork1CampaignsIndex } from "./labs/Labwork1CampaignsIndex";
-export { default as Labwork1DonationsIndex } from "./labs/Labwork1DonationsIndex";
-export { default as Labwork1UsersIndex } from "./labs/Labwork1UsersIndex";
+export { default as UsersIndex } from "./dashboard/UsersIndex";

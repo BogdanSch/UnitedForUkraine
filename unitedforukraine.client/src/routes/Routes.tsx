@@ -24,9 +24,7 @@ import {
   Contact,
   NewsUpdatesIndex,
   NewsUpdateCreate,
-  Labwork1CampaignsIndex,
-  Labwork1UsersIndex,
-  Labwork1DonationsIndex,
+  UsersIndex,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -69,15 +67,6 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-    ],
-  },
-  {
-    path: "labs",
-    element: <MainLayout />,
-    children: [
-      { path: "campaigns", element: <Labwork1CampaignsIndex /> },
-      { path: "users", element: <Labwork1UsersIndex /> },
-      { path: "donations", element: <Labwork1DonationsIndex /> },
     ],
   },
   {
@@ -145,6 +134,8 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      { path: "users", element: <UsersIndex /> },
+      { path: "donations", element: <UsersIndex /> },
     ],
   },
 ]);

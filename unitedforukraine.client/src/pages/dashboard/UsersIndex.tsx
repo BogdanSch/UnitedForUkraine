@@ -2,13 +2,13 @@ import { FC } from "react";
 import { UsersTable } from "../../containers";
 import { SectionHeadline } from "../../components";
 
-const Labwork1UsersIndex: FC = () => {
+const UsersIndex: FC = () => {
   return (
-    <section className="lab mt-5" id="lab">
+    <section className="dashboard mt-5">
       <div className="container">
-        <div className="lab__wrap">
+        <div className="dashboard__wrap">
           <SectionHeadline
-            sectionIndicatorTitle="Labwork 1"
+            sectionIndicatorTitle="Dashboard"
             title="Users"
             headingClassName="heading"
           />
@@ -19,4 +19,4 @@ const Labwork1UsersIndex: FC = () => {
   );
 };
 
-export default Labwork1UsersIndex;
+export default UsersIndex;

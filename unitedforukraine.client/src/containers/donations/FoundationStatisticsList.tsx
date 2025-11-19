@@ -7,8 +7,9 @@ import { Card } from "../../components";
 import { formatMoney } from "../../utils/helpers/currencyHelper";
 import formatNumber from "../../utils/helpers/formatNumber";
 
-const DEFAULT_STATISTICS: Statistics = {
+const getDefaultStatistics = (): Statistics => ({
   donationsCount: 0,
+  campaignsCount: 0,
   totalDonationsAmount: 0,
   mostFrequentDonationAmount: 0,
   averageDonationsAmount: 0,
@@ -16,10 +17,12 @@ const DEFAULT_STATISTICS: Statistics = {
   cityWithMostDonations: "",
   mostFrequentDonorName: "",
   donationsGrowthRate: 0,
-};
+});
 
 const FoundationStatisticsList: FC = () => {
-  const [statistics, setStatistics] = useState<Statistics>(DEFAULT_STATISTICS);
+  const [statistics, setStatistics] = useState<Statistics>(
+    getDefaultStatistics()
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +34,7 @@ const FoundationStatisticsList: FC = () => {
       try {
         const { data } = await axios.request(options);
         console.log(data);
-        setStatistics(data || DEFAULT_STATISTICS);
+        setStatistics(data || getDefaultStatistics());
       } catch (error) {
         console.error(error);
       }
@@ -66,6 +69,19 @@ const FoundationStatisticsList: FC = () => {
           </div>
           <p className="statistics__item-amount">
             {formatNumber(statistics.donationsCount)}+
+          </p>
+        </Card>
+      </li>
+      <li className="statistics__item">
+        <Card className="card-border p-3" isLite={false}>
+          <div className="statistics__item-group">
+            <i className="statistics__item-icon  bi bi-currency-exchange"></i>
+            <h4 className="sub-heading statistics__item-title">
+              Total Campaigns Created
+            </h4>
+          </div>
+          <p className="statistics__item-amount">
+            {formatNumber(statistics.campaignsCount)}+
           </p>
         </Card>
       </li>

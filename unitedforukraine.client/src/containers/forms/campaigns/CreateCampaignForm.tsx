@@ -28,14 +28,7 @@ const CreateCampaignForm: FC = () => {
   const [formData, setFormData] = useState<CreateCampaignRequestDto>(
     getDefaultData()
   );
-  const [errors, setErrors] = useState<Record<string, string>>({
-    title: "",
-    slogan: "",
-    description: "",
-    goalAmount: "",
-    startDate: "",
-    endDate: "",
-  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [requestError, setRequestError] = useState<string>("");
   const navigate = useNavigate();
   const {

@@ -148,6 +148,7 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         int saved = await _context.SaveChangesAsync();
         return saved > 0;
     }
+    public async Task<int> GetTotalCampaignsCountAsync() => await _context.Campaigns.CountAsync();
     private IQueryable<Campaign> GetAllUserSupportedCampaigns(string userId)
     {
         return _context.Donations.Where(d => d.UserId == userId)

@@ -56,7 +56,6 @@ const DonationsTable: FC<IDonationsTableProps> = ({ campaignId, userId }) => {
                 <th scope="col">Метод оплати</th>
                 <th scope="col">Стан</th>
                 <th scope="col">Побажання</th>
-                <th scope="col">Номер сесії оплати</th>
                 <th scope="col">Ідентифікатор користувача</th>
                 <th scope="col">Ідентифікатор кампанії</th>
               </tr>
@@ -71,7 +70,6 @@ const DonationsTable: FC<IDonationsTableProps> = ({ campaignId, userId }) => {
                   <td>{donation.paymentMethod}</td>
                   <td>{donation.status}</td>
                   <td>{donation.notes}</td>
-                  <td>{donation.checkoutSessionId}</td>
                   <td>{donation.userId}</td>
                   <td>{donation.campaignId}</td>
                 </tr>

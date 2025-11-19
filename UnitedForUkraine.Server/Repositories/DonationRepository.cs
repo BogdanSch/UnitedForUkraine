@@ -125,7 +125,6 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
 
                 string from = Enum.GetName(donation.Currency)!;
                 string to = Enum.GetName(CurrencyType.UAH)!;
-
                 return await _currencyConverterService.ConvertCurrency(donation.Amount, from, to);
             });
 

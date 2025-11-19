@@ -3,7 +3,7 @@ import { DonationsTable } from "../../containers";
 import { SectionHeadline } from "../../components";
 import { useSearchParams } from "react-router-dom";
 
-const Labwork1UsersIndex: FC = () => {
+const DonationsIndex: FC = () => {
   const [searchParams] = useSearchParams();
   const campaignId: string | null = searchParams.get("campaignId");
   let userId: string | null = searchParams.get("userId");
@@ -25,4 +25,4 @@ const Labwork1UsersIndex: FC = () => {
   );
 };
 
-export default Labwork1UsersIndex;
+export default DonationsIndex;

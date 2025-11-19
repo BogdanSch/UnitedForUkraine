@@ -57,6 +57,7 @@ namespace UnitedForUkraine.Server.Controllers
                                 StripeSettings.GetCurrencyCode(campaign.Currency)
                             );
                             campaign.RaisedAmount += convertedAmount;
+                            campaign.DonorsCount += 1;
                             await _campaignRepository.UpdateAsync(campaign);
                         }
                         await _donationRepository.UpdateAsync(donation);

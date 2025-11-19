@@ -88,6 +88,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
         FoundationDonationsStatisticsDto statisticsDto = new()
         {
             DonationsCount = await _donationRepository.GetTotalDonationsCountAsync(),
+            CampaignsCount = await _campaignRepository.GetTotalCampaignsCountAsync(),
             TotalDonationsAmount = await _donationRepository.GetTotalDonationsAmountAsync(),
             AverageDonationsAmount = await _donationRepository.GetAverageDonationsAmountAsync(),
             MostFrequentDonationAmount = await _donationRepository.GetMostFrequentUserDonationAmountAsync(),

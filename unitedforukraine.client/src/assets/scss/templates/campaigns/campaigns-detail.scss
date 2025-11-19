@@ -18,6 +18,12 @@
       color: $text-light-gray;
       line-height: 1.6;
     }
+    &__buttons {
+      @include flex-row();
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
     &__category {
       text-align: center;
     }
