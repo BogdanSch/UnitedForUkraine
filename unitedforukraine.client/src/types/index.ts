@@ -53,6 +53,11 @@ export type UpdateCampaignRequestDto = {
   imageUrl: string;
 };
 
+export type DonationModeDto = {
+  amount: number;
+  currency: number;
+};
+
 export type DonationDto = {
   id: number;
   userId: number;
@@ -132,10 +137,11 @@ export type Statistics = {
   donationsCount: number;
   campaignsCount: number;
   totalDonationsAmount: number;
-  mostFrequentDonationAmount: number;
+  mostFrequentDonation: DonationModeDto;
   averageDonationsAmount: number;
   uniqueDonorsCount: number;
   cityWithMostDonations: string;
+  countryWithMostDonations: string;
   mostFrequentDonorName: string;
   donationsGrowthRate: number;
 };

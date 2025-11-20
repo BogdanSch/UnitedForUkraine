@@ -92,7 +92,11 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
 
       if (response.status !== 204) throw new Error("Campaign updating failed!");
 
-      navigate(`/campaigns/detail/${formData.id}`);
+      navigate(`/campaigns/detail/${formData.id}`, {
+        state: {
+          message: "Campaign was updated successfully.",
+        },
+      });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setRequestError(

@@ -1,7 +1,8 @@
 import { FC, useContext, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { CampaignDto } from "../../types";
 import {
+  Alert,
   CampaignActionButton,
   Image,
   ProgressBar,
@@ -20,9 +21,12 @@ import { convertCurrencyToString } from "../../utils/helpers/currencyHelper";
 
 const CampaignsDetail: FC = () => {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
-  let { id } = useParams();
   const { isAdmin, isAuthenticated } = useContext(AuthContext);
+
+  let { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const message: string = location.state?.message || "";
 
   useEffect(() => {
     const fetcher = async () => {
@@ -41,6 +45,7 @@ const CampaignsDetail: FC = () => {
   return (
     <section className="campaigns-detail">
       <div className="container">
+        {message && <Alert className="mb-3" message={message} />}
         <article className="campaigns-detail__header">
           {isAuthenticated() && isAdmin() && (
             <ul className="campaigns-detail__buttons-list">

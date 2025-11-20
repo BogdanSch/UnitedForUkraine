@@ -226,15 +226,15 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
         <label htmlFor="notes" className="form-label">
           Type any wishes if you want to
         </label>
-        <Input
+        <textarea
           id="notes"
           name="notes"
           className="form-select"
           aria-label="User notes input"
           value={formData.notes}
           onChange={handleChange}
-          isRequired={false}
-        />
+          rows={4}
+        ></textarea>
       </div>
       <div className="form-buttons">
         <button type="submit" className="btn btn-primary">

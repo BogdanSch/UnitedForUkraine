@@ -4,17 +4,24 @@ import { API_URL } from "../../variables";
 import { Statistics } from "../../types";
 
 import { Card } from "../../components";
-import { formatMoney } from "../../utils/helpers/currencyHelper";
+import {
+  convertCurrencyToString,
+  formatMoney,
+} from "../../utils/helpers/currencyHelper";
 import formatNumber from "../../utils/helpers/formatNumber";
 
 const getDefaultStatistics = (): Statistics => ({
   donationsCount: 0,
   campaignsCount: 0,
   totalDonationsAmount: 0,
-  mostFrequentDonationAmount: 0,
+  mostFrequentDonation: {
+    amount: 0,
+    currency: 0,
+  },
   averageDonationsAmount: 0,
   uniqueDonorsCount: 0,
   cityWithMostDonations: "",
+  countryWithMostDonations: "",
   mostFrequentDonorName: "",
   donationsGrowthRate: 0,
 });
@@ -75,7 +82,7 @@ const FoundationStatisticsList: FC = () => {
       <li className="statistics__item">
         <Card className="card-border p-3" isLite={false}>
           <div className="statistics__item-group">
-            <i className="statistics__item-icon  bi bi-currency-exchange"></i>
+            <i className="statistics__item-icon  bi bi-house-heart"></i>
             <h4 className="sub-heading statistics__item-title">
               Total Campaigns Created
             </h4>
@@ -121,8 +128,12 @@ const FoundationStatisticsList: FC = () => {
             </h4>
           </div>
           <p className="statistics__item-amount">
-            {formatMoney(statistics.mostFrequentDonationAmount)}{" "}
-            <span className="currency">UAH</span>
+            {formatMoney(statistics.mostFrequentDonation.amount)}{" "}
+            <span className="currency">
+              {convertCurrencyToString(
+                statistics.mostFrequentDonation.currency
+              )}
+            </span>
           </p>
         </Card>
       </li>
@@ -136,6 +147,19 @@ const FoundationStatisticsList: FC = () => {
           </div>
           <p className="statistics__item-amount">
             {statistics.cityWithMostDonations}
+          </p>
+        </Card>
+      </li>
+      <li className="statistics__item">
+        <Card className="card-border p-3" isLite={false}>
+          <div className="statistics__item-group">
+            <i className="statistics__item-icon bi bi-globe-europe-africa"></i>
+            <h4 className="sub-heading statistics__item-title">
+              Country with Most Donations
+            </h4>
+          </div>
+          <p className="statistics__item-amount">
+            {statistics.countryWithMostDonations}
           </p>
         </Card>
       </li>

@@ -146,8 +146,8 @@ const HomePage: FC = () => {
             <SectionHeadline
               className={`statistics__headline`}
               sectionIndicatorTitle={`Donations Statistics`}
-              title={`For the past 30 days`}
-              description={`A transparent overview of donation activity over the past 30 days, showcasing contributions and their impact.`}
+              title={`Overall Statistics`}
+              description={`An overview of all donations made since the foundation began operating, showcasing contributions and their impact.`}
             >
               <Link
                 className="btn btn-outline-secondary"

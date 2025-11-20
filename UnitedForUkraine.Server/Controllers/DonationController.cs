@@ -85,15 +85,22 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     public async Task<IActionResult> GetFoundationStatistics()
     {
         DateTime currentPeriod = DateTime.UtcNow.AddMonths(-1);
+        (decimal, Data.Enums.CurrencyType) mode = await _donationRepository.GetMostFrequentUserDonationAsync();
+
         FoundationDonationsStatisticsDto statisticsDto = new()
         {
             DonationsCount = await _donationRepository.GetTotalDonationsCountAsync(),
             CampaignsCount = await _campaignRepository.GetTotalCampaignsCountAsync(),
             TotalDonationsAmount = await _donationRepository.GetTotalDonationsAmountAsync(),
             AverageDonationsAmount = await _donationRepository.GetAverageDonationsAmountAsync(),
-            MostFrequentDonationAmount = await _donationRepository.GetMostFrequentUserDonationAmountAsync(),
+            MostFrequentDonation = new DonationModeDto
+            {
+                Amount = mode.Item1,
+                Currency = (int)mode.Item2
+            },
             UniqueDonorsCount = await _donationRepository.GetUniqueDonorsCountAsync(),
             CityWithMostDonations = await _donationRepository.GetCityWithMostDonationsAsync(),
+            CountryWithMostDonations = await _donationRepository.GetCountryWithMostDonationsAsync(),
             MostFrequentDonorName = (await _donationRepository.GetMostFrequentDonorInformationAsync()).donorName,
             DonationsGrowthRate = await _donationRepository.GetDonationsGrowthRateAsync(currentPeriod),
         };

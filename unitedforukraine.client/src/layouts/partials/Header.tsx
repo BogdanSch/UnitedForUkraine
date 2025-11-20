@@ -113,7 +113,7 @@ const Header: FC = () => {
               <ul className="dropdown-menu">
                 <li className="dropdown-menu__item">
                   <Link className="dropdown-item" to="/newsUpdates">
-                    View all News & Updates
+                    View all news & updates
                   </Link>
                 </li>
                 {isAuthenticated() && isAdmin() && (

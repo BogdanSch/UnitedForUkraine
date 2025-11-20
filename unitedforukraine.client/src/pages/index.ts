@@ -27,3 +27,4 @@ export { default as NewsUpdatesIndex } from "./newsUpdates/NewsUpdatesIndex";
 export { default as NewsUpdateCreate } from "./newsUpdates/NewsUpdateCreate";
 
 export { default as UsersIndex } from "./dashboard/UsersIndex";
+export { default as DonationsIndex } from "./dashboard/DonationsIndex";

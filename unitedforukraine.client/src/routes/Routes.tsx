@@ -25,6 +25,7 @@ import {
   NewsUpdatesIndex,
   NewsUpdateCreate,
   UsersIndex,
+  DonationsIndex,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -135,7 +136,7 @@ export const router = createBrowserRouter([
         ),
       },
       { path: "users", element: <UsersIndex /> },
-      { path: "donations", element: <UsersIndex /> },
+      { path: "donations", element: <DonationsIndex /> },
     ],
   },
 ]);

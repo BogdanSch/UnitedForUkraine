@@ -29,7 +29,7 @@ const CampaignItem: FC<ICampaignItemProps> = ({ campaign }) => {
           to={`/campaigns/detail/${campaign.id}/`}
           className="campaigns__item-link"
         >
-          <h3 className="card-title">{campaign.title}</h3>
+          <h3 className="card-title mb-0">{campaign.title}</h3>
           <p className="card-text text-muted mb-1">{campaign.slogan}</p>
           <ul className="card-category">
             <li className="card-category__item">

@@ -1,4 +1,5 @@
-﻿using UnitedForUkraine.Server.Helpers;
+﻿using UnitedForUkraine.Server.Data.Enums;
+using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Interfaces;
@@ -14,11 +15,12 @@ public interface IDonationRepository
     Task<int> GetTotalDonationsCountAsync(string? userId = null);
     Task<decimal> GetTotalDonationsAmountAsync(string? userId = null);
     Task<int> GetAverageDonationsAmountAsync(string? userId = null);
-    Task<decimal> GetMostFrequentUserDonationAmountAsync();
+    Task<(decimal, CurrencyType)> GetMostFrequentUserDonationAsync();
     Task<decimal> GetSmallestDonationAmountAsync(string? userId);
     Task<decimal> GetBiggestDonationAmountAsync(string? userId);
     Task<int> GetUniqueDonorsCountAsync();
     Task<string> GetCityWithMostDonationsAsync();
+    Task<string> GetCountryWithMostDonationsAsync();
     Task<(string donorName, int donationsCount)> GetMostFrequentDonorInformationAsync();
     Task<decimal> GetDonationsGrowthRateAsync(DateTime period);
     Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId);

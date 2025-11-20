@@ -11,8 +11,9 @@ namespace UnitedForUkraine.Server.Repositories;
 public class DonationRepository(ApplicationDbContext context, ICurrencyConverterService currencyConverterService) : IDonationRepository
 {
     public const string DEFAULT_CITY_NAME = "Kharkiv";
+    public const string DEFAULT_COUNTRY_NAME = "Ukraine";
     public const string DEFAULT_FREQUENT_DONOR_NAME = "bogsvity777";
-    public const int DEFAULT_FREQUENT_DONOR_COUNT = 100;
+    public const int DEFAULT_DONATIONS_COUNT = 100;
     private readonly ApplicationDbContext _context = context;
     private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
     public IQueryable<Donation> HandleDonationsFiltering(QueryObject queryObject, IQueryable<Donation> donations)
@@ -94,12 +95,25 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     {
         string? popularCity = await _context.Donations.Include(d => d.User)
             .Include(d => d.User.Address)
-            .GroupBy(d => d.User.Address == null ? DEFAULT_CITY_NAME : (d.User.Address.City ?? DEFAULT_CITY_NAME))
+            .GroupBy(d => d.User.Address.City ?? DEFAULT_CITY_NAME)
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
             .FirstOrDefaultAsync();
         if (string.IsNullOrWhiteSpace(popularCity))
             return DEFAULT_CITY_NAME;
+
+        return popularCity;
+    }
+    public async Task<string> GetCountryWithMostDonationsAsync()
+    {
+        string? popularCity = await _context.Donations.Include(d => d.User)
+            .Include(d => d.User.Address)
+            .GroupBy(d => d.User.Address.Country ?? DEFAULT_COUNTRY_NAME)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
+            .FirstOrDefaultAsync();
+        if (string.IsNullOrWhiteSpace(popularCity))
+            return DEFAULT_COUNTRY_NAME;
 
         return popularCity;
     }
@@ -118,15 +132,7 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
         IQueryable<Donation> donations = GetDonationsQuery(userId);
 
         var temp = donations.Select(d => new { d.Amount, d.Currency }).ToList();
-        var tasks = temp.Select(async donation =>
-            {
-                if (donation.Currency == CurrencyType.UAH)
-                    return donation.Amount;
-
-                string from = Enum.GetName(donation.Currency)!;
-                string to = Enum.GetName(CurrencyType.UAH)!;
-                return await _currencyConverterService.ConvertCurrency(donation.Amount, from, to);
-            });
+        var tasks = temp.Select(async d => await ConvertToUahAsync(d.Amount, d.Currency));
 
         decimal[] converted = await Task.WhenAll(tasks);
         return converted.Sum();
@@ -137,49 +143,33 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
         decimal totalDonationsAmount = await GetTotalDonationsAmountAsync(userId);
 
         if (totalDonationsCount == 0) return 0;
-
         return (int)Math.Round(totalDonationsAmount / totalDonationsCount);
     }
-    public async Task<decimal> GetMostFrequentUserDonationAmountAsync()
+    public async Task<(decimal, CurrencyType)> GetMostFrequentUserDonationAsync()
     {
-        return await _context.Donations.GroupBy(d => d.Amount)
+        var mode = await _context.Donations.GroupBy(d => new {d.Amount, d.Currency})
             .OrderByDescending(g => g.Count())
-            .Select(g => g.Key)
+            .Select(g => new { g.Key.Amount, g.Key.Currency })
             .FirstOrDefaultAsync();
+        return mode is null ? (0, CurrencyType.UAH) : (mode.Amount, mode.Currency);
     }
     public async Task<decimal> GetSmallestDonationAmountAsync(string? userId)
     {
         IQueryable<Donation> donations = GetDonationsQuery(userId);
-
-        if (!donations.Any())
-            return decimal.Zero;
-
         Donation? smallestDonation = await donations.OrderBy(d => d.Amount).FirstOrDefaultAsync();
-
         if (smallestDonation is null)
             return decimal.Zero;
 
-        string from = Enum.GetName(smallestDonation.Currency)!;
-        string to = Enum.GetName(CurrencyType.UAH)!;
-
-        return await _currencyConverterService.ConvertCurrency(smallestDonation.Amount, from, to);
+        return await ConvertToUahAsync(smallestDonation.Amount, smallestDonation.Currency);
     }
     public async Task<decimal> GetBiggestDonationAmountAsync(string? userId)
     {
         IQueryable<Donation> donations = GetDonationsQuery(userId);
-
-        if (!donations.Any())
-            return decimal.Zero;
-
         Donation? biggestDonation = await donations.OrderByDescending(d => d.Amount).FirstOrDefaultAsync();
-
         if (biggestDonation is null)
             return decimal.Zero;
 
-        string from = Enum.GetName(biggestDonation.Currency)!;
-        string to = Enum.GetName(CurrencyType.UAH)!;
-
-        return await _currencyConverterService.ConvertCurrency(biggestDonation.Amount, from, to);
+        return await ConvertToUahAsync(biggestDonation.Amount, biggestDonation.Currency);
     }
     public async Task<int> GetUniqueDonorsCountAsync()
     {
@@ -197,23 +187,38 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
             .Select(g => new { Name = g.Key, Count = g.Count() })
             .FirstOrDefaultAsync();
 
-        return result is not null ? (result.Name!, result.Count) : (DEFAULT_FREQUENT_DONOR_NAME, DEFAULT_FREQUENT_DONOR_COUNT);
+        return result is not null ? (result.Name!, result.Count) : (DEFAULT_FREQUENT_DONOR_NAME, DEFAULT_DONATIONS_COUNT);
     }
     public async Task<decimal> GetDonationsGrowthRateAsync(DateTime currentPeriod)
     {
         DateTime previousPeriod = currentPeriod.AddMonths(-1);
         DateTime currentPeriodEnd = currentPeriod.AddMonths(1);
 
-        decimal previousPeriodTotal = await _context.Donations.Where(d => d.PaymentDate >= previousPeriod && d.PaymentDate < currentPeriod)
-            .SumAsync(d => d.Amount);
-        decimal currentPeriodTotal = await _context.Donations.Where(d => d.PaymentDate >= currentPeriod && d.PaymentDate < currentPeriodEnd)
-            .SumAsync(d => d.Amount);
+        var previousPeriodResults = await _context.Donations
+            .Where(d => d.PaymentDate >= previousPeriod && d.PaymentDate < currentPeriod)
+            .Select(d => new { d.Amount, d.Currency }).ToListAsync();
+        decimal previousPeriodTotal = (await Task.WhenAll(previousPeriodResults.Select(async d => await ConvertToUahAsync(d.Amount, d.Currency)))).Sum();
+
+        var currentPeriodResults = await _context.Donations
+            .Where(d => d.PaymentDate >= currentPeriod && d.PaymentDate < currentPeriodEnd)
+            .Select(d => new { d.Amount, d.Currency }).ToListAsync();
+        decimal currentPeriodTotal = (await Task.WhenAll(currentPeriodResults.Select(async d => await ConvertToUahAsync(d.Amount, d.Currency)))).Sum();
 
         if (previousPeriodTotal == decimal.Zero)
             return currentPeriodTotal > decimal.Zero ? 100m : decimal.Zero;
 
         decimal growthRate = Math.Round((currentPeriodTotal - previousPeriodTotal) * 100 / previousPeriodTotal, 2);
         return growthRate;
+    }
+    private async Task<decimal> ConvertToUahAsync(decimal amount, CurrencyType currency)
+    {
+        if (currency == CurrencyType.UAH)
+            return amount;
+
+        string from = Enum.GetName(currency)!;
+        string to = Enum.GetName(CurrencyType.UAH)!;
+
+        return await _currencyConverterService.ConvertCurrency(amount, from, to);
     }
     public async Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId)
     {

@@ -16,7 +16,11 @@ const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
 
     try {
       await protectedAxios.delete(`${API_URL}/campaigns/${id}`);
-      navigate(`/campaigns`);
+      navigate(`/campaigns`, {
+        state: {
+          message: "Campaign was successfully deleted.",
+        },
+      });
     } catch (error) {
       console.error(`Error deleting campaign: ${error}`);
     }

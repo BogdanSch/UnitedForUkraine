@@ -17,6 +17,7 @@ protectedAxios.interceptors.request.use(
     const expiryUtc = new Date(accessTokenExpirationTimeUTC)?.getTime();
 
     if (!Number.isNaN(expiryUtc) && expiryUtc <= nowUtc) {
+      console.log("Refreshing the tokens");
       await refreshTokens();
     }
     config.withCredentials = true;
