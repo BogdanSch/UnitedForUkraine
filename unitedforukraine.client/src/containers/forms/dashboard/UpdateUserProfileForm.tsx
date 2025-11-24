@@ -4,15 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { FC, FormEvent, useContext, useState } from "react";
 import AuthContext from "../../../contexts/AuthContext";
 import { ErrorAlert, Input } from "../../../components";
-import { UpdateUserProfileDto } from "../../../types";
+import { UpdateUserProfileDto, UserDto } from "../../../types";
 import { useCustomForm } from "../../../hooks";
 import { API_URL } from "../../../variables";
 
-const UpdateUserProfileForm: FC = () => {
-  const navigate = useNavigate();
-
-  const { user, refreshUserData } = useContext(AuthContext);
-  const [formData, setFormData] = useState<UpdateUserProfileDto>({
+const getFormData = (user: UserDto | null): UpdateUserProfileDto => {
+  return {
     userName: user?.userName || "",
     phoneNumber: user?.phoneNumber || "",
     updatedAddress: {
@@ -22,7 +19,16 @@ const UpdateUserProfileForm: FC = () => {
       street: user?.address.street || "",
       postalCode: user?.address.postalCode || "",
     },
-  });
+  };
+};
+
+const UpdateUserProfileForm: FC = () => {
+  const navigate = useNavigate();
+
+  const { user, refreshUserData } = useContext(AuthContext);
+  const [formData, setFormData] = useState<UpdateUserProfileDto>(
+    getFormData(user)
+  );
   const { handleChange, handleNestedChange } = useCustomForm(setFormData);
 
   const [errors, setErrors] = useState<Record<string, string>>({});

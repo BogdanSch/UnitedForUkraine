@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.DTOs.Donation;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Helpers.Settings;
@@ -80,6 +81,14 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
         {
             return BadRequest(new { message = "We couldn't create the new donation. Try again later" });
         }
+    }
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task<IActionResult> DeleteDonation([FromRoute] int id)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+        await _donationRepository.DeleteAsync(id);
+        return NoContent();
     }
     [HttpGet("statistics")]
     public async Task<IActionResult> GetFoundationStatistics()

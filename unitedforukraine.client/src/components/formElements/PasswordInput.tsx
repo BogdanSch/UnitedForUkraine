@@ -11,9 +11,6 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ value, onChange }) => {
 
   const handleToggleShowPassword = () => setShowPassword(!showPassword);
 
-  // const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
-  //   onChange(e);
-
   return (
     <div className="input-group flex-nowrap password-input-wrapper">
       <Input

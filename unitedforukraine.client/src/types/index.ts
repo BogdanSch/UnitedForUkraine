@@ -133,6 +133,11 @@ export type UpdateUserProfileDto = {
   updatedAddress: UpdateAddressRequestDto;
 };
 
+export type DeleteUserDto = {
+  email: string;
+  password: string;
+};
+
 export type Statistics = {
   donationsCount: number;
   campaignsCount: number;

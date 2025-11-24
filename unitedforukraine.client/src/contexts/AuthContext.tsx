@@ -92,7 +92,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   const isAuthenticated = () => {
-    return user != null && accessTokenExpirationTimeUTC.trim().length > 0;
+    return user !== null && accessTokenExpirationTimeUTC.trim().length > 0;
   };
 
   const isAdmin = () => user?.isAdmin ?? false;

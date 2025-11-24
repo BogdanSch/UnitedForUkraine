@@ -58,7 +58,7 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
                 <th scope="col">Місто</th>
                 <th scope="col">Вулиця</th>
                 <th scope="col">Поштовий індекс</th>
-                {/* <th scope="col">Перегляд донатів користувача</th> */}
+                <th scope="col">Check user donations</th>
               </tr>
             </thead>
             <tbody>
@@ -75,16 +75,16 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
                   <td>{user.address.city}</td>
                   <td>{user.address.street}</td>
                   <td>{user.address.postalCode}</td>
-                  {/* <td>
+                  <td>
                     <a
                       className="btn btn-light"
-                      href={`/labs/donations?userId=${encodeURIComponent(
+                      href={`/dashboard/donations?userId=${encodeURIComponent(
                         user.id
                       )}`}
                     >
-                      Переглянути
+                      Examine
                     </a>
-                  </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -98,7 +98,7 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
         paginatedUsers.hasNextPage &&
         paginatedUsers.hasPreviousPage && (
           <Paginator
-            linkPath={"/users"}
+            linkPath={"/dashboard/users"}
             currentPageIndex={pageIndex}
             hasPreviousPage={paginatedUsers.hasPreviousPage}
             hasNextPage={paginatedUsers.hasNextPage}

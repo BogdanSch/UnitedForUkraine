@@ -14,7 +14,7 @@ const DonationsIndex: FC = () => {
       <div className="container">
         <div className="lab__wrap">
           <SectionHeadline
-            sectionIndicatorTitle="Labwork 1"
+            sectionIndicatorTitle="Dashboard"
             title="Donations"
             headingClassName="heading"
           />

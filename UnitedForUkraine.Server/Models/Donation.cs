@@ -15,7 +15,7 @@ public class Donation
     public required DateTime PaymentDate { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public DonationStatus Status { get; set; } = DonationStatus.Pending;
-    [StringLength(200, ErrorMessage = "Notes cannot exceed 200 characters.")]
+    [StringLength(200, ErrorMessage = "Notes can't exceed 200 characters.")]
     public string? Notes { get; set; } = string.Empty;
     [ForeignKey(nameof(AppUser))]
     public string UserId { get; set; } = string.Empty;

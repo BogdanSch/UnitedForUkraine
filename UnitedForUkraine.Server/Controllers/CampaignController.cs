@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.DTOs.Campaign;
 using UnitedForUkraine.Server.Helpers;
@@ -51,7 +52,7 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
         return Ok(new { Campaigns = campaignDtos });
     }
     [HttpPost]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> CreateCampaign([FromBody] CreateCampaignRequestDto createdCampaignDto)
     {
         if(!ModelState.IsValid) return BadRequest(ModelState);
@@ -69,7 +70,7 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
         }
     }
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> UpdateCampaign([FromRoute] int id, [FromBody] UpdateCampaignRequestDto updatedCampaignDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -107,12 +108,10 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
         return NoContent();
     }
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> DeleteCampaign([FromRoute] int id)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         await _campaignRepository.DeleteAsync(id);
         return NoContent();
     }

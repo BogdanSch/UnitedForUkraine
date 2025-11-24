@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CloudinaryDotNet" Version="1.27.7" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.27.8" />
     <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
     <PackageReference Include="FluentEmail.Razor" Version="3.0.2" />
     <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
@@ -32,9 +32,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
     <PackageReference Include="Microsoft.SqlServer.Server" Version="1.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.8.3" />
-    <PackageReference Include="Stripe.net" Version="48.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.11.0" />
+    <PackageReference Include="Stripe.net" Version="50.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
   </ItemGroup>

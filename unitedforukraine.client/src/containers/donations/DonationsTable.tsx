@@ -1,7 +1,10 @@
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 import { FC, useEffect, useState } from "react";
 import { API_URL } from "../../variables";
 import { DonationDto } from "../../types";
+import { DeleteDonationForm } from "../";
+import { Alert } from "../../components";
 
 interface IDonationsTableProps {
   campaignId: string | null;
@@ -13,6 +16,9 @@ const DonationsTable: FC<IDonationsTableProps> = ({ campaignId, userId }) => {
   const [sortOrder] = useState<string>("date_dsc");
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [currentDonationsPage, setCurrentDonationsPage] = useState<number>(1);
+
+  const location = useLocation();
+  const message: string = location.state?.message || "";
 
   useEffect(() => {
     let requestUrl: string;
@@ -46,6 +52,7 @@ const DonationsTable: FC<IDonationsTableProps> = ({ campaignId, userId }) => {
     <>
       {donations.length > 0 ? (
         <div className="table-wrap">
+          {message && <Alert className="mb-3" message={message} />}
           <table className="table table-dark mt-4">
             <thead>
               <tr>
@@ -58,6 +65,7 @@ const DonationsTable: FC<IDonationsTableProps> = ({ campaignId, userId }) => {
                 <th scope="col">Побажання</th>
                 <th scope="col">Ідентифікатор користувача</th>
                 <th scope="col">Ідентифікатор кампанії</th>
+                <th scope="col">Remove donation</th>
               </tr>
             </thead>
             <tbody>
@@ -72,6 +80,12 @@ const DonationsTable: FC<IDonationsTableProps> = ({ campaignId, userId }) => {
                   <td>{donation.notes}</td>
                   <td>{donation.userId}</td>
                   <td>{donation.campaignId}</td>
+                  <td>
+                    <DeleteDonationForm
+                      id={donation.id}
+                      setDonations={setDonations}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>

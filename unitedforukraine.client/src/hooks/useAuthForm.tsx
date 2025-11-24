@@ -14,18 +14,26 @@ export default function useAuthForm(initialState: Record<string, any>) {
 
   const { handleChange } = useCustomForm(setFormData);
 
-  const validateForm = (isRegisterPage = false): boolean => {
+  const validatePassword = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.email.match(emailValidation))
-      newErrors.email = "Invalid email format!";
     if (formData.password.length < MIN_PASSWORD_LENGTH) {
       newErrors.password = `Password should be at least ${MIN_PASSWORD_LENGTH} characters long!`;
     } else if (!formData.password.match(upperCaseLettersValidation)) {
       newErrors.password =
-        "Password should contain at least one uppercase letter!";
+        "Password must contain at least one uppercase letter!";
     } else if (!formData.password.match(numbersValidation)) {
-      newErrors.password = "Password should contain at least three digits!";
+      newErrors.password = "Password must contain at least three digits!";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateForm = (isRegisterPage = false): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!validatePassword()) return false;
+    if (!formData.email.match(emailValidation)) {
+      newErrors.email = "Invalid email format!";
     }
     if (isRegisterPage && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords should be identical!";

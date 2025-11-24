@@ -13,9 +13,7 @@ const ProtectedRoute: FC<IProtectedRouteProps> = ({
 }) => {
   const { isAuthenticated, isAdmin, loading } = useContext(AuthContext);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
   if (!isAuthenticated()) return <Navigate to="/auth/login" replace />;
   if (requireAdmin && !isAdmin())
     return <Navigate to="/notAuthorized" replace />;

@@ -1,10 +1,11 @@
 import { FC, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 import {
   DonationsList,
   CampaignsList,
   UserStatisticsList,
+  DeleteUserForm,
 } from "../../containers";
 import { Alert, Card, SectionHeadline } from "../../components";
 
@@ -20,9 +21,9 @@ const Dashboard: FC = () => {
           <div className="dashboard__wrap">
             {message && <Alert className="mb-3" message={message} />}
             <div className="text-content text-center mb-4">
-              <h2 className="heading dashboard__title">
+              <h1 className="heading dashboard__title">
                 Welcome, <span className="decoration">{user?.userName}!</span>
-              </h2>
+              </h1>
               <p className="dashboard__description">
                 We're glad to have you back! Here you can view and edit your
                 profile details, track the statistics of your donations, and
@@ -30,10 +31,10 @@ const Dashboard: FC = () => {
               </p>
             </div>
             <Card className="px-5 py-4" isLite={false}>
-              <div className="mb-3">
-                <a className="dashboard__link" href="/dashboard/update">
+              <div className="alert alert-primary mb-3">
+                <Link className="dashboard__link" to="/dashboard/update">
                   Update profile info
-                </a>
+                </Link>
               </div>
               <ul className="dashboard__list">
                 <li className="dashboard__item">
@@ -68,6 +69,23 @@ const Dashboard: FC = () => {
                   </>
                 )}
               </ul>
+              <div className="mt-5">
+                <div className="alert alert-danger">
+                  <button
+                    className="dashboard__link btn"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteUserModal"
+                  >
+                    Delete account
+                  </button>
+                </div>
+                <p>
+                  Note that this action can't be undone. All your information
+                  will be removed from the database. There're also some
+                  conditions and terms applied.
+                </p>
+              </div>
             </Card>
           </div>
         </div>
@@ -131,6 +149,7 @@ const Dashboard: FC = () => {
           </div>
         </div>
       </section>
+      <DeleteUserForm />
     </>
   );
 };

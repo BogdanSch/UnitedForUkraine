@@ -62,7 +62,6 @@ namespace UnitedForUkraine.Server.Extensions
                         ctx.Request.Cookies.TryGetValue("accessToken", out var accessToken);
                         if (!string.IsNullOrWhiteSpace(accessToken))
                             ctx.Token = accessToken;
-
                         return Task.CompletedTask;
                     }
                 };

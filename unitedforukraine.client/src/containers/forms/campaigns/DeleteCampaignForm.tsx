@@ -33,7 +33,7 @@ const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
           className="btn btn-outline-danger form-buttons__item"
           type="submit"
         >
-          <span>Delete Campaign</span>
+          <span>Delete campaign</span>
           <i className="bi bi-trash3-fill"></i>
         </button>
       </div>

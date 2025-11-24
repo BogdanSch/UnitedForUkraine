@@ -135,8 +135,22 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      { path: "users", element: <UsersIndex /> },
-      { path: "donations", element: <DonationsIndex /> },
+      {
+        path: "users",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <UsersIndex />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "donations",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <DonationsIndex />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);

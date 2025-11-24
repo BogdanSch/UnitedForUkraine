@@ -284,37 +284,26 @@ namespace UnitedForUkraine.Server.Controllers
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Successfully logged out" });
         }
-        [HttpDelete("delete")]
+        [HttpDelete]
         [Authorize]
-        public async Task<IActionResult> Delete()
+        public async Task<IActionResult> DeleteByEmail([FromBody] DeleteUserDto deleteUserDto)
         {
-            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrWhiteSpace(userId))
-                return Unauthorized(new { message = "Invalid user confirmation token" });
+            if(!ModelState.IsValid) 
+                return BadRequest(ModelState);
 
-            AppUser? user = await _userManager.FindByIdAsync(userId);
+            AppUser? user = await _userManager.FindByEmailAsync(deleteUserDto.Email);
             if (user is null)
-                return NotFound(new { message = "User was not found" });
+                return NotFound(new { message = $"User with email={deleteUserDto.Email} was not found" });
+
+            bool isPasswordValid = await _userManager.CheckPasswordAsync(user, deleteUserDto.Password);
+            if (!isPasswordValid)
+                return BadRequest(new { password = "Incorrect password" });
 
             IdentityResult result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
-                return BadRequest(new { message = "Failed to delete the user" });
+                return BadRequest(new { message = "Deletion failed. Try again later" });
 
-            return Ok(new { message = "Successfully removed the user" });
-        }
-        [HttpDelete("delete/{userId:guid}")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteById([FromRoute] Guid userId)
-        {
-            AppUser? user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user is null)
-                return NotFound(new { message = $"User with id={userId} was not found" });
-
-            IdentityResult result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
-                return BadRequest(new { message = "Failed to delete the user" });
-
-            return Ok(new { message = $"Successfully removed the user with id={userId}" });
+            return Ok(new { message = "Account deleted" });
         }
     }
 }
