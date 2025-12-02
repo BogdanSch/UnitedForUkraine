@@ -26,7 +26,7 @@ const Card: FC<CardProps> = ({
       {...rest}
     >
       <div className="card-image">
-        {cardStatus !== "" && <div className={`card-status`}>{cardStatus}</div>}
+        {cardStatus !== "" && <div className="card-status">{cardStatus}</div>}
         {!isLite && imageSrc.trim() !== "" && (
           <Image imageClassName={`card-img`} src={imageSrc} alt={imageAlt} />
         )}

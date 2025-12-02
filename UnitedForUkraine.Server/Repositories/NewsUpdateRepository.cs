@@ -16,7 +16,9 @@ namespace UnitedForUkraine.Server.Repositories
             if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
             {
                 string query = queryObject.SearchedQuery;
-                newsUpdates = newsUpdates.Where(n => n.Title.Contains(query, StringComparison.OrdinalIgnoreCase) || n.Content.Contains(query, StringComparison.OrdinalIgnoreCase));
+                newsUpdates = newsUpdates.Where(n => n.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    n.Content.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    n.KeyWords.Contains(query, StringComparison.OrdinalIgnoreCase));
             }
             if(!string.IsNullOrWhiteSpace(queryObject.SortOrder))
             {

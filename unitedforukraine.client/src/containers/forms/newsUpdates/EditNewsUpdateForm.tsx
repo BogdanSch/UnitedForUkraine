@@ -1,73 +1,45 @@
+import axios from "axios";
 import { protectedAxios } from "../../../utils/axiosInstances";
-import { FC, FormEvent, useContext, useEffect, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ErrorAlert, Input } from "../../../components";
-import AuthContext from "../../../contexts/AuthContext";
 import { useCustomForm } from "../../../hooks";
-import {
-  NewsUpdateDto,
-  CreateNewsUpdateRequestDto,
-  PaginatedCampaignsDto,
-} from "../../../types";
-import {
-  API_URL,
-  API_IMAGE_PLACEHOLDER_URL,
-  DEFAULT_PAGE_INDEX,
-  LOAD_MORE_SELECT_VALUE,
-} from "../../../variables";
-import { fetchAllActiveAndCompletedCampaigns } from "../../../utils/services/campaignService";
+import { API_URL } from "../../../variables";
+import { UpdateNewsUpdateRequestDto } from "../../../types";
+import { fetchNewsUpdateData } from "../../../utils/services/newsUpdateService";
+import { ErrorAlert, Input } from "../../../components";
 
-const getDefaultFormData = (authorId: string): CreateNewsUpdateRequestDto => ({
+interface IEditNewsUpdateFormProps {
+  id: number;
+}
+
+const getDefaultFormData = (id: number): UpdateNewsUpdateRequestDto => ({
+  id: id,
   title: "",
   keyWords: "",
   content: "",
-  imageUrl: API_IMAGE_PLACEHOLDER_URL,
   readingTimeInMinutes: 0,
-  authorId: authorId,
-  campaignId: 0,
+  imageUrl: "",
 });
 
-const CreateNewsUpdateForm: FC = () => {
-  const { user } = useContext(AuthContext);
-
-  const [formData, setFormData] = useState<CreateNewsUpdateRequestDto>(
-    getDefaultFormData(user?.id || "")
+const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
+  const [formData, setFormData] = useState<UpdateNewsUpdateRequestDto>(
+    getDefaultFormData(id)
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [requestError, setRequestError] = useState<string>("");
-
-  const [paginatedCampaigns, setPaginatedCampaigns] =
-    useState<PaginatedCampaignsDto>({
-      campaigns: [],
-      hasNextPage: false,
-      hasPreviousPage: false,
-    });
-  const [pageIndex, setPageIndex] = useState<number>(DEFAULT_PAGE_INDEX);
   const navigate = useNavigate();
-  const { handleChange, handleSelectChange, handleImageChange } =
-    useCustomForm(setFormData);
+  const { handleChange, handleImageChange } = useCustomForm(setFormData);
 
   useEffect(() => {
-    fetchAllActiveAndCompletedCampaigns(pageIndex)
+    fetchNewsUpdateData(id)
       .then((data) => {
-        setPaginatedCampaigns({
-          campaigns: paginatedCampaigns.campaigns.concat(data.campaigns),
-          hasNextPage: data.hasNextPage,
-          hasPreviousPage: data.hasPreviousPage,
-        });
+        if (!data) throw new Error("Invalid response from server");
+        setFormData(data);
       })
-      .catch((error) => {
-        setRequestError(
-          "Failed to load related campaigns. Please, refresh the page!"
-        );
-        console.log(`Error fetching  campaigns: ${error}`);
+      .catch(() => {
+        navigate("/notFound");
       });
-  }, [pageIndex]);
-
-  const loadMoreCompletedCampaigns = async (): Promise<void> => {
-    if (paginatedCampaigns.hasNextPage)
-      setPageIndex((prevPageIndex) => prevPageIndex + 1);
-  };
+  }, [id, navigate]);
 
   const isValid = (): boolean => {
     setErrors({});
@@ -100,27 +72,33 @@ const CreateNewsUpdateForm: FC = () => {
     if (!isValid()) return;
 
     try {
-      const { data } = await protectedAxios.post<NewsUpdateDto>(
-        `${API_URL}/newsUpdates`,
+      const response = await protectedAxios.put(
+        `${API_URL}/newsUpdates/${formData.id}`,
         formData
       );
-      console.log(data);
+      console.log(response);
+      if (response.status !== 204)
+        throw new Error("News update updating failed!");
 
-      if (!data.id) {
-        throw new Error("News update creation failed");
-      }
-
-      navigate(`/newsUpdates/detail/${data.id}`);
+      navigate(`/newsUpdates/detail/${formData.id}`, {
+        state: {
+          message: "Campaign was updated successfully.",
+        },
+      });
     } catch (error) {
-      setRequestError(
-        "Failed to create a new campaign. Please, try again later!"
-      );
-      console.error(`Error creating campaign: ${error}`);
+      if (axios.isAxiosError(error)) {
+        setRequestError(
+          error.response?.data.message ||
+            "Failed to update the campaign. Please try again later!"
+        );
+      } else {
+        console.error(`Error updating campaign: ${error}`);
+      }
     }
   };
 
   const handleReset = (): void => {
-    setFormData(getDefaultFormData(user?.id || ""));
+    setFormData(getDefaultFormData(id));
     setErrors({});
   };
 
@@ -141,8 +119,9 @@ const CreateNewsUpdateForm: FC = () => {
           name="title"
           value={formData.title}
           onChange={handleChange}
-          placeholder="Enter news update title"
-          isRequired
+          minLength={10}
+          placeholder="News update title"
+          isRequired={true}
         />
         {errors.title && <ErrorAlert errorMessage={errors.title} />}
       </div>
@@ -157,7 +136,7 @@ const CreateNewsUpdateForm: FC = () => {
           value={formData.keyWords}
           onChange={handleChange}
           placeholder="Enter key words, separate them with a comma:"
-          isRequired
+          isRequired={true}
         />
         {errors.keyWords && <ErrorAlert errorMessage={errors.keyWords} />}
       </div>
@@ -197,34 +176,6 @@ const CreateNewsUpdateForm: FC = () => {
         )}
       </div>
       <div className="mb-3">
-        <label htmlFor="campaignId" className="form-label">
-          Select to what campaign this news update belongs
-        </label>
-        <select
-          id="campaignId"
-          name="campaignId"
-          className="form-select"
-          aria-label="Select to what campaign this news update belongs"
-          value={formData.campaignId}
-          onChange={(e) => handleSelectChange(e, loadMoreCompletedCampaigns)}
-        >
-          {paginatedCampaigns.campaigns.map((campaign) => {
-            return (
-              <option key={campaign.title} value={campaign.id}>
-                {campaign.title}
-              </option>
-            );
-          })}
-          <option
-            id="loadMoreOption"
-            value={LOAD_MORE_SELECT_VALUE}
-            disabled={!paginatedCampaigns.hasNextPage}
-          >
-            Load more
-          </option>
-        </select>
-      </div>
-      <div className="mb-3">
         <label htmlFor="image" className="form-label">
           News update preview image
         </label>
@@ -237,12 +188,11 @@ const CreateNewsUpdateForm: FC = () => {
             handleImageChange(e, formData.imageUrl, setRequestError)
           }
           accept="image/png, image/jpeg"
-          required
         />
       </div>
       <div className="form-buttons">
         <button type="submit" className="btn btn-primary">
-          Submit
+          Save Changes
         </button>
         <button type="reset" className="btn btn-outline-danger">
           Reset
@@ -251,5 +201,4 @@ const CreateNewsUpdateForm: FC = () => {
     </form>
   );
 };
-
-export default CreateNewsUpdateForm;
+export default EditNewsUpdateForm;

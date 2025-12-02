@@ -87,7 +87,6 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                 <option data-value="title_asc">Title</option>
                 <option data-value="readingTime_asc">Fastest to read</option>
                 <option data-value="readingTime_dsc">Longest to read</option>
-                {/* <option data-value="nearEnd_dsc">Near End</option> */}
               </select>
             </div>
           </div>
@@ -106,7 +105,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                 <Card
                   imageSrc={newsUpdate.imageUrl}
                   imageAlt={newsUpdate.title}
-                  // cardStatus={convertCampaignStatusToString(campaign.status)}
+                  cardStatus={newsUpdate.keyWords}
                   isLite={false}
                 >
                   <Link

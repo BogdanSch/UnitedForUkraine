@@ -1,13 +1,14 @@
-import { protectedAxios } from "../../../utils/axiosInstances";
 import { FC, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { protectedAxios } from "../../../utils/axiosInstances";
 import { API_URL } from "../../../variables";
 import { DeleteButton } from "../../../components";
 
-interface IDeleteCampaignFormProps {
+interface IDeleteNewsUpdateFormProps {
   id: number;
 }
-const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
+
+const DeleteNewsUpdateForm: FC<IDeleteNewsUpdateFormProps> = ({ id }) => {
   const navigate = useNavigate();
 
   const handleSubmit = async (
@@ -16,24 +17,23 @@ const DeleteCampaignForm: FC<IDeleteCampaignFormProps> = ({ id }) => {
     event.preventDefault();
 
     try {
-      await protectedAxios.delete(`${API_URL}/campaigns/${id}`);
-      navigate(`/campaigns`, {
+      await protectedAxios.delete(`${API_URL}/newsUpdates/${id}`);
+      navigate(`/newsUpdates`, {
         state: {
-          message: "Campaign was successfully deleted.",
+          message: "News update was successfully deleted.",
         },
       });
     } catch (error) {
-      console.error(`Error deleting campaign: ${error}`);
+      console.error(`Error deleting the news update: ${error}`);
     }
   };
-
   return (
     <form className="campaigns-detail__delete-form" onSubmit={handleSubmit}>
       <div className="form-buttons">
-        <DeleteButton text="Delete campaign" />
+        <DeleteButton text="Delete news update" />
       </div>
     </form>
   );
 };
 
-export default DeleteCampaignForm;
+export default DeleteNewsUpdateForm;

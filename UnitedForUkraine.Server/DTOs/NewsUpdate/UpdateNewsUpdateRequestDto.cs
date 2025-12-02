@@ -13,6 +13,6 @@ namespace UnitedForUkraine.Server.DTOs.NewsUpdate
         public required string Content { get; init; }
         [Range(1, 60)]
         public required int ReadingTimeInMinutes { get; init; }
-        public string? ImageUrl { get; init; }
+        public string ImageUrl { get; init; } = string.Empty;
     }
 }

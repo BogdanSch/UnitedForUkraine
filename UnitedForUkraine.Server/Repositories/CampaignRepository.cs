@@ -20,7 +20,50 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
         {
             string query = queryObject.SearchedQuery;
-            campaigns = campaigns.Where(c => c.Title.Contains(query, StringComparison.OrdinalIgnoreCase) || c.Description.Contains(query, StringComparison.OrdinalIgnoreCase));
+            campaigns = campaigns.Where(c => c.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                c.Description.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                c.Slogan.Contains(query, StringComparison.OrdinalIgnoreCase));
+        }
+        //Filtering by category, status or currency
+        if (!string.IsNullOrWhiteSpace(queryObject.Categories))
+        {
+            string[] categoryList = queryObject.Categories.Split('+', StringSplitOptions.RemoveEmptyEntries);
+            List<CampaignCategory> parsedCategories = [];
+            foreach (var c in categoryList)
+            {
+                if (Enum.TryParse<CampaignCategory>(c.Trim(), out CampaignCategory result) && result != CampaignCategory.None)
+                    parsedCategories.Add(result);
+            }
+
+            if (parsedCategories.Count != 0)
+                campaigns = campaigns.Where(c => parsedCategories.Contains(c.Category));
+        }
+        if (!string.IsNullOrWhiteSpace(queryObject.Statuses))
+        {
+            string[] statusList = queryObject.Statuses.Split('+', StringSplitOptions.RemoveEmptyEntries);
+            List<CampaignStatus> parsedStatuses = [];
+
+            foreach (var s in statusList)
+            {
+                if (Enum.TryParse<CampaignStatus>(s.Trim(), out CampaignStatus result))
+                    parsedStatuses.Add(result);
+            }
+            if (parsedStatuses.Count != 0)
+                campaigns = campaigns.Where(c => parsedStatuses.Contains(c.Status));
+        }
+        if (!string.IsNullOrWhiteSpace(queryObject.Currencies))
+        {
+            string[] currencyList = queryObject.Currencies.Split('+', StringSplitOptions.RemoveEmptyEntries);
+            List<CurrencyType> parsedCurrencies = [];
+
+            foreach (var cur in currencyList)
+            {
+                if (Enum.TryParse<CurrencyType>(cur.Trim(), out CurrencyType result))
+                    parsedCurrencies.Add(result);
+            }
+
+            if (parsedCurrencies.Count != 0)
+                campaigns = campaigns.Where(c => parsedCurrencies.Contains(c.Currency));
         }
         if (!string.IsNullOrWhiteSpace(queryObject.SortOrder))
         {
@@ -37,36 +80,6 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         else
         {
             campaigns = campaigns.OrderByDescending(c => c.StartDate);
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryObject.FilterName) && !string.IsNullOrWhiteSpace(queryObject.FilterCategories))
-        {
-            string[] categories = [.. queryObject.FilterCategories.Split('+', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray()];
-
-            switch (queryObject.FilterName)
-            {
-                case "campaignCategory":
-                    CampaignCategory[] requiredCategories = [.. categories.Select(c =>
-                    {
-                        if (Enum.TryParse<CampaignCategory>(c, out CampaignCategory campaignCategory))
-                            return campaignCategory;
-                        return CampaignCategory.None;
-                    })];
-
-                    if (!requiredCategories.Contains(CampaignCategory.None))
-                        campaigns = campaigns.Where(c => requiredCategories.Contains(c.Category));
-                    break;
-                case "campaignStatus":
-                    CampaignStatus[] requiredStatuses = [.. categories.Select(c =>
-                    {
-                        if (Enum.TryParse<CampaignStatus>(c, out CampaignStatus campaignStatus))
-                            return campaignStatus;
-                        return CampaignStatus.Upcoming;
-                    })];
-
-                    campaigns = campaigns.Where(c => requiredStatuses.Contains(c.Status));
-                    break;
-            }
         }
 
         return await PaginatedList<Campaign>.CreateAsync(campaigns, queryObject.Page, itemsPerPageCount);

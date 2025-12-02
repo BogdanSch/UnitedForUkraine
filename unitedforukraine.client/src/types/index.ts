@@ -210,12 +210,11 @@ export type CreateNewsUpdateRequestDto = {
   campaignId: number;
 };
 
-// export type UpdateNewsUpdateRequestDto = {
-//   title: string;
-//   keyWords: string;
-//   content: string;
-//   imageUrl: string;
-//   readingTimeInMinutes: number;
-//   authorId: string;
-//   campaignId: number;
-// };
+export type UpdateNewsUpdateRequestDto = {
+  id: number;
+  title: string;
+  keyWords: string;
+  content: string;
+  readingTimeInMinutes: number;
+  imageUrl: string;
+};

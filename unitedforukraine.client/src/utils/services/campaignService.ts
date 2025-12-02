@@ -8,7 +8,7 @@ export const fetchAllActiveAndCompletedCampaigns = async (
 ): Promise<PaginatedCampaignsDto> => {
   try {
     const { data } = await axios.get<PaginatedCampaignsDto>(
-      `${API_URL}/campaigns?page=${page}&filterName=campaignStatus&filterStatuses=${CampaignStatus.Ongoing}+${CampaignStatus.Completed}`
+      `${API_URL}/campaigns?page=${page}&statuses=${CampaignStatus.Ongoing}+${CampaignStatus.Completed}`
     );
     return data;
   } catch (error) {
@@ -68,7 +68,7 @@ export const fetchCampaignData = async (
 
     return data;
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return null;
   }
 };

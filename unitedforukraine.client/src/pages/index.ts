@@ -24,7 +24,9 @@ export { default as Failed } from "./donate/Failed";
 
 export { default as Contact } from "./contact/Contact";
 export { default as NewsUpdatesIndex } from "./newsUpdates/NewsUpdatesIndex";
-export { default as NewsUpdateCreate } from "./newsUpdates/NewsUpdateCreate";
+export { default as NewsUpdateCreate } from "./newsUpdates/NewsUpdatesCreate";
+export { default as NewsUpdateEdit } from "./newsUpdates/NewsUpdateEdit";
+export { default as NewsUpdateDetail } from "./newsUpdates/NewsUpdateDetail";
 
 export { default as UsersIndex } from "./dashboard/UsersIndex";
 export { default as DonationsIndex } from "./dashboard/DonationsIndex";

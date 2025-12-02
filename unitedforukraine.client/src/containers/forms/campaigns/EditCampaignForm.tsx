@@ -13,22 +13,23 @@ interface EditCampaignFormProps {
   id: number;
 }
 
-const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
-  const DEFAULT_FORM_DATA: UpdateCampaignRequestDto = {
-    id: id,
-    title: "",
-    slogan: "",
-    description: "",
-    goalAmount: 0,
-    status: CampaignStatus.Upcoming,
-    category: CampaignCategory.Education,
-    startDate: "",
-    endDate: "",
-    imageUrl: "",
-  };
+const getDefaultFormData = (id: number): UpdateCampaignRequestDto => ({
+  id: id,
+  title: "",
+  slogan: "",
+  description: "",
+  goalAmount: 0,
+  status: CampaignStatus.Upcoming,
+  category: CampaignCategory.Education,
+  startDate: "",
+  endDate: "",
+  imageUrl: "",
+});
 
-  const [formData, setFormData] =
-    useState<UpdateCampaignRequestDto>(DEFAULT_FORM_DATA);
+const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
+  const [formData, setFormData] = useState<UpdateCampaignRequestDto>(
+    getDefaultFormData(id)
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [requestError, setRequestError] = useState<string>("");
   const navigate = useNavigate();
@@ -110,7 +111,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
   };
 
   const handleReset = (): void => {
-    setFormData(DEFAULT_FORM_DATA);
+    setFormData(getDefaultFormData(id));
     setErrors({});
   };
 

@@ -40,7 +40,6 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     {
         IQueryable<Donation> donations = _context.Donations.Include(d => d.User).AsQueryable();
         donations = HandleDonationsFiltering(queryObject, donations);
-
         return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
     public async Task<PaginatedList<Donation>> GetPaginatedDonationsByCampaignId(int campaignId, int page, int itemsPerPageCount)

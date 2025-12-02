@@ -26,6 +26,8 @@ import {
   NewsUpdateCreate,
   UsersIndex,
   DonationsIndex,
+  NewsUpdateEdit,
+  NewsUpdateDetail,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -75,11 +77,20 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <NewsUpdatesIndex /> },
+      { path: "detail/:id", element: <NewsUpdateDetail /> },
       {
         path: "create",
         element: (
           <ProtectedRoute requireAdmin>
             <NewsUpdateCreate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "edit/:id",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <NewsUpdateEdit />
           </ProtectedRoute>
         ),
       },

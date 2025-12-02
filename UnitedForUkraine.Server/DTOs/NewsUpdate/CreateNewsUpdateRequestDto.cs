@@ -4,7 +4,7 @@ namespace UnitedForUkraine.Server.DTOs.NewsUpdate
 {
     public record CreateNewsUpdateRequestDto
     {
-        [StringLength(100, MinimumLength = 10)]
+        [StringLength(255, MinimumLength = 10)]
         public required string Title { get; init; }
         [StringLength(180, MinimumLength = 10)]
         public required string KeyWords { get; init; }

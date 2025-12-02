@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.DTOs;
 using UnitedForUkraine.Server.DTOs.NewsUpdate;
 using UnitedForUkraine.Server.Helpers;
@@ -34,7 +35,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         return Ok(newsUpdateDto);
     }
     [HttpPost]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> CreateNewsUpdate([FromBody] CreateNewsUpdateRequestDto createNewsUpdate)
     {
         if (!ModelState.IsValid)
@@ -44,7 +45,6 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         {
             NewsUpdate newsUpdate = createNewsUpdate.FromCreateNewsUpdateDtoToNewsUpdate();
             await _newsUpdateRepository.AddAsync(newsUpdate);
-
             return Ok(new CreationResultDto(newsUpdate.Id.ToString()));
         }
         catch (Exception)
@@ -52,14 +52,14 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
             return BadRequest(new { message = "Error, we couldn't create a new news update! Please, try again later" });
         }
     }
-    [HttpPut]
-    [Authorize(Roles = "admin")]
-    public async Task<IActionResult> UpdateNewsUpdate([FromBody] UpdateNewsUpdateRequestDto updateRequestDto)
+    [HttpPut("{id:int}")]
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task<IActionResult> UpdateNewsUpdate([FromRoute] int id, [FromBody] UpdateNewsUpdateRequestDto updateRequestDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
 
-        NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(updateRequestDto.Id);
-
+        NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(id);
         if (newsUpdate is null)
             return NotFound(new { message = "Error, we weren't able to retrieve this blog post" });
 
@@ -80,13 +80,12 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         }
     }
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> DeleteNewsUpdate([FromRoute] int id)
     {
         NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(id);
-
         if (newsUpdate is null)
-            return NotFound(new { message = "Error, we weren't able to retrieve this blog post" });
+            return NotFound(new { message = "Error, we weren't able to retrieve the news update" });
 
         try
         {
@@ -95,7 +94,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         }
         catch (Exception)
         {
-            return BadRequest(new { message = "Error, we weren't able to delete this blog post! Please, try again later" });
+            return BadRequest(new { message = "Error, we weren't able to delete the news update! Please, try again later" });
         }
     }
 }
