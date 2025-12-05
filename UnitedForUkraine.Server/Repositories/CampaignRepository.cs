@@ -24,24 +24,22 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
                 c.Description.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                 c.Slogan.Contains(query, StringComparison.OrdinalIgnoreCase));
         }
-        //Filtering by category, status or currency
         if (!string.IsNullOrWhiteSpace(queryObject.Categories))
         {
             string[] categoryList = queryObject.Categories.Split('+', StringSplitOptions.RemoveEmptyEntries);
-            List<CampaignCategory> parsedCategories = [];
+            HashSet<CampaignCategory> parsedCategories = [];
             foreach (var c in categoryList)
             {
                 if (Enum.TryParse<CampaignCategory>(c.Trim(), out CampaignCategory result) && result != CampaignCategory.None)
                     parsedCategories.Add(result);
             }
-
             if (parsedCategories.Count != 0)
                 campaigns = campaigns.Where(c => parsedCategories.Contains(c.Category));
         }
         if (!string.IsNullOrWhiteSpace(queryObject.Statuses))
         {
             string[] statusList = queryObject.Statuses.Split('+', StringSplitOptions.RemoveEmptyEntries);
-            List<CampaignStatus> parsedStatuses = [];
+            HashSet<CampaignStatus> parsedStatuses = [];
 
             foreach (var s in statusList)
             {
@@ -54,7 +52,7 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         if (!string.IsNullOrWhiteSpace(queryObject.Currencies))
         {
             string[] currencyList = queryObject.Currencies.Split('+', StringSplitOptions.RemoveEmptyEntries);
-            List<CurrencyType> parsedCurrencies = [];
+            HashSet<CurrencyType> parsedCurrencies = [];
 
             foreach (var cur in currencyList)
             {

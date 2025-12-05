@@ -80,6 +80,11 @@ export type CreateDonationRequestDto = {
   paymentMethod: PaymentMethod;
 };
 
+export type PaginatedDonationsDto = {
+  donations: DonationDto[];
+  hasNextPage: boolean;
+};
+
 export type ImageDto = {
   path: string;
   alt: string;
@@ -217,4 +222,9 @@ export type UpdateNewsUpdateRequestDto = {
   content: string;
   readingTimeInMinutes: number;
   imageUrl: string;
+};
+
+export type DateRange = {
+  startDate: string;
+  endDate: string;
 };

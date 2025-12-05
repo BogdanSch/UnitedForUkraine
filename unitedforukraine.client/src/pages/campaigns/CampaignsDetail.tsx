@@ -135,9 +135,10 @@ const CampaignsDetail: FC = () => {
             </div>
           </div>
           <h3 className="mt-5 sub-heading">
-            {campaign?.donorsCount} donors contributed
+            In total {campaign?.donorsCount} donors contributed
           </h3>
           <DonationsList
+            name="campaignDonations"
             campaignId={Number(id)}
             showUserDonations={false}
             showQueryCriteria={false}

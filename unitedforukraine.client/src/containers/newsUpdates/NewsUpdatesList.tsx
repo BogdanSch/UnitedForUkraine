@@ -15,11 +15,11 @@ interface INewsUpdatesListProps {
   [key: string]: any;
 }
 
-const DEFAULT_PAGINATED_NEWS_UPDATES: PaginatedNewsUpdatesDto = {
+const getDefaultPaginatedNewsUpdates = (): PaginatedNewsUpdatesDto => ({
   newsUpdates: [],
   hasNextPage: false,
   hasPreviousPage: false,
-};
+});
 
 const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
   showQueryCriteria,
@@ -28,8 +28,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
   ...rest
 }) => {
   const [paginatedNewsUpdates, setPaginatedNewsUpdates] =
-    useState<PaginatedNewsUpdatesDto>(DEFAULT_PAGINATED_NEWS_UPDATES);
-  // const [newsUpdates, setNewsUpdates] = useState<NewsUpdateDto[]>([]);
+    useState<PaginatedNewsUpdatesDto>(getDefaultPaginatedNewsUpdates());
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("date_dsc");
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -42,7 +41,6 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
   const fetchNewsUpdates = async () => {
     try {
       let requestUrl: string = `${API_URL}/newsUpdates?page=${pageIndex}`;
-
       if (showQueryCriteria)
         requestUrl += `&searchedQuery=${searchQuery}&sortOrder=${sortOrder}`;
 
@@ -50,21 +48,19 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
       setPaginatedNewsUpdates(data);
     } catch (error) {
       console.log("Error fetching news updates: ", error);
-      setPaginatedNewsUpdates(DEFAULT_PAGINATED_NEWS_UPDATES);
+      setPaginatedNewsUpdates(getDefaultPaginatedNewsUpdates());
     }
   };
 
   useEffect(() => {
     const currentPage: number = Number(page) > 0 ? Number(page) : 1;
     setPageIndex(currentPage);
-
     fetchNewsUpdates();
   }, [page, searchQuery, sortOrder]);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     const searchInput: HTMLInputElement | null = searchInputRef.current;
-
     if (!searchInput) return;
     setSearchQuery(searchInput.value);
   };
@@ -82,6 +78,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                 name="sortOrder"
                 onChange={(e) => handleSelectWithDataTagChange(e, setSortOrder)}
               >
+                <option data-value="viewsCount_dsc">Most Popular</option>
                 <option data-value="date_dsc">Most Recent</option>
                 <option data-value="date_asc">Most Latest</option>
                 <option data-value="title_asc">Title</option>
@@ -94,7 +91,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
       )}
       <ul
         className={`news__list mt-5 ${
-          className.trim().length > 0 ? " " + className : ""
+          className.length > 0 ? " " + className : ""
         }`}
         {...rest}
       >

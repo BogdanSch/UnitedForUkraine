@@ -6,9 +6,8 @@ public class CampaignLike
 {
     [ForeignKey(nameof(Campaign))]
     public required int LikedCampaignId { get; set; }
-    public Campaign? LikedCampaign { get; set; }
-
+    public Campaign LikedCampaign { get; set; } = null!;
     [ForeignKey(nameof(AppUser))]
     public required string UserId { get; set; } = string.Empty;
-    public AppUser? User { get; set; }
+    public AppUser User { get; set; } = null!;
 }

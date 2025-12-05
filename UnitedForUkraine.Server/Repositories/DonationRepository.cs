@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
+using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
 
@@ -18,11 +19,35 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
     public IQueryable<Donation> HandleDonationsFiltering(QueryObject queryObject, IQueryable<Donation> donations)
     {
+        if(!string.IsNullOrWhiteSpace(queryObject.Currencies))
+        {
+            string[] currencyList = queryObject.Currencies.Split('+', StringSplitOptions.RemoveEmptyEntries);
+            HashSet<CurrencyType> parsedCurrencies = [];
+
+            foreach (var cur in currencyList)
+            {
+                if (Enum.TryParse<CurrencyType>(cur.Trim(), out CurrencyType result))
+                    parsedCurrencies.Add(result);
+            }
+
+            if (parsedCurrencies.Count != 0)
+                donations = donations.Where(d => parsedCurrencies.Contains(d.Currency));
+        }
+        if (!string.IsNullOrWhiteSpace(queryObject.CampaignIds))
+        {
+            string[] campaignIds = queryObject.CampaignIds.Split('+', StringSplitOptions.RemoveEmptyEntries);
+            if (campaignIds.Length != 0)
+                donations = donations.Where(d => campaignIds.Contains(d.CampaignId.ToString()));
+        }
+        if (!string.IsNullOrWhiteSpace(queryObject.StartDate) && !string.IsNullOrWhiteSpace(queryObject.EndDate))
+        {
+            (DateTime start, DateTime end) = DateSettings.ParseStartAndEndDate(queryObject.StartDate, queryObject.EndDate);
+            donations = donations.Where(d => d.PaymentDate >= start && d.PaymentDate <= end);
+        }
         if (!string.IsNullOrWhiteSpace(queryObject.SortOrder))
         {
             donations = queryObject.SortOrder switch
             {
-                "date_dsc" => donations.OrderByDescending(d => d.PaymentDate),
                 "amount_dsc" => donations.OrderByDescending(d => d.Amount),
                 "amount_asc" => donations.OrderBy(d => d.Amount),
                 "userName_asc" => donations.OrderBy(d => d.User.UserName),
@@ -56,7 +81,6 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     {
         IQueryable<Donation> donations = _context.Donations.Where(d => d.UserId == userId).Include(d => d.User);
         donations = HandleDonationsFiltering(queryObject, donations);
-
         return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
     public async Task<Donation?> GetByIdAsync(int id)
@@ -89,6 +113,10 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     {
         int saved = await _context.SaveChangesAsync();
         return saved > 0;
+    }
+    public async Task<bool> DonationExistsForUserAsync(int campaignId, string userId)
+    {
+        return await _context.Donations.AnyAsync(d => d.CampaignId == campaignId && d.UserId == userId);
     }
     public async Task<string> GetCityWithMostDonationsAsync()
     {

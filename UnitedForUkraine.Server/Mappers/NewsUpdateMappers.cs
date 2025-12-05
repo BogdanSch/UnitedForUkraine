@@ -27,7 +27,7 @@ namespace UnitedForUkraine.Server.Mappers
             return new NewsUpdate()
             {
                 Title = newsUpdate.Title,
-                KeyWords = string.Empty,
+                KeyWords = newsUpdate.KeyWords,
                 Content = newsUpdate.Content,
                 ImageUrl = newsUpdate.ImageUrl,
                 ReadingTimeInMinutes = newsUpdate.ReadingTimeInMinutes,

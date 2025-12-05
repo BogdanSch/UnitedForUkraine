@@ -10,6 +10,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Campaign> Campaigns => Set<Campaign>();
     public DbSet<Donation> Donations => Set<Donation>();
     public DbSet<NewsUpdate> NewsUpdates => Set<NewsUpdate>();
+    public DbSet<CampaignLike> CampaignLikes => Set<CampaignLike>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -19,7 +20,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithMany()
             .HasForeignKey(d => d.UserId)
             .OnDelete(DeleteBehavior.Restrict);
-
         builder.Entity<Donation>()
             .HasOne(d => d.Campaign)
             .WithMany(c => c.Donations)
@@ -32,9 +32,23 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(n => n.CampaignId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<AppUser>()
-            .HasOne(a => a.Address)
-            .WithOne()
+        builder.Entity<Address>()
+            .HasOne(a => a.User)
+            .WithOne(u => u.Address)
+            .HasForeignKey<Address>(a => a.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<CampaignLike>()
+            .HasKey(cl => new { cl.LikedCampaignId, cl.UserId });
+        builder.Entity<CampaignLike>()
+            .HasOne(cl => cl.User)
+            .WithMany()
+            .HasForeignKey(cl => cl.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<CampaignLike>()
+            .HasOne(cl => cl.LikedCampaign)
+            .WithMany()
+            .HasForeignKey(cl => cl.LikedCampaignId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

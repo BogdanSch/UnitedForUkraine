@@ -286,7 +286,7 @@ namespace UnitedForUkraine.Server.Controllers
         }
         [HttpDelete]
         [Authorize]
-        public async Task<IActionResult> DeleteByEmail([FromBody] DeleteUserDto deleteUserDto)
+        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserDto deleteUserDto)
         {
             if(!ModelState.IsValid) 
                 return BadRequest(ModelState);

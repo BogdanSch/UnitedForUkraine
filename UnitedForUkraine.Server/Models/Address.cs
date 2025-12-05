@@ -17,5 +17,8 @@ public class Address
     public string? Street { get; set; } = string.Empty;
     [StringLength(20)]
     public string? PostalCode { get; set; } = string.Empty;
+    [ForeignKey(nameof(AppUser))]
+    public string UserId { get; set; } = null!;
+    public AppUser User { get; set; } = null!;
 }
 

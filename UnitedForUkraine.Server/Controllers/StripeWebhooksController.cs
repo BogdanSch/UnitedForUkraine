@@ -39,7 +39,7 @@ namespace UnitedForUkraine.Server.Controllers
                     if (stripeEvent.Data.Object is not Session session)
                     {
                         _logger.LogError("Session is empty!");
-                        return BadRequest();
+                        return BadRequest(new { message = "Session is empty!" });
                     }
 
                     Donation? donation = await _donationRepository.GetDonationByCheckoutSessionId(session.Id);
@@ -56,7 +56,8 @@ namespace UnitedForUkraine.Server.Controllers
                                 StripeSettings.GetCurrencyCode(campaign.Currency)
                             );
                             campaign.RaisedAmount += convertedAmount;
-                            campaign.DonorsCount += 1;
+                            if(!(await _donationRepository.DonationExistsForUserAsync(campaign.Id, donation.UserId)))
+                                campaign.DonorsCount += 1;
                             await _campaignRepository.UpdateAsync(campaign);
                         }
                         await _donationRepository.UpdateAsync(donation);

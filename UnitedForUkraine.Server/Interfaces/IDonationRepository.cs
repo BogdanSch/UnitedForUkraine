@@ -1,4 +1,5 @@
-﻿using UnitedForUkraine.Server.Data.Enums;
+﻿using Microsoft.EntityFrameworkCore;
+using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Models;
 
@@ -26,6 +27,7 @@ public interface IDonationRepository
     Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId);
     Task<DateTime?> GetFirstDonationDateAsync(string? userId);
     Task<DateTime?> GetLastDonationDateAsync(string? userId);
+    Task<bool> DonationExistsForUserAsync(int campaignId, string userId);
     Task AddAsync(Donation donation);
     Task<bool> DeleteAsync(int id);
     Task<bool> UpdateAsync(Donation donation);

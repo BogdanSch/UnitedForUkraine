@@ -61,11 +61,12 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
 
         NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(id);
         if (newsUpdate is null)
-            return NotFound(new { message = "Error, we weren't able to retrieve this blog post" });
+            return NotFound(new { message = "Error, we weren't able to retrieve this news update" });
 
         try
         {
             newsUpdate.Title = updateRequestDto.Title;
+            newsUpdate.KeyWords = updateRequestDto.KeyWords;
             newsUpdate.Content = updateRequestDto.Content;
             newsUpdate.ReadingTimeInMinutes = updateRequestDto.ReadingTimeInMinutes;
             if (!string.IsNullOrWhiteSpace(updateRequestDto.ImageUrl))
@@ -76,7 +77,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         }
         catch (Exception)
         {
-            return BadRequest(new { message = "Error, we weren't able to update this blog post! Please, try again later" });
+            return BadRequest(new { message = "Error, we weren't able to update this news update! Please, try again later" });
         }
     }
     [HttpDelete("{id:int}")]
