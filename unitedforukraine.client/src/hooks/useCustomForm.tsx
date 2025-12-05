@@ -46,21 +46,33 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
       },
     }));
   };
-
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (!setFormData) return;
     const target = e.target;
-
     const { name, value, type } = target;
-
     if (type !== "date") return;
 
-    const formattedDate: string = convertDate(value); //new Date(value).toISOString().slice(0, 10);
-
+    const formattedDate: string = convertDate(value);
     setFormData((prev: any) => ({
       ...prev,
       [name]: formattedDate,
     }));
+  };
+  const handleDateChangeWithCallback = (
+    e: ChangeEvent<HTMLInputElement>,
+    callback: () => void
+  ): void => {
+    if (!setFormData) return;
+    const target = e.target;
+    const { name, value, type } = target;
+    if (type !== "date") return;
+
+    const formattedDate: string = convertDate(value);
+    setFormData((prev: any) => ({
+      ...prev,
+      [name]: formattedDate,
+    }));
+    callback();
   };
   const handleSelectChange = (
     e: ChangeEvent<HTMLSelectElement>,
@@ -114,9 +126,28 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
     handleNestedChange,
     handleSelectChange,
     handleDateChange,
+    handleDateChangeWithCallback,
     handleImageChange,
   };
 }
+
+export const handleSimpleSelectChangeWithCallback = (
+  e: ChangeEvent<HTMLSelectElement>,
+  setFormData: Dispatch<SetStateAction<any>>,
+  callback: () => void,
+  loadMoreCallback?: () => void,
+): void => {
+  if (!setFormData) return;
+  const { value } = e.target;
+
+  if (value === LOAD_MORE_SELECT_VALUE && loadMoreCallback) {
+    loadMoreCallback();
+    return;
+  }
+
+  setFormData(value);
+  callback();
+};
 
 export const handleSelectWithDataTagChange = (
   e: ChangeEvent<HTMLSelectElement>,

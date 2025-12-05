@@ -121,32 +121,6 @@ const RegisterForm: FC = () => {
           </div>
         )}
       </div>
-      {/* <div className="mb-3">
-        <label htmlFor="email" className="form-label">
-          Phone number*
-        </label>
-        <Input
-          type="tel"
-          id="phoneNumber"
-          name="phoneNumber"
-          placeholder="Enter phone number: "
-          className="form-control"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-          autoComplete="tel"
-          isRequired={true}
-        />
-        {errors.phoneNumber ? (
-          <div className="alert alert-danger mt-1" role="alert">
-            {errors.phoneNumber}
-          </div>
-        ) : (
-          <div id="phoneNumberHelp" className="form-text">
-            Phone number must be between 7 and 40 characters long. Include
-            country code, e.g., +380931234567.
-          </div>
-        )}
-      </div> */}
       <div className="mb-3">
         <label htmlFor="password" className="form-label">
           Password*

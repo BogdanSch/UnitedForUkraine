@@ -154,7 +154,7 @@ const UpdateUserProfileForm: FC = () => {
           id="country"
           value={formData.updatedAddress.country}
           onChange={handleNestedChange}
-          isRequired={true}
+          isRequired={false}
         />
         {errors.country && <ErrorAlert errorMessage={errors.country} />}
       </div>
@@ -167,7 +167,7 @@ const UpdateUserProfileForm: FC = () => {
           id="region"
           value={formData.updatedAddress.region}
           onChange={handleNestedChange}
-          isRequired={true}
+          isRequired={false}
         />
         {errors.region && <ErrorAlert errorMessage={errors.region} />}
       </div>
@@ -180,7 +180,7 @@ const UpdateUserProfileForm: FC = () => {
           id="city"
           value={formData.updatedAddress.city}
           onChange={handleNestedChange}
-          isRequired={true}
+          isRequired={false}
         />
         {errors.city && <ErrorAlert errorMessage={errors.city} />}
       </div>
@@ -193,7 +193,7 @@ const UpdateUserProfileForm: FC = () => {
           id="street"
           value={formData.updatedAddress.street}
           onChange={handleNestedChange}
-          isRequired={true}
+          isRequired={false}
         />
         {errors.street && <ErrorAlert errorMessage={errors.street} />}
       </div>
@@ -206,7 +206,7 @@ const UpdateUserProfileForm: FC = () => {
           id="postalCode"
           value={formData.updatedAddress.postalCode}
           onChange={handleNestedChange}
-          isRequired={true}
+          isRequired={false}
         />
         {errors.postalCode && <ErrorAlert errorMessage={errors.postalCode} />}
       </div>

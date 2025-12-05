@@ -22,7 +22,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     {
         var paginatedDonations = await _donationRepository.GetPaginatedDonationsAsync(queryObject, NUMBER_OF_DONATIONs_PER_PAGE);
 
-        if (!paginatedDonations.Any()) return Ok(new List<DonationDto>());
+        if (!paginatedDonations.Any()) return Ok(new PaginatedDonationsDto([], false));
         List<DonationDto> donationDtos = [.. paginatedDonations.Select(d => d.ToDonationDto())];
 
         return Ok(new PaginatedDonationsDto(donationDtos, paginatedDonations.HasNextPage));

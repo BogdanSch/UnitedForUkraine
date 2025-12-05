@@ -110,6 +110,7 @@ const Dashboard: FC = () => {
                   Overview of all foundation donations
                 </h2>
                 <DonationsList
+                  name="adminDonations"
                   showUserDonations={false}
                   showQueryCriteria={true}
                 />
@@ -124,6 +125,7 @@ const Dashboard: FC = () => {
                 victory
               </p>
               <DonationsList
+                name="userDonations"
                 showUserDonations={true}
                 showQueryCriteria={true}
               />
