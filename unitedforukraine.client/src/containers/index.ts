@@ -24,3 +24,4 @@ export { default as UserStatisticsList } from "./donations/UserStatisticsList";
 export { default as NewsUpdatesList } from "./newsUpdates/NewsUpdatesList";
 export { default as CreateNewsUpdateForm } from "./forms/newsUpdates/CreateNewsUpdateForm";
 export { default as EditNewsUpdateForm } from "./forms/newsUpdates/EditNewsUpdateForm";
+export { default as DeleteNewsUpdateForm } from "./forms/newsUpdates/DeleteNewsUpdateForm";

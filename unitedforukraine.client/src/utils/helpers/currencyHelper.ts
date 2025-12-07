@@ -1,7 +1,10 @@
 import { Currency } from "../../types/enums";
 
 export const formatMoney = (amount: number): string => {
-  return new Intl.NumberFormat("en-GB").format(amount);
+  return new Intl.NumberFormat("en-GB", {
+    style: "decimal",
+    maximumFractionDigits: 2,
+  }).format(amount);
 };
 
 export const convertCurrencyToString = (currency: number): string => {

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { SectionHeadline } from "../../components";
 import { EditNewsUpdateForm } from "../../containers";
 
-const NewsUpdateEdit: FC = () => {
+const NewsUpdatesEdit: FC = () => {
   let { id } = useParams();
   return (
     <section className="news">
@@ -22,4 +22,4 @@ const NewsUpdateEdit: FC = () => {
   );
 };
 
-export default NewsUpdateEdit;
+export default NewsUpdatesEdit;

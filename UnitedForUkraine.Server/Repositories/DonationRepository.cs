@@ -17,7 +17,7 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     public const int DEFAULT_DONATIONS_COUNT = 100;
     private readonly ApplicationDbContext _context = context;
     private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
-    public IQueryable<Donation> HandleDonationsFiltering(QueryObject queryObject, IQueryable<Donation> donations)
+    private static IQueryable<Donation> ApplyDonationsFilters(QueryObject queryObject, IQueryable<Donation> donations)
     {
         if(!string.IsNullOrWhiteSpace(queryObject.Currencies))
         {
@@ -64,7 +64,7 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     public async Task<PaginatedList<Donation>> GetPaginatedDonationsAsync(QueryObject queryObject, int itemsPerPageCount)
     {
         IQueryable<Donation> donations = _context.Donations.Include(d => d.User).AsQueryable();
-        donations = HandleDonationsFiltering(queryObject, donations);
+        donations = ApplyDonationsFilters(queryObject, donations);
         return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
     public async Task<PaginatedList<Donation>> GetPaginatedDonationsByCampaignId(int campaignId, int page, int itemsPerPageCount)
@@ -80,7 +80,7 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     public async Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, QueryObject queryObject, int itemsPerPageCount)
     {
         IQueryable<Donation> donations = _context.Donations.Where(d => d.UserId == userId).Include(d => d.User);
-        donations = HandleDonationsFiltering(queryObject, donations);
+        donations = ApplyDonationsFilters(queryObject, donations);
         return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
     public async Task<Donation?> GetByIdAsync(int id)
@@ -180,22 +180,21 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
             .FirstOrDefaultAsync();
         return mode is null ? (0, CurrencyType.UAH) : (mode.Amount, mode.Currency);
     }
-    public async Task<decimal> GetSmallestDonationAmountAsync(string? userId)
+    public async Task<decimal> GetSmallestDonationAmountAsync(string? userId = null)
     {
         IQueryable<Donation> donations = GetDonationsQuery(userId);
         Donation? smallestDonation = await donations.OrderBy(d => d.Amount).FirstOrDefaultAsync();
+        
         if (smallestDonation is null)
             return decimal.Zero;
-
         return await ConvertToUahAsync(smallestDonation.Amount, smallestDonation.Currency);
     }
-    public async Task<decimal> GetBiggestDonationAmountAsync(string? userId)
+    public async Task<decimal> GetBiggestDonationAmountAsync(string? userId = null)
     {
         IQueryable<Donation> donations = GetDonationsQuery(userId);
         Donation? biggestDonation = await donations.OrderByDescending(d => d.Amount).FirstOrDefaultAsync();
-        if (biggestDonation is null)
-            return decimal.Zero;
 
+        if (biggestDonation is null) return decimal.Zero;
         return await ConvertToUahAsync(biggestDonation.Amount, biggestDonation.Currency);
     }
     public async Task<int> GetUniqueDonorsCountAsync()
@@ -235,7 +234,8 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
             return currentPeriodTotal > decimal.Zero ? 100m : decimal.Zero;
 
         decimal growthRate = Math.Round((currentPeriodTotal - previousPeriodTotal) * 100 / previousPeriodTotal, 2);
-        return growthRate;
+
+        return growthRate > 100 ? 100 : growthRate;
     }
     private async Task<decimal> ConvertToUahAsync(decimal amount, CurrencyType currency)
     {

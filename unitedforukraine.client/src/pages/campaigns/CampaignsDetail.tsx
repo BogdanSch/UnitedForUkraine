@@ -29,15 +29,14 @@ const CampaignsDetail: FC = () => {
   const message: string = location.state?.message || "";
 
   useEffect(() => {
-    const fetcher = async () => {
-      const data = await fetchCampaignData(Number(id));
-
-      if (!data) {
-        navigate("/notFound");
-        return;
-      }
-
-      setCampaign(data);
+    const fetcher = () => {
+      fetchCampaignData(Number(id)).then((data) => {
+        if (!data) {
+          navigate("/notFound");
+          return;
+        }
+        setCampaign(data);
+      });
     };
     fetcher();
   }, [id]);

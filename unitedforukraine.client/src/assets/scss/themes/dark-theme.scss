@@ -188,4 +188,7 @@
       color: $text-light-gray;
     }
   }
+  [class$="__content"] {
+    color: $text-light-gray;
+  }
 }

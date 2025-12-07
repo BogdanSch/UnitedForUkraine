@@ -82,7 +82,7 @@ const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
 
       navigate(`/newsUpdates/detail/${formData.id}`, {
         state: {
-          message: "Campaign was updated successfully.",
+          message: "News update was successfully updated.",
         },
       });
     } catch (error) {

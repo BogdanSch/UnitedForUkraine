@@ -27,14 +27,10 @@ const UserStatisticsList: FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const options = {
-        method: "GET",
-        url: `${API_URL}/donations/statistics/${user?.id}`,
-      };
-
       try {
-        const { data } = await protectedAxios.request<UserStatistics>(options);
-
+        const { data } = await protectedAxios.get<UserStatistics>(
+          `${API_URL}/donations/statistics/${user?.id}`
+        );
         console.log("User statistics data: " + data);
         setStatistics(data || DEFAULT_STATISTICS);
       } catch (error) {

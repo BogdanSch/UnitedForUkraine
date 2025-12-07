@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 import { Link } from "react-router-dom";
-
+import AuthContext from "../../contexts/AuthContext";
 import { CampaignsList, FoundationStatisticsList } from "../../containers";
 import {
   CallToActionSection,
@@ -11,6 +11,7 @@ import {
 import aboutImage from "/assets/img/aboutPreviewAbstract.webp";
 
 const HomePage: FC = () => {
+  const { isAuthenticated } = useContext(AuthContext);
   return (
     <>
       <section className="hero" id="hero">
@@ -149,15 +150,17 @@ const HomePage: FC = () => {
               title={`Overall Statistics`}
               description={`An overview of all donations made since the foundation began operating, showcasing contributions and their impact.`}
             >
-              <Link
-                className="btn btn-outline-secondary"
-                to={{
-                  pathname: "/dashboard",
-                  hash: "#dashboardStatistics",
-                }}
-              >
-                View Your Statistics
-              </Link>
+              {isAuthenticated() && (
+                <Link
+                  className="btn btn-outline-secondary"
+                  to={{
+                    pathname: "/dashboard",
+                    hash: "#dashboardStatistics",
+                  }}
+                >
+                  View Your Statistics
+                </Link>
+              )}
             </SectionHeadline>
             <FoundationStatisticsList />
           </div>

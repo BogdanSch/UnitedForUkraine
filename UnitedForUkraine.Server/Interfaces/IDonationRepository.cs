@@ -7,7 +7,6 @@ namespace UnitedForUkraine.Server.Interfaces;
 
 public interface IDonationRepository
 {
-    IQueryable<Donation> HandleDonationsFiltering(QueryObject queryObject, IQueryable<Donation> donations);
     Task<PaginatedList<Donation>> GetPaginatedDonationsAsync(QueryObject queryObject, int itemsPerPageCount);
     Task<PaginatedList<Donation>> GetPaginatedDonationsByCampaignId(int campaignId, int page, int itemsPerPageCount);
     Task<PaginatedList<Donation>> GetPaginatedDonationsByNewsUpdate(NewsUpdate newsUpdate, int page, int itemsPerPageCount);
@@ -17,8 +16,8 @@ public interface IDonationRepository
     Task<decimal> GetTotalDonationsAmountAsync(string? userId = null);
     Task<int> GetAverageDonationsAmountAsync(string? userId = null);
     Task<(decimal, CurrencyType)> GetMostFrequentUserDonationAsync();
-    Task<decimal> GetSmallestDonationAmountAsync(string? userId);
-    Task<decimal> GetBiggestDonationAmountAsync(string? userId);
+    Task<decimal> GetSmallestDonationAmountAsync(string? userId = null);
+    Task<decimal> GetBiggestDonationAmountAsync(string? userId = null);
     Task<int> GetUniqueDonorsCountAsync();
     Task<string> GetCityWithMostDonationsAsync();
     Task<string> GetCountryWithMostDonationsAsync();

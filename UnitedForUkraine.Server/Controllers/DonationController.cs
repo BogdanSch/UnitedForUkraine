@@ -16,7 +16,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
 {
     private readonly IDonationRepository _donationRepository = donationRepository;
     private readonly ICampaignRepository _campaignRepository = campaignRepository;
-    private const int NUMBER_OF_DONATIONs_PER_PAGE = 12;
+    private const int NUMBER_OF_DONATIONs_PER_PAGE = 8;
     [HttpGet]
     public async Task<IActionResult> GetPaginatedDontaionsData([FromQuery] QueryObject queryObject)
     {
@@ -101,7 +101,9 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
             DonationsCount = await _donationRepository.GetTotalDonationsCountAsync(),
             CampaignsCount = await _campaignRepository.GetTotalCampaignsCountAsync(),
             TotalDonationsAmount = await _donationRepository.GetTotalDonationsAmountAsync(),
+            BiggestDonationAmount = await _donationRepository.GetBiggestDonationAmountAsync(),
             AverageDonationsAmount = await _donationRepository.GetAverageDonationsAmountAsync(),
+            SmallestDonationAmount = await _donationRepository.GetSmallestDonationAmountAsync(),
             MostFrequentDonation = new DonationModeDto
             {
                 Amount = mode.Item1,

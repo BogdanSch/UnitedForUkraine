@@ -34,6 +34,7 @@ namespace UnitedForUkraine.Server.Mappers
                 PostedAt = DateTime.UtcNow,
                 AuthorId = newsUpdate.AuthorId,
                 CampaignId = newsUpdate.CampaignId,
+                ViewsCount = 0
             };
         }
     }

@@ -8,6 +8,7 @@ import { CampaignItem, Paginator, SearchBar } from "../../components";
 import AuthContext from "../../contexts/AuthContext";
 import { API_URL } from "../../variables";
 import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
+import { isNullOrWhitespace } from "../../utils/helpers/stringHelper";
 
 type CampaignsListProps = {
   showPaginationButtons: boolean;
@@ -49,10 +50,18 @@ const CampaignsList: FC<CampaignsListProps> = ({
       if (showUserCampaigns) {
         requestUrl = `${API_URL}/campaigns/users/${user?.id}/supports`;
       } else {
-        requestUrl = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}&categories=${category}&statuses=${status}&currencies=${currency}`;
-        if (searchQuery.length > 0)
-          requestUrl += `&searchedQuery=${searchQuery}`;
+        requestUrl = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}`;
+        requestUrl += !isNullOrWhitespace(category)
+          ? `&categories=${category}`
+          : "";
+        requestUrl += !isNullOrWhitespace(status) ? `&statuses=${status}` : "";
+        requestUrl += !isNullOrWhitespace(currency)
+          ? `&currencies=${currency}`
+          : "";
       }
+      requestUrl += !isNullOrWhitespace(searchQuery)
+        ? `&searchedQuery=${searchQuery}`
+        : "";
 
       let axiosInstance = showUserCampaigns ? protectedAxios : axios;
 

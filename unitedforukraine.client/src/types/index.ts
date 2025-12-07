@@ -148,7 +148,9 @@ export type Statistics = {
   campaignsCount: number;
   totalDonationsAmount: number;
   mostFrequentDonation: DonationModeDto;
+  biggestDonationAmount: number;
   averageDonationsAmount: number;
+  smallestDonationAmount: number;
   uniqueDonorsCount: number;
   cityWithMostDonations: string;
   countryWithMostDonations: string;
@@ -196,6 +198,7 @@ export type NewsUpdateDto = {
   readingTimeInMinutes: number;
   postedAt: string;
   authorName: string;
+  viewsCount: number;
   targetCampaign: CampaignDto;
 };
 

@@ -23,7 +23,6 @@ import { fetchAllActiveAndCompletedCampaigns } from "../../utils/services/campai
 import { isNullOrWhitespace } from "../../utils/helpers/stringHelper";
 import useCustomForm, {
   handleSelectWithDataTagChange,
-  handleSimpleSelectChangeWithCallback,
 } from "../../hooks/useCustomForm";
 import { Input } from "../../components";
 
@@ -67,10 +66,10 @@ const DonationsList: FC<IDonationsListProps> = ({
   });
 
   const { handleDateChangeWithCallback } = useCustomForm(setDateRange);
+  const { handleSelectChange } = useCustomForm(setCampaignIds);
 
   useEffect(() => {
     let requestUrl: string;
-
     if (campaignId) {
       requestUrl = `${API_URL}/donations/campaign/${campaignId}?page=${currentDonationsPage}`;
     } else if (showUserDonations && user) {
@@ -138,10 +137,10 @@ const DonationsList: FC<IDonationsListProps> = ({
   };
   const handleChangeWithDonationsReset = (
     event: ChangeEvent<HTMLSelectElement>,
-    setItems: Dispatch<SetStateAction<string>>
+    setter: Dispatch<SetStateAction<string>>
   ) => {
     resetDonationsList();
-    handleSelectWithDataTagChange(event, setItems);
+    handleSelectWithDataTagChange(event, setter);
   };
   const loadMoreCompletedCampaigns = async (): Promise<void> => {
     if (paginatedCampaigns.hasNextPage)
@@ -218,9 +217,9 @@ const DonationsList: FC<IDonationsListProps> = ({
                   name="campaignIds"
                   value={campaignIds}
                   onChange={(e) =>
-                    handleSimpleSelectChangeWithCallback(
+                    handleSelectChange(
                       e,
-                      setCampaignIds,
+                      false,
                       resetDonationsList,
                       loadMoreCompletedCampaigns
                     )

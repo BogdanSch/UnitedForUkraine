@@ -76,6 +76,8 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
   };
   const handleSelectChange = (
     e: ChangeEvent<HTMLSelectElement>,
+    isComplexObject: boolean = false,
+    callback?: () => void,
     loadMoreCallback?: () => void
   ): void => {
     if (!setFormData) return;
@@ -86,11 +88,36 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
       return;
     }
 
-    setFormData((prev: any) => ({
-      ...prev,
-      [name]: Number(value),
-    }));
+    if (isComplexObject) {
+      setFormData((prev: any) => {
+        let numberValue: number | null = Number(value);
+        return {
+          ...prev,
+          [name]: isNaN(numberValue) ? value : Number(value),
+        };
+      });
+    } else {
+      setFormData(value);
+    }
+
+    if (callback) callback();
   };
+  // const handleSimpleSelectChange = (
+  //   e: ChangeEvent<HTMLSelectElement>,
+  //   callback?: () => void,
+  //   loadMoreCallback?: () => void
+  // ): void => {
+  //   if (!setFormData) return;
+  //   const { value } = e.target;
+
+  //   if (value === LOAD_MORE_SELECT_VALUE && loadMoreCallback) {
+  //     loadMoreCallback();
+  //     return;
+  //   }
+
+  //   setFormData(value);
+  //   if (callback) callback();
+  // };
   const handleImageChange = async (
     e: ChangeEvent<HTMLInputElement>,
     previousImageUrl: string,
@@ -130,25 +157,6 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
     handleImageChange,
   };
 }
-
-export const handleSimpleSelectChangeWithCallback = (
-  e: ChangeEvent<HTMLSelectElement>,
-  setFormData: Dispatch<SetStateAction<any>>,
-  callback: () => void,
-  loadMoreCallback?: () => void,
-): void => {
-  if (!setFormData) return;
-  const { value } = e.target;
-
-  if (value === LOAD_MORE_SELECT_VALUE && loadMoreCallback) {
-    loadMoreCallback();
-    return;
-  }
-
-  setFormData(value);
-  callback();
-};
-
 export const handleSelectWithDataTagChange = (
   e: ChangeEvent<HTMLSelectElement>,
   setSelectData: Dispatch<SetStateAction<any>>

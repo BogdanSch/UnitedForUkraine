@@ -15,7 +15,6 @@ const DeleteNewsUpdateForm: FC<IDeleteNewsUpdateFormProps> = ({ id }) => {
     event: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
-
     try {
       await protectedAxios.delete(`${API_URL}/newsUpdates/${id}`);
       navigate(`/newsUpdates`, {
@@ -24,7 +23,13 @@ const DeleteNewsUpdateForm: FC<IDeleteNewsUpdateFormProps> = ({ id }) => {
         },
       });
     } catch (error) {
-      console.error(`Error deleting the news update: ${error}`);
+      console.log(`Error deleting the news update: ${error}`);
+      navigate(`/newsUpdates/detail/${id}`, {
+        state: {
+          message:
+            "Error, we couldn't delete the News update. Please try again, later!",
+        },
+      });
     }
   };
   return (

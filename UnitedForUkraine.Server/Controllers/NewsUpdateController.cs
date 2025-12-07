@@ -15,11 +15,10 @@ namespace UnitedForUkraine.Server.Controllers;
 public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : ControllerBase
 {
     private readonly INewsUpdateRepository _newsUpdateRepository = newsUpdateRepository;
-    private const int NUMBER_OF_ITEMS_PER_PAGE = 6;
     [HttpGet]
     public async Task<IActionResult> GetPaginatedNewsUpdates([FromQuery] QueryObject queryObject)
     {
-        PaginatedList<NewsUpdate> paginatedNews = await _newsUpdateRepository.GetPaginatedAsync(queryObject, NUMBER_OF_ITEMS_PER_PAGE);
+        PaginatedList<NewsUpdate> paginatedNews = await _newsUpdateRepository.GetPaginatedAsync(queryObject, PaginatedListConstants.NUMBER_OF_ITEMS_PER_PAGE);
         List<NewsUpdateDto> newsUpdateDtos = [.. paginatedNews.Select(n => n.ToNewsUpdateDto())];
 
         return Ok(new PaginatedNewsUpdatesDto(newsUpdateDtos, paginatedNews.HasPreviousPage, paginatedNews.HasNextPage));
@@ -31,7 +30,6 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         if (newsUpdate is null) return NotFound();
 
         NewsUpdateDto newsUpdateDto = newsUpdate.ToNewsUpdateDto();
-
         return Ok(newsUpdateDto);
     }
     [HttpPost]
@@ -40,7 +38,6 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
         try
         {
             NewsUpdate newsUpdate = createNewsUpdate.FromCreateNewsUpdateDtoToNewsUpdate();
@@ -77,7 +74,25 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         }
         catch (Exception)
         {
-            return BadRequest(new { message = "Error, we weren't able to update this news update! Please, try again later" });
+            return BadRequest(new { message = "Error, we weren't able to find this news update! Please, try again later" });
+        }
+    }
+    [HttpPatch("{id:int}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateNewsUpdateViews([FromRoute] int id)
+    {
+        NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(id);
+        if (newsUpdate is null)
+            return NotFound(new { message = "Error, we weren't able to find this news update" });
+        try
+        {
+            newsUpdate.ViewsCount += 1;
+            await _newsUpdateRepository.UpdateAsync(newsUpdate);
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            return BadRequest(new { message = "Error, we weren't able to update views count! Please, refresh the page" });
         }
     }
     [HttpDelete("{id:int}")]
