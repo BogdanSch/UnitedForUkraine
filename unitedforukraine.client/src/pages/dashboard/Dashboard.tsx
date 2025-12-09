@@ -8,6 +8,7 @@ import {
   DeleteUserForm,
 } from "../../containers";
 import { Alert, Card, SectionHeadline } from "../../components";
+import { convertToReadableDate } from "../../utils/helpers/dateHelper";
 
 const Dashboard: FC = () => {
   const location = useLocation();
@@ -43,6 +44,12 @@ const Dashboard: FC = () => {
                 <li className="dashboard__item">
                   Your contact number:{" "}
                   <strong>{user?.phoneNumber ?? "Unknown"}</strong>
+                </li>
+                <li className="dashboard__item">
+                  You've been with us since{" "}
+                  <strong>
+                    {convertToReadableDate(user?.registeredAt ?? "")}
+                  </strong>
                 </li>
                 {user?.address && (
                   <>

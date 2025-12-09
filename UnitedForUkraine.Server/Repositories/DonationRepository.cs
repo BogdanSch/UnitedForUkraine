@@ -270,4 +270,16 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
 
         return await donations.MaxAsync(d => d.PaymentDate);
     }
+    public async Task<int> GetDonationsCountByCampaingIdAsync(int campaignId) => await _context.Donations.Where(d => d.CampaignId == campaignId).CountAsync();
+    public async Task<decimal> GetReapeatDonorsRate(int campaignId)
+    {
+        Campaign? campaign = await _context.Campaigns.FirstOrDefaultAsync(c => c.Id == campaignId);
+        if (campaign is null || campaign.DonorsCount == 0) return 0;
+        int repeatDonorsCount = await _context.Donations
+            .Where(d => d.CampaignId == campaignId)
+            .GroupBy(d => d.UserId)
+            .Where(g => g.Count() > 1)
+            .CountAsync();
+        return Math.Round((decimal)repeatDonorsCount * 100m / campaign.DonorsCount, 2);
+    }
 }

@@ -169,6 +169,12 @@ export type UserStatistics = {
   lastDonationDate: string;
 };
 
+export type CampaignStatistics = {
+  newsUpdatesCount: number;
+  donationsCount: number;
+  repeatDonorRate: number;
+};
+
 export type TimelineItem = {
   date: string;
   description: string;

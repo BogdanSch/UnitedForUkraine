@@ -65,5 +65,9 @@ namespace UnitedForUkraine.Server.Repositories
             int saved = await _context.SaveChangesAsync();
             return saved > 0;
         }
+        public async Task<int> GetNewsUpdatesCountByCampaignIdAsync(int campaignId)
+        {
+            return await _context.NewsUpdates.Where(n => n.CampaignId == campaignId).CountAsync();
+        }
     }
 }

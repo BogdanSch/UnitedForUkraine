@@ -1,5 +1,6 @@
 export { default as CampaignsList } from "./campaigns/CampaignsList";
 export { default as CampaignsTable } from "./campaigns/CampaignsTable";
+export { default as CampaignStatisticsList } from "./campaigns/CampaignStatisticsList";
 
 export { default as SignOutForm } from "./forms/auth/SignOutForm";
 export { default as SignInForm } from "./forms/auth/SignInForm";

@@ -27,6 +27,8 @@ public interface IDonationRepository
     Task<DateTime?> GetFirstDonationDateAsync(string? userId);
     Task<DateTime?> GetLastDonationDateAsync(string? userId);
     Task<bool> DonationExistsForUserAsync(int campaignId, string userId);
+    Task<int> GetDonationsCountByCampaingIdAsync(int campaignId);
+    Task<decimal> GetReapeatDonorsRate(int campaignId);
     Task AddAsync(Donation donation);
     Task<bool> DeleteAsync(int id);
     Task<bool> UpdateAsync(Donation donation);

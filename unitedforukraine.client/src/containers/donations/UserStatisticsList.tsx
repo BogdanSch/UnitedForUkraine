@@ -8,7 +8,7 @@ import { formatMoney } from "../../utils/helpers/currencyHelper";
 import { convertToReadableDate } from "../../utils/helpers/dateHelper";
 import { Card } from "../../components";
 
-const DEFAULT_STATISTICS: UserStatistics = {
+const getDefaultData = (): UserStatistics => ({
   donationsCount: 0,
   totalDonationsAmount: 0,
   averageDonationsAmount: 0,
@@ -17,13 +17,14 @@ const DEFAULT_STATISTICS: UserStatistics = {
   supportedCampaignsCount: 0,
   firstDonationDate: "",
   lastDonationDate: "",
-};
+});
 
 const UserStatisticsList: FC = () => {
   const { user } = useContext(AuthContext);
 
-  const [statistics, setStatistics] =
-    useState<UserStatistics>(DEFAULT_STATISTICS);
+  const [statistics, setStatistics] = useState<UserStatistics>(
+    getDefaultData()
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +33,7 @@ const UserStatisticsList: FC = () => {
           `${API_URL}/donations/statistics/${user?.id}`
         );
         console.log("User statistics data: " + data);
-        setStatistics(data || DEFAULT_STATISTICS);
+        setStatistics(data || getDefaultData());
       } catch (error) {
         console.error(error);
       }

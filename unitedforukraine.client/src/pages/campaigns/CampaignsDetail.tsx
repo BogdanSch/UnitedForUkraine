@@ -9,7 +9,11 @@ import {
   ShareButton,
   Timeline,
 } from "../../components";
-import { DeleteCampaignForm, DonationsList } from "../../containers/";
+import {
+  CampaignStatisticsList,
+  DeleteCampaignForm,
+  DonationsList,
+} from "../../containers/";
 import AuthContext from "../../contexts/AuthContext";
 import {
   convertCampaignCategoryToString,
@@ -45,6 +49,7 @@ const CampaignsDetail: FC = () => {
     <section className="campaigns-detail">
       <div className="container">
         {message && <Alert className="mb-3" message={message} />}
+        <CampaignStatisticsList id={Number(id)} />
         <article className="campaigns-detail__header">
           {isAuthenticated() && isAdmin() && (
             <ul className="campaigns-detail__buttons-list">

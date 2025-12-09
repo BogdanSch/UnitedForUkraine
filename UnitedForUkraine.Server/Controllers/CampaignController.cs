@@ -13,15 +13,16 @@ namespace UnitedForUkraine.Server.Controllers;
 
 [ApiController]
 [Route("api/campaigns")]
-public class CampaignController(ICampaignRepository campaignRepository) : ControllerBase
+public class CampaignController(ICampaignRepository campaignRepository, INewsUpdateRepository newsUpdateRepository, IDonationRepository donationRepository) : ControllerBase
 {
     private readonly ICampaignRepository _campaignRepository = campaignRepository;
-    private const int NUMBER_OF_ITEMS_PER_PAGE = 6;
+    private readonly INewsUpdateRepository _newsUpdateRepository = newsUpdateRepository;
+    private readonly IDonationRepository _donationRepository = donationRepository;
 
     [HttpGet]
     public async Task<IActionResult> GetPaginatedCampaignsData([FromQuery] QueryObject queryObject)
     {
-        var paginatedCampaigns = await _campaignRepository.GetPaginatedCampaigns(queryObject, NUMBER_OF_ITEMS_PER_PAGE);
+        var paginatedCampaigns = await _campaignRepository.GetPaginatedCampaigns(queryObject, PaginatedListConstants.NUMBER_OF_ITEMS_PER_PAGE);
         List<CampaignDto> campainsList = [.. paginatedCampaigns.Select(c => c.ToCampaignDto())];
 
         return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
@@ -37,6 +38,19 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
         CampaignDto campaignDto = targetCampaign.ToCampaignDto();
 
         return Ok(campaignDto);
+    }
+    [HttpGet("{id:int}/statistics")]
+    public async Task<IActionResult> GetUserSupportedCampaigns([FromRoute] int id)
+    {
+        Campaign? targetCampaign = await _campaignRepository.GetByIdAsync(id);
+        if (targetCampaign == null)
+            return NotFound();
+        return Ok(new CampaignStatistics() 
+            { 
+                DonationsCount = await _donationRepository.GetDonationsCountByCampaingIdAsync(id),
+                RepeatDonorRate = await _donationRepository.GetReapeatDonorsRate(id),
+                NewsUpdatesCount = await _newsUpdateRepository.GetNewsUpdatesCountByCampaignIdAsync(id)
+            });
     }
     [HttpGet("users/{userId:guid}/supports")]
     [Authorize]
@@ -55,12 +69,10 @@ public class CampaignController(ICampaignRepository campaignRepository) : Contro
     public async Task<IActionResult> CreateCampaign([FromBody] CreateCampaignRequestDto createdCampaignDto)
     {
         if(!ModelState.IsValid) return BadRequest(ModelState);
-
         try
         {
             Campaign newCampaign = createdCampaignDto.FromCreateCampaignDtoToCampaign();
             await _campaignRepository.AddAsync(newCampaign);
-
             return CreatedAtAction(nameof(GetCampaignDataById), new { id = newCampaign.Id }, newCampaign.ToCampaignDto());
         }
         catch (Exception)

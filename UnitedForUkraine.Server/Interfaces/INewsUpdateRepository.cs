@@ -11,5 +11,6 @@ public interface INewsUpdateRepository
     Task<bool> DeleteByIdAsync(int id);
     Task<bool> UpdateAsync(NewsUpdate newsUpdate);
     Task<bool> SaveAsync();
+    Task<int> GetNewsUpdatesCountByCampaignIdAsync(int campaignId);
 }
 
