@@ -26,5 +26,6 @@ namespace UnitedForUkraine.Server.Models
         public string ImageUrl { get; set; } = "https://placehold.co/600x400/EEE/31343C";
         public int DonorsCount { get; set; } = 0;
         public ICollection<Donation> Donations { get; set; } = [];
+        public ICollection<NewsUpdate> NewsUpdates { get; set; } = [];
     }
 }

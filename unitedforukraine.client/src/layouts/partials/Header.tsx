@@ -168,6 +168,11 @@ const Header: FC = () => {
                     Donations list
                   </Link>
                 </li>
+                <li>
+                  <Link className="dropdown-item" to={`/dashboard/report`}>
+                    Reports
+                  </Link>
+                </li>
                 <hr className="dropdown-divider" />
                 <li>
                   <SignOutForm />

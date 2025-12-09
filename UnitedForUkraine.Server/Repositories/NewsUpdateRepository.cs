@@ -16,9 +16,12 @@ namespace UnitedForUkraine.Server.Repositories
             if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
             {
                 string query = queryObject.SearchedQuery;
-                newsUpdates = newsUpdates.Where(n => n.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                    n.Content.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                    n.KeyWords.Contains(query, StringComparison.OrdinalIgnoreCase));
+                string pattern = $"%{query}%";
+                newsUpdates = newsUpdates.Where(n =>
+                    EF.Functions.Like(n.Title, pattern) ||
+                    EF.Functions.Like(n.Content, pattern) ||
+                    EF.Functions.Like(n.KeyWords, pattern)
+                );
             }
             if(!string.IsNullOrWhiteSpace(queryObject.SortOrder))
             {
@@ -65,9 +68,26 @@ namespace UnitedForUkraine.Server.Repositories
             int saved = await _context.SaveChangesAsync();
             return saved > 0;
         }
+        private IQueryable<NewsUpdate> GetNewsUpdatesQuery(int? campaignId = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            IQueryable<NewsUpdate> newsUpdates = _context.NewsUpdates.AsQueryable();
+            if(campaignId is not null)
+            {
+                newsUpdates = newsUpdates.Where(n => n.CampaignId == campaignId);
+            }
+            if(startDate is not null && endDate is not null)
+            {
+                newsUpdates = newsUpdates.Where(n => n.PostedAt >= startDate && n.PostedAt <= endDate);
+            }
+            return newsUpdates;
+        }
         public async Task<int> GetNewsUpdatesCountByCampaignIdAsync(int campaignId)
         {
-            return await _context.NewsUpdates.Where(n => n.CampaignId == campaignId).CountAsync();
+            return await GetNewsUpdatesQuery(campaignId).CountAsync();
+        }
+        public async Task<int> GetNewsUpdatesCount(DateTime? start = null, DateTime? end = null)
+        {
+            return await GetNewsUpdatesQuery(startDate: start, endDate: end).CountAsync();
         }
     }
 }

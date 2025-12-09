@@ -103,7 +103,7 @@ const CreateCampaignForm: FC = () => {
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="title" className="form-label">
-          Campaign Title
+          Campaign Title*
         </label>
         <Input
           type="text"

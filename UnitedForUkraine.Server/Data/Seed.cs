@@ -24,7 +24,7 @@ public class Seed
                     Title = "Rebuild Kharkiv Schools",
                     Slogan = "Help restore hope for children",
                     Description = "We are raising funds to rebuild and equip damaged schools in Kharkiv after the recent attacks.",
-                    GoalAmount = 50000.00m,
+                    GoalAmount = 70000.00m,
                     RaisedAmount = 0m,
                     Currency = CurrencyType.UAH,
                     Status = CampaignStatus.Ongoing, 
@@ -39,7 +39,7 @@ public class Seed
                     Title = "Medical Aid for Frontline Civilians",
                     Slogan = "Every life matters",
                     Description = "Funds collected will be used to provide first aid kits and medicines to civilians in frontline regions.",
-                    GoalAmount = 30000.00m,
+                    GoalAmount = 20000.00m,
                     RaisedAmount = 0m,
                     Currency = CurrencyType.USD,
                     Status = CampaignStatus.Ongoing,
@@ -84,7 +84,7 @@ public class Seed
                     Title = "Support Ukrainian Tech Students",
                     Slogan = "Build the future through education",
                     Description = "This campaign provides laptops, internet access, and scholarships to talented tech students affected by the war.",
-                    GoalAmount = 25000.00m,
+                    GoalAmount = 15000.00m,
                     RaisedAmount = 0.00m,
                     Currency = CurrencyType.EUR,
                     Status = CampaignStatus.Ongoing,
@@ -102,7 +102,6 @@ public class Seed
 
         AppUser? firstUser = await context.Users.FirstOrDefaultAsync();
         List<Campaign> campaigns = await context.Campaigns.AsNoTracking().ToListAsync();
-
         if (!context.NewsUpdates.Any() && firstUser is not null && campaigns.Count != 0)
         {
             var campaignMap = campaigns.ToDictionary(c => c.Title, c => c.Id);
@@ -127,7 +126,7 @@ public class Seed
                     Title = "Health for the Regions: New Ultrasound Machine Ordered",
                     KeyWords = "Hospitals, Equipment, Ultrasound, Restoration, Medicine",
                     Content = "Thanks to the successful completion of the first fundraising stage, we were able to order a modern ultrasound machine for the central district hospital in a liberated city. Delivery is expected next month.",
-                    ImageUrl = "https://res.cloudinary.com/danl4sj0w/image/upload/v1763577005/gbl0ooam3wfiuxxani7s.jpg",
+                    ImageUrl = DEFAULT_IMAGE_URL,
                     ReadingTimeInMinutes = 3,
                     PostedAt = new DateTime(2025, 12, 4, 6, 53, 22, 913, DateTimeKind.Utc),
                     AuthorId = authorId,
@@ -139,7 +138,7 @@ public class Seed
                     Title = "IT Future: Scholarships Awarded to First 20 Students",
                     KeyWords = "Education, Students, Technology, Scholarships, Support",
                     Content = "Our goal is to support talented youth. The first 20 IT students affected by the war have received not only scholarships but also new laptops to continue their studies.",
-                    ImageUrl = "https://res.cloudinary.com/danl4sj0w/image/upload/v1763577160/bk73obivoupbxychlvsi.jpg",
+                    ImageUrl = DEFAULT_IMAGE_URL,
                     ReadingTimeInMinutes = 4,
                     PostedAt = new DateTime(2025, 11, 29, 18, 53, 22, 913, DateTimeKind.Utc),
                     AuthorId = authorId,
@@ -192,7 +191,7 @@ public class Seed
     {
         using var serviceScope = applicationBuilder.ApplicationServices.CreateScope();
         //Roles
-        var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        RoleManager<IdentityRole> roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
             await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
         if (!await roleManager.RoleExistsAsync(UserRoles.User))
@@ -200,7 +199,6 @@ public class Seed
 
         //Users
         UserManager<AppUser> userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-
         string adminUserEmail = "bogsvity777@gmail.com";
         AppUser? adminUser = await userManager.FindByEmailAsync(adminUserEmail);
         if (adminUser is null)
@@ -210,7 +208,7 @@ public class Seed
                 UserName = "bogsvity777",
                 Email = adminUserEmail,
                 EmailConfirmed = true,
-                PhoneNumber = "+380123456789",
+                PhoneNumber = "+380 123 456 789",
                 RegisteredAt = DateTime.UtcNow,
                 Address = new Address()
             };
@@ -226,7 +224,7 @@ public class Seed
                 UserName = "app-user",
                 Email = appUserEmail,
                 EmailConfirmed = true,
-                PhoneNumber = "+380123456789",
+                PhoneNumber = "+380 123 456 789",
                 RegisteredAt = DateTime.UtcNow,
                 Address = new Address(),
             };

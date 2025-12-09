@@ -14,12 +14,14 @@ namespace UnitedForUkraine.Server.Controllers
     public class StripeWebhooksController(
         IDonationRepository donationRepository,
         ICampaignRepository campaignRepository,
+        IReceiptRepository receiptRepository,
         ICurrencyConverterService currencyConverterService,
         IOptions<StripeSettings> stripeOptions,
         ILogger<StripeWebhooksController> logger) : ControllerBase
     {
         private readonly IDonationRepository _donationRepository = donationRepository;
         private readonly ICampaignRepository _campaignRepository = campaignRepository;
+        private readonly IReceiptRepository _receiptRepository = receiptRepository;
         private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
         private readonly StripeSettings _stripeSettings = stripeOptions.Value;
         private readonly ILogger<StripeWebhooksController> _logger = logger;
@@ -45,7 +47,6 @@ namespace UnitedForUkraine.Server.Controllers
                     Donation? donation = await _donationRepository.GetDonationByCheckoutSessionId(session.Id);
                     if (donation is not null)
                     {
-                        donation.Status = DonationStatus.Completed;
                         Campaign? campaign = await _campaignRepository.GetByIdAsync(donation.CampaignId);
                         if (campaign is not null)
                         {
@@ -59,8 +60,25 @@ namespace UnitedForUkraine.Server.Controllers
                             if(!(await _donationRepository.DonationExistsForUserAsync(campaign.Id, donation.UserId)))
                                 campaign.DonorsCount += 1;
                             await _campaignRepository.UpdateAsync(campaign);
+
+                            donation.Status = DonationStatus.Completed;
+                            await _donationRepository.UpdateAsync(donation);
+                            if (!(await _receiptRepository.ExistsForDonationAsync(donation.Id)))
+                            {
+                                Receipt newReceipt = new()
+                                {
+                                    ReceiptNumber = string.Empty,
+                                    Currency = donation.Currency,
+                                    PaymentMethod = donation.PaymentMethod,
+                                    IssuedAt = DateTime.UtcNow,
+                                    CampaignName = campaign.Title,
+                                    IssuerName = string.Empty,
+                                    IssuerEmail = string.Empty,
+                                    DonationId = donation.Id,
+                                };
+                                await _receiptRepository.AddAsync(newReceipt);
+                            }
                         }
-                        await _donationRepository.UpdateAsync(donation);
                     }
                     return Ok();
                 }

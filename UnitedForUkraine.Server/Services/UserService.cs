@@ -19,6 +19,19 @@ namespace UnitedForUkraine.Server.Services
             IOrderedQueryable<AppUser> users = _userManager.Users.Include(u => u.Address).AsNoTracking().OrderByDescending(u => u.RegisteredAt);
             return await PaginatedList<AppUser>.CreateAsync(users, queryObject.Page, itemsPerPageCount);
         }
+        private async Task<bool> CreateUserAddress(string userId)
+        {
+            await _context.Addresses.AddAsync(new Address
+            {
+                Country = string.Empty,
+                PostalCode = string.Empty,
+                Region = string.Empty,
+                City = string.Empty,
+                Street = string.Empty,
+                UserId = userId,
+            });
+            return (await _context.SaveChangesAsync()) > 0;
+        }
         public async Task<AppUser?> GetOrCreateUserAsync(string email, string userName, string? password)
         {
             AppUser? user = await _userManager.FindByEmailAsync(email);
@@ -30,7 +43,6 @@ namespace UnitedForUkraine.Server.Services
                 Email = email,
                 PhoneNumber = string.Empty,
                 RegisteredAt = DateTime.UtcNow,
-                Address = new Address()
             };
 
             IdentityResult result;
@@ -49,7 +61,7 @@ namespace UnitedForUkraine.Server.Services
                 _logger.LogError($"An error has occurred during registration: {errorMessage}");
                 return null;
             }
-
+            await CreateUserAddress(newUser.Id);
             await _userManager.AddToRoleAsync(newUser, UserRoles.User);
             return newUser;
         }
@@ -73,6 +85,15 @@ namespace UnitedForUkraine.Server.Services
                 return false;
             }
             return true;
+        }
+        public async Task<int> GetNumberOfRegisteredUsers(DateTime? start = null, DateTime? end = null)
+        {
+            IQueryable<AppUser> users = _context.Users.AsQueryable();
+            if(start is not null && end is not null)
+            {
+                users = users.Where(u => u.RegisteredAt >= start && u.RegisteredAt <= end);
+            }
+            return await users.CountAsync();
         }
     }
 }

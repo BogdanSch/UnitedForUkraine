@@ -28,6 +28,7 @@ import {
   DonationsIndex,
   NewsUpdateEdit,
   NewsUpdateDetail,
+  FoundationReport,
 } from "../pages";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 
@@ -159,6 +160,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute requireAdmin>
             <DonationsIndex />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "report",
+        element: (
+          <ProtectedRoute>
+            <FoundationReport />
           </ProtectedRoute>
         ),
       },

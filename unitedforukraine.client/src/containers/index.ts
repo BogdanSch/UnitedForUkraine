@@ -16,6 +16,7 @@ export { default as DeleteCampaignForm } from "./forms/campaigns/DeleteCampaignF
 
 export { default as DonateForm } from "./forms/donations/DonateForm";
 export { default as DeleteDonationForm } from "./forms/donations/DeleteDonationForm";
+export { default as FoundationReportForm } from "./forms/donations/FoundationReportForm";
 export { default as DonationsList } from "./donations/DonationsList";
 export { default as DonationsTable } from "./donations/DonationsTable";
 

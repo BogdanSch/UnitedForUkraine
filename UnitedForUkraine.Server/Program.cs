@@ -34,10 +34,12 @@ builder.Services.AddHttpClient<ICurrencyConverterService, CurrencyConverterServi
 builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<INewsUpdateRepository, NewsUpdateRepository>();
+builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IAuthTokenService, AuthTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddHostedService<CampaignBackgroundService>();
 

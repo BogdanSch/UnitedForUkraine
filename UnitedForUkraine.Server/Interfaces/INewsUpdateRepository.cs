@@ -12,5 +12,6 @@ public interface INewsUpdateRepository
     Task<bool> UpdateAsync(NewsUpdate newsUpdate);
     Task<bool> SaveAsync();
     Task<int> GetNewsUpdatesCountByCampaignIdAsync(int campaignId);
+    Task<int> GetNewsUpdatesCount(DateTime? start = null, DateTime? end = null);
 }
 

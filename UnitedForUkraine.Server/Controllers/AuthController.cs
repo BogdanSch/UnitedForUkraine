@@ -185,7 +185,6 @@ namespace UnitedForUkraine.Server.Controllers
 
             string emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
             string encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken));
-
             Dictionary<string, string?> parameters = new()
             {
                 { "email", newUser.Email },
@@ -198,7 +197,6 @@ namespace UnitedForUkraine.Server.Controllers
                 EmailMetadata emailMetadata = new(newUser.Email, "Confirm your email address");
                 await _emailService.SendEmailConfirmationAsync(emailMetadata, callback);
             }
-
             return Ok(new { message = "Successful registration! We've sent you a verification token via email! Now, please, confirm your email" });
         }
         [HttpGet("emailConfirmation")]

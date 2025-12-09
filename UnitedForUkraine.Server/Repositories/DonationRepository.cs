@@ -116,7 +116,7 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
     }
     public async Task<bool> DonationExistsForUserAsync(int campaignId, string userId)
     {
-        return await _context.Donations.AnyAsync(d => d.CampaignId == campaignId && d.UserId == userId);
+        return await _context.Donations.AnyAsync(d => d.CampaignId == campaignId && d.UserId == userId && d.Status == DonationStatus.Completed);
     }
     public async Task<string> GetCityWithMostDonationsAsync()
     {
@@ -144,69 +144,77 @@ public class DonationRepository(ApplicationDbContext context, ICurrencyConverter
 
         return popularCity;
     }
-    private IQueryable<Donation> GetDonationsQuery(string? userId)
+    private IQueryable<Donation> GetDonationsQuery(string? userId = null, DateTime? startDate = null, DateTime? endDate = null)
     {
         IQueryable<Donation> query = _context.Donations.AsQueryable();
         if (!string.IsNullOrWhiteSpace(userId))
         {
             query = query.Where(d => d.UserId == userId);
         }
+        if(startDate is not null && endDate is not null)
+        {
+            query = query.Where(d => d.PaymentDate >= startDate && d.PaymentDate <= endDate);
+        }
         return query;
     }
-    public async Task<int> GetTotalDonationsCountAsync(string? userId = null) => await GetDonationsQuery(userId).CountAsync();
-    public async Task<decimal> GetTotalDonationsAmountAsync(string? userId = null)
+    public async Task<int> GetTotalDonationsCountAsync(string? userId = null, DateTime? start = null, DateTime? end = null) => await GetDonationsQuery(userId, start, end).CountAsync();
+    public async Task<decimal> GetTotalDonationsAmountAsync(string? userId = null, DateTime? start = null, DateTime? end = null)
     {
-        IQueryable<Donation> donations = GetDonationsQuery(userId);
+        IQueryable<Donation> donations = GetDonationsQuery(userId, start, end);
 
         var temp = donations.Select(d => new { d.Amount, d.Currency }).ToList();
         var tasks = temp.Select(async d => await ConvertToUahAsync(d.Amount, d.Currency));
-
         decimal[] converted = await Task.WhenAll(tasks);
+
         return converted.Sum();
     }
-    public async Task<int> GetAverageDonationsAmountAsync(string? userId = null)
+    public async Task<int> GetAverageDonationsAmountAsync(string? userId = null, DateTime? start = null, DateTime? end = null)
     {
-        int totalDonationsCount = await GetTotalDonationsCountAsync(userId);
-        decimal totalDonationsAmount = await GetTotalDonationsAmountAsync(userId);
+        int totalDonationsCount = await GetTotalDonationsCountAsync(userId, start, end);
+        decimal totalDonationsAmount = await GetTotalDonationsAmountAsync(userId, start, end);
 
         if (totalDonationsCount == 0) return 0;
         return (int)Math.Round(totalDonationsAmount / totalDonationsCount);
     }
-    public async Task<(decimal, CurrencyType)> GetMostFrequentUserDonationAsync()
+    public async Task<(decimal, CurrencyType)> GetMostFrequentUserDonationAsync(DateTime? start = null, DateTime? end = null)
     {
-        var mode = await _context.Donations.GroupBy(d => new {d.Amount, d.Currency})
+        IQueryable<Donation> donations = GetDonationsQuery(startDate: start, endDate: end);
+        var mode = await donations.GroupBy(d => new {d.Amount, d.Currency})
             .OrderByDescending(g => g.Count())
             .Select(g => new { g.Key.Amount, g.Key.Currency })
             .FirstOrDefaultAsync();
         return mode is null ? (0, CurrencyType.UAH) : (mode.Amount, mode.Currency);
     }
-    public async Task<decimal> GetSmallestDonationAmountAsync(string? userId = null)
+    public async Task<decimal> GetSmallestDonationAmountAsync(string? userId = null, DateTime? start = null, DateTime? end = null)
     {
-        IQueryable<Donation> donations = GetDonationsQuery(userId);
+        IQueryable<Donation> donations = GetDonationsQuery(userId, start, end);
         Donation? smallestDonation = await donations.OrderBy(d => d.Amount).FirstOrDefaultAsync();
         
         if (smallestDonation is null)
             return decimal.Zero;
         return await ConvertToUahAsync(smallestDonation.Amount, smallestDonation.Currency);
     }
-    public async Task<decimal> GetBiggestDonationAmountAsync(string? userId = null)
+    public async Task<decimal> GetBiggestDonationAmountAsync(string? userId = null, DateTime? start = null, DateTime? end = null)
     {
-        IQueryable<Donation> donations = GetDonationsQuery(userId);
+        IQueryable<Donation> donations = GetDonationsQuery(userId, start, end);
         Donation? biggestDonation = await donations.OrderByDescending(d => d.Amount).FirstOrDefaultAsync();
 
-        if (biggestDonation is null) return decimal.Zero;
+        if (biggestDonation is null) 
+            return decimal.Zero;
         return await ConvertToUahAsync(biggestDonation.Amount, biggestDonation.Currency);
     }
-    public async Task<int> GetUniqueDonorsCountAsync()
+    public async Task<int> GetUniqueDonorsCountAsync(DateTime? start = null, DateTime? end = null)
     {
-        return await _context.Donations
+        IQueryable<Donation> donations = GetDonationsQuery(startDate: start, endDate: end);
+        return await donations
            .Select(d => d.UserId)
            .Distinct()
            .CountAsync();
     }
-    public async Task<(string donorName, int donationsCount)> GetMostFrequentDonorInformationAsync()
+    public async Task<(string donorName, int donationsCount)> GetMostFrequentDonorInformationAsync(DateTime? start = null, DateTime? end = null)
     {
-        var result = await _context.Donations.Include(d => d.User)
+        IQueryable<Donation> donations = GetDonationsQuery(startDate: start, endDate: end);
+        var result = await donations.Include(d => d.User)
             .Where(d => !string.IsNullOrWhiteSpace(d.User.UserName))
             .GroupBy(d => d.User.UserName )
             .OrderByDescending(g => g.Count())

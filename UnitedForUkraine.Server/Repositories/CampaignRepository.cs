@@ -20,9 +20,12 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
         {
             string query = queryObject.SearchedQuery;
-            campaigns = campaigns.Where(c => c.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                c.Description.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                c.Slogan.Contains(query, StringComparison.OrdinalIgnoreCase));
+            string pattern = $"%{query}%";
+            campaigns = campaigns.Where(c => 
+                    EF.Functions.Like(c.Title, pattern) ||
+                    EF.Functions.Like(c.Description, pattern) ||
+                    EF.Functions.Like(c.Slogan, pattern)
+                );
         }
         if (!string.IsNullOrWhiteSpace(queryObject.Categories))
         {
@@ -159,7 +162,13 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         int saved = await _context.SaveChangesAsync();
         return saved > 0;
     }
-    public async Task<int> GetTotalCampaignsCountAsync() => await _context.Campaigns.CountAsync();
+    public async Task<int> GetTotalCampaignsCountAsync(DateTime? start = null, DateTime? end = null)
+    {
+        IQueryable<Campaign> campaigns = _context.Campaigns.AsQueryable();
+        if (start is not null && end is not null) 
+            campaigns = campaigns.Where(c => c.StartDate >= start && c.EndDate <= end);
+        return await campaigns.CountAsync(); 
+    }
     private IQueryable<Campaign> GetAllUserSupportedCampaigns(string userId)
     {
         return _context.Donations.Where(d => d.UserId == userId)

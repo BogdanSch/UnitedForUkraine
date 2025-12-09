@@ -9,6 +9,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Address> Addresses => Set<Address>();
     public DbSet<Campaign> Campaigns => Set<Campaign>();
     public DbSet<Donation> Donations => Set<Donation>();
+    public DbSet<Receipt> Receipts => Set<Receipt>();
     public DbSet<NewsUpdate> NewsUpdates => Set<NewsUpdate>();
     public DbSet<CampaignLike> CampaignLikes => Set<CampaignLike>();
     protected override void OnModelCreating(ModelBuilder builder)
@@ -25,10 +26,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithMany(c => c.Donations)
             .HasForeignKey(d => d.CampaignId)
             .OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<Donation>()
+            .HasOne(d => d.Receipt)
+            .WithOne(r => r.Donation)
+            .HasForeignKey<Receipt>(r => r.DonationId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<NewsUpdate>()
             .HasOne(n => n.TargetCampaign)
-            .WithMany()
+            .WithMany(c => c.NewsUpdates)
             .HasForeignKey(n => n.CampaignId)
             .OnDelete(DeleteBehavior.Restrict);
 

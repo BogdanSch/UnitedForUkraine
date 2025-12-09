@@ -14,7 +14,7 @@ public interface ICampaignRepository
     Task<Campaign> DeleteAsync(int id);
     Task<bool> UpdateAsync(Campaign campaign);
     Task<bool> SaveAsync();
-    Task<int> GetTotalCampaignsCountAsync();
+    Task<int> GetTotalCampaignsCountAsync(DateTime? start = null, DateTime? end = null);
     Task<List<CampaignDto>> GetAllUserSupportedCampaignsAsync(string? userId);
     Task<int> GetAllUserSupportedCampaignsCount(string? userId);
 }
