@@ -102,22 +102,6 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
 
     if (callback) callback();
   };
-  // const handleSimpleSelectChange = (
-  //   e: ChangeEvent<HTMLSelectElement>,
-  //   callback?: () => void,
-  //   loadMoreCallback?: () => void
-  // ): void => {
-  //   if (!setFormData) return;
-  //   const { value } = e.target;
-
-  //   if (value === LOAD_MORE_SELECT_VALUE && loadMoreCallback) {
-  //     loadMoreCallback();
-  //     return;
-  //   }
-
-  //   setFormData(value);
-  //   if (callback) callback();
-  // };
   const handleImageChange = async (
     e: ChangeEvent<HTMLInputElement>,
     previousImageUrl: string,

@@ -177,7 +177,7 @@ const CreateCampaignForm: FC = () => {
           className="form-select"
           aria-label="Campaign status select"
           value={formData.status}
-          onChange={handleSelectChange}
+          onChange={(e) => handleSelectChange(e, true)}
         >
           {Object.keys(CampaignStatus)
             .filter((key) => !isNaN(Number(CampaignStatus[key as any])))
@@ -204,7 +204,7 @@ const CreateCampaignForm: FC = () => {
           className="form-select"
           aria-label="Campaign category select"
           value={formData.category}
-          onChange={handleSelectChange}
+          onChange={(e) => handleSelectChange(e, true)}
         >
           {Object.keys(CampaignCategory)
             .filter((key) => !isNaN(Number(CampaignCategory[key as any])))
@@ -228,7 +228,7 @@ const CreateCampaignForm: FC = () => {
           className="form-select"
           aria-label="Campaign currency select"
           value={formData.currency}
-          onChange={handleSelectChange}
+          onChange={(e) => handleSelectChange(e, true)}
         >
           {Object.keys(Currency)
             .filter((key) => !isNaN(Number(Currency[key as any])))

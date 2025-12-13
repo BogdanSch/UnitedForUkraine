@@ -206,7 +206,9 @@ const CreateNewsUpdateForm: FC = () => {
           className="form-select"
           aria-label="Select to what campaign this news update belongs"
           value={formData.campaignId}
-          onChange={(e) => handleSelectChange(e, loadMoreCompletedCampaigns)}
+          onChange={(e) =>
+            handleSelectChange(e, true, undefined, loadMoreCompletedCampaigns)
+          }
         >
           {paginatedCampaigns.campaigns.map((campaign) => {
             return (

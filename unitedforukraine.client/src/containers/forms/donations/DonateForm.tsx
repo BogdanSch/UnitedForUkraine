@@ -155,7 +155,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
           value={formData.amount}
           onChange={handleChange}
           min={1}
-          max={10e12}
+          max={10e18}
           isRequired={true}
         />
         <ul className="donate__list mt-3">
@@ -187,7 +187,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
           className="form-select"
           aria-label="Campaign currency select"
           value={formData.currency}
-          onChange={handleSelectChange}
+          onChange={(e) => handleSelectChange(e, true)}
         >
           {Object.keys(Currency)
             .filter((key) => !isNaN(Number(Currency[key as any])))
@@ -208,7 +208,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
           className="form-select"
           aria-label="Campaign payment method select"
           value={formData.paymentMethod}
-          onChange={handleSelectChange}
+          onChange={(e) => handleSelectChange(e, true)}
         >
           {Object.keys(PaymentMethod)
             .filter((key) => !isNaN(Number(PaymentMethod[key as any])))
