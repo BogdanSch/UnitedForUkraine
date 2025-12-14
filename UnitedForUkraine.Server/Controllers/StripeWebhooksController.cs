@@ -34,7 +34,7 @@ namespace UnitedForUkraine.Server.Controllers
             try
             {
                 string secret = _stripeSettings.WebhookSecret;
-                Event stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], secret); //Throws the error
+                Event stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], secret);
 
                 if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted)
                 {
@@ -93,7 +93,6 @@ namespace UnitedForUkraine.Server.Controllers
                     }
 
                     Donation? donation = await _donationRepository.GetDonationByCheckoutSessionId(session.Id);
-
                     if (donation is not null && donation.Status == DonationStatus.Pending)
                     {
                         await _donationRepository.DeleteAsync(donation.Id);

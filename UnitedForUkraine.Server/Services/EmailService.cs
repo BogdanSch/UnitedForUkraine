@@ -16,8 +16,12 @@ namespace UnitedForUkraine.Server.Services
         }
         public async Task SendEmailConfirmationAsync(EmailMetadata emailMetadata, string callback)
         {
-            string templatePath = $"{Directory.GetCurrentDirectory()}/EmailTemplates/EmailConfirmationMessage.cshtml";
-
+            string templatePath = Path.Combine(
+                AppContext.BaseDirectory,
+                "Templates",
+                "EmailTemplates",
+                "EmailConfirmationMessage.cshtml"
+            );
             await _fluentEmail.To(emailMetadata.ToAddress)
                 .Subject(emailMetadata.Subject)
                 .UsingTemplateFromFile(templatePath, callback)

@@ -13,12 +13,22 @@ public class ReportController(IReportService reportService) : ControllerBase
     public async Task<IActionResult> GetFoundationReport([FromQuery] DateTime start, [FromQuery] DateTime end)
     {
         ReportStats stats = await _reportService.GetStatisticsAsync(start, end);
-        byte[] excelFile = _reportService.GenerateExcelReport(stats);
+        byte[] excelFile = _reportService.GenerateExcelReport(stats, start, end);
 
         return File(
             excelFile,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             $"Report_{start:yyyyMMdd}_{end:yyyyMMdd}.xlsx");
     }
+    //[HttpGet]
+    //public async Task<IActionResult> GetTransactionReceipt([FromQuery] )
+    //{
+    //    ReportStats stats = await _reportService.GetStatisticsAsync(start, end);
+    //    byte[] excelFile = _reportService.GenerateExcelReport(stats);
 
+    //    return File(
+    //        excelFile,
+    //        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    //        $"Report_{start:yyyyMMdd}_{end:yyyyMMdd}.xlsx");
+    //}
 }

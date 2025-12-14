@@ -224,17 +224,20 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
       </div>
       <div className="mb-3">
         <label htmlFor="notes" className="form-label">
-          Type any wishes if you want to
+          Type any wishes {`(`}if you want to{`)`}
         </label>
         <textarea
           id="notes"
           name="notes"
-          className="form-select"
+          className="form-control"
           aria-label="User notes input"
           value={formData.notes}
           onChange={handleChange}
           rows={4}
         ></textarea>
+      </div>
+      <div id="passwordHelpBlock" className="form-text">
+        All fields marked with an asterisk (*) are required.
       </div>
       <div className="form-buttons">
         <button type="submit" className="btn btn-primary">

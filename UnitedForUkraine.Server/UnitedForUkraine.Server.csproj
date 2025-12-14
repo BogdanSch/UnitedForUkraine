@@ -49,7 +49,19 @@
   <ItemGroup>
     <Folder Include="DTOs\Reports\" />
   </ItemGroup>
+	
+  <ItemGroup>
+  	<Content Update="Templates\**\*">
+  		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  	</Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Templates\ExcelTemplates\FoundationStatisticsTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="properties" /></VisualStudio></ProjectExtensions>
+
+	<ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="properties" /></VisualStudio></ProjectExtensions>
 
 </Project>

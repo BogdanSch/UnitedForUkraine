@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Helpers;
+using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 
 namespace UnitedForUkraine.Server.Services
@@ -29,49 +30,34 @@ namespace UnitedForUkraine.Server.Services
                 MostFrequentDonorStats = await _donationRepository.GetMostFrequentDonorInformationAsync(start: startDate, end: endDate),
             };
         }
-        public byte[] GenerateExcelReport(ReportStats stats)
+        public byte[] GenerateExcelReport(ReportStats stats, DateTime startDate, DateTime endDate)
         {
-            using var wb = new XLWorkbook();
-            var ws = wb.AddWorksheet("Foundation Report");
+            string templatePath = Path.Combine(
+                AppContext.BaseDirectory,
+                "Templates",
+                "ExcelTemplates",
+                "FoundationStatisticsTemplate.xlsx"
+            );
+            using var wb = new XLWorkbook(templatePath);
+            var ws = wb.Worksheet(1);
 
-            ws.Cell("A1").Value = "Indicator";
-            ws.Cell("B1").Value = "Value";
+            ws.Cell("B1").Value = $"Foundation report on period from {startDate.ToString(DateSettings.DEFAULT_DATE_FORMAT)} to {endDate.ToString(DateSettings.DEFAULT_DATE_FORMAT)}";
 
-            ws.Cell("A2").Value = "Total donations number";
-            ws.Cell("B2").Value = stats.DonationsCount;
+            ws.Cell("C5").Value = stats.DonationsCount;
+            ws.Cell("C6").Value = stats.UsersCount;
+            ws.Cell("C7").Value = stats.UniqueDonors;
+            ws.Cell("C8").Value = stats.CampaignsCount;
+            ws.Cell("C9").Value = stats.NewsUpdatesCount;
+            ws.Cell("C10").Value = stats.TotalAmount;
+            ws.Cell("C11").Value = stats.MaxDonation;
+            ws.Cell("C12").Value = stats.AverageDonation;
+            ws.Cell("C13").Value = stats.MinDonation;
 
-            ws.Cell("A3").Value = "Number of registered users";
-            ws.Cell("B3").Value = stats.UsersCount;
+            ws.Cell("C14").Value = stats.ModeDonation.Item1;
+            ws.Cell("D14").Value = stats.ModeDonation.Item2.ToString();
 
-            ws.Cell("A4").Value = "Uniquer donors number";
-            ws.Cell("B4").Value = stats.UniqueDonors;
-
-            ws.Cell("A5").Value = "Campaigns number";
-            ws.Cell("B5").Value = stats.CampaignsCount;
-
-            ws.Cell("A6").Value = "News updates number";
-            ws.Cell("B6").Value = stats.NewsUpdatesCount;
-
-            ws.Cell("A7").Value = "Total donations amount";
-            ws.Cell("B7").Value = stats.TotalAmount;
-
-            ws.Cell("A8").Value = "Max donation amount";
-            ws.Cell("B8").Value = stats.MaxDonation;
-
-            ws.Cell("A9").Value = "Average donation amount";
-            ws.Cell("B9").Value = stats.AverageDonation;
-
-            ws.Cell("A10").Value = "Min donation amount";
-            ws.Cell("B10").Value = stats.MinDonation;
-
-            ws.Cell("A11").Value = "Mode (the most frequent amount)";
-            ws.Cell("B11").Value = stats.ModeDonation.Item1;
-            ws.Cell("C11").Value = stats.ModeDonation.Item2.ToString();
-
-            ws.Cell("A12").Value = "The best donor name";
-            ws.Cell("B12").Value = stats.MostFrequentDonorStats.Item1;
-            ws.Cell("A13").Value = "The best donor donations number";
-            ws.Cell("B13").Value = stats.MostFrequentDonorStats.Item2;
+            ws.Cell("C15").Value = stats.MostFrequentDonorStats.Item1;
+            ws.Cell("C16").Value = stats.MostFrequentDonorStats.Item2;
 
             using var stream = new MemoryStream();
             wb.SaveAs(stream);

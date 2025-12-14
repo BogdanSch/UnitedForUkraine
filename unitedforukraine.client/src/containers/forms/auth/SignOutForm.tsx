@@ -1,15 +1,13 @@
-// import axios from "axios";
 import { FC, FormEvent, useContext } from "react";
 import AuthContext from "../../../contexts/AuthContext";
-// import { API_URL } from "../../variables";
 
 const SignOutForm: FC = () => {
   const { isAuthenticated, logoutUser } = useContext(AuthContext);
 
   const handleLogout = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-
     if (!isAuthenticated()) return;
+
     try {
       logoutUser();
     } catch (error) {
