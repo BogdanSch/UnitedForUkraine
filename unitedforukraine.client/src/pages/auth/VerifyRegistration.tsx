@@ -23,7 +23,6 @@ const VerifyRegistration: FC = () => {
         const response = await axios.get(
           `${API_URL}/auth/emailConfirmation?token=${token}&email=${email}`,
           {
-            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },

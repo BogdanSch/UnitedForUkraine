@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
+using Scalar.AspNetCore;
+using Stripe;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Extensions;
 using UnitedForUkraine.Server.Helpers.Settings;
@@ -7,8 +10,6 @@ using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
 using UnitedForUkraine.Server.Repositories;
 using UnitedForUkraine.Server.Services;
-using Scalar.AspNetCore;
-using Stripe;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +53,7 @@ builder.Services.Configure<StripeSettings>(stripeSettings);
 builder.Services.Configure<FrontendSettings>(frontendSettings);
 
 StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
+QuestPDF.Settings.License = LicenseType.Community;
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
@@ -83,7 +85,8 @@ app.UseCors(cors => cors
                   .WithOrigins(frontendSettings["Origin"]!)
                   .AllowAnyHeader()
                   .AllowAnyMethod()
-                  .AllowCredentials());
+                  .AllowCredentials()
+                  .WithExposedHeaders("Content-Disposition"));
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

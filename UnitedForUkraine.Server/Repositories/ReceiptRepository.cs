@@ -11,6 +11,7 @@ public class ReceiptRepository(ApplicationDbContext context) : IReceiptRepositor
     public const string ISSUER_EMAIL = "ufu@host.com";
     private readonly ApplicationDbContext _context = context;
     public async Task<Receipt?> GetByIdAsync(int id) => await _context.Receipts.FirstOrDefaultAsync(n => n.Id == id);
+    public async Task<Receipt?> GetByDonationIdAsync(int donationId) => await _context.Receipts.FirstOrDefaultAsync(n => n.DonationId == donationId);
     public async Task AddAsync(Receipt receipt)
     {
         receipt.IssuerName = ISSUER_NAME;

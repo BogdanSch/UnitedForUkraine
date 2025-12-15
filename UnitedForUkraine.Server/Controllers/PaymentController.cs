@@ -22,13 +22,12 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly IDonationRepository _donationRepository = donationRepository;
         private readonly ICampaignRepository _campaignRepository = campaignRepository;
-
         private static List<string> GetStripePaymentMethod(CustomDonationMethod paymentMethod)
         {
             return paymentMethod switch
             {
                 CustomDonationMethod.CreditCard => ["card"],
-                //CustomDonationMethod.BankTransfer => ["bancontact"],
+                CustomDonationMethod.BankTransfer => ["customer_balance"],
                 _ => ["card"],
             };
         }
@@ -74,7 +73,7 @@ namespace UnitedForUkraine.Server.Controllers
                 ],
                 Mode = "payment",
                 ClientReferenceId = contributor.Id,
-                SuccessUrl = $"{requestOrigin}/donate/confirmation",
+                SuccessUrl = $"{requestOrigin}/donate/confirmation?donationId={currentDonation.Id}",
                 CancelUrl = $"{requestOrigin}/donate/failed",
                 CustomerEmail = contributor.Email,                
             };

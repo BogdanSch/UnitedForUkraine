@@ -1,8 +1,11 @@
 ﻿using ClosedXML.Excel;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
+using UnitedForUkraine.Server.Models;
 
 namespace UnitedForUkraine.Server.Services
 {
@@ -12,7 +15,6 @@ namespace UnitedForUkraine.Server.Services
         private readonly INewsUpdateRepository _newsUpdateRepository = newsUpdateRepository;
         private readonly ICampaignRepository _campaignRepository = campaignRepository;
         private readonly IUserService _userService = userService;
-
         public async Task<ReportStats> GetStatisticsAsync(DateTime startDate, DateTime endDate)
         {
             return new ReportStats
@@ -62,6 +64,40 @@ namespace UnitedForUkraine.Server.Services
             using var stream = new MemoryStream();
             wb.SaveAs(stream);
             return stream.ToArray();
+        }
+        public byte[] GeneratePdfDonationReceipt(Donation donation, Receipt receipt)
+        {
+            return Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(40);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(12));
+
+                    page.Content().Column(col =>
+                    {
+                        col.Item().Text("DONATION RECEIPT")
+                            .FontSize(20)
+                            .Bold();
+
+                        col.Item().Text($"Receipt № {receipt.ReceiptNumber}");
+                        col.Item().Text($"Issued at: {receipt.IssuedAt:yyyy-MM-dd}");
+
+                        col.Item().PaddingVertical(10);
+
+                        col.Item().Text($"Campaign: {receipt.CampaignName}");
+                        col.Item().Text($"Amount: {donation.Amount} {receipt.Currency}");
+                        col.Item().Text($"Payment: {receipt.PaymentMethod}");
+
+                        col.Item().PaddingVertical(20);
+
+                        col.Item().Text($"Issuer: {receipt.IssuerName}");
+                        col.Item().Text($"Email: {receipt.IssuerEmail}");
+                    });
+                });
+            }).GeneratePdf();
         }
     }
 }

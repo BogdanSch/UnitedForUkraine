@@ -6,5 +6,6 @@ namespace UnitedForUkraine.Server.Interfaces
     {
         Task SendAsync(EmailMetadata emailMetadata);
         Task SendEmailConfirmationAsync(EmailMetadata emailMetadata, string callback);
+        Task SendReceiptAsync(EmailMetadata emailMetadata, string recipientName);
     }
 }

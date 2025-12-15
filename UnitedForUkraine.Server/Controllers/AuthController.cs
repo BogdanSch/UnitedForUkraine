@@ -223,7 +223,6 @@ namespace UnitedForUkraine.Server.Controllers
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized(new { message = "Invalid user confirmation token" });
-
             AppUser? appUser = await _userService.GetByIdAsync(userId);
             if (appUser is null)
                 return Unauthorized(new { message = "User was not found" });

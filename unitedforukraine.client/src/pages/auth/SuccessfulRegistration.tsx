@@ -14,11 +14,14 @@ const SuccessfulRegistration: FC = () => {
             <h2 className="registration__title">Registration Successful</h2>
             <p className="registration__message">
               Thank you for registering! We need to verify your email address
-              before you can log in. We've sent a verification email to the
-              address you provided during registration.
+              before you can log in.
+            </p>
+            <p className="registration__message">
+              We've sent a verification email to the address you provided during
+              registration.
             </p>
             <Link className="btn btn-outline-sky" to={`/auth/login`}>
-              Go to Login Page
+              Go to the Login Page
             </Link>
           </div>
         </Card>

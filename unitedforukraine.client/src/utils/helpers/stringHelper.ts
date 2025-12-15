@@ -7,6 +7,8 @@ export const convertToPreviewText = (
   return text.length <= maxLength ? text : text.substring(0, maxLength) + "...";
 };
 
-export const isNullOrWhitespace = (text: string): boolean => {
+export const isNullOrWhitespace = (
+  text: string | null | undefined
+): boolean => {
   return !text || text.trim().length < 1;
 };
