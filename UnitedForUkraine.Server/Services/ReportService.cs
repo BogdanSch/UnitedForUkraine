@@ -22,7 +22,7 @@ namespace UnitedForUkraine.Server.Services
                 DonationsCount = await _donationRepository.GetTotalDonationsCountAsync(start: startDate, end: endDate),
                 UsersCount = await _userService.GetNumberOfRegisteredUsers(start: startDate, end: endDate),
                 UniqueDonors = await _donationRepository.GetUniqueDonorsCountAsync(start: startDate, end: endDate),
-                CampaignsCount = await _campaignRepository.GetTotalCampaignsCountAsync(start: startDate, end: endDate),
+                CampaignsCount = await _campaignRepository.GetTotalCreatedCampaignsCountAsync(start: startDate, end: endDate),
                 NewsUpdatesCount = await _newsUpdateRepository.GetNewsUpdatesCount(start: startDate, end: endDate),
                 TotalAmount = await _donationRepository.GetTotalDonationsAmountAsync(start: startDate, end: endDate),
                 MaxDonation = await _donationRepository.GetBiggestDonationAmountAsync(start: startDate, end: endDate),

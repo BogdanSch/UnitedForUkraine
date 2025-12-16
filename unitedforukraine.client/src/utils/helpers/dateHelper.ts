@@ -22,10 +22,6 @@ export const convertToReadableDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString("en-US", options);
 };
 
-export const toReadableDate = (date: Date): string => {
-  return date.toLocaleDateString("en-US", options);
-};
-
 export const convertToUTCDate = (dateString: string): string => {
   if (dateString.length === 0) {
     return UNDEFINED_DATE;

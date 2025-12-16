@@ -22,7 +22,9 @@ public class ReportController(IReportService reportService, IDonationRepository 
     [HttpGet]
     public async Task<IActionResult> GetFoundationReport([FromQuery] DateTime start, [FromQuery] DateTime end)
     {
-        ReportStats stats = await _reportService.GetStatisticsAsync(start, end);
+        DateTime boundaryEnd = end.AddDays(1);
+
+        ReportStats stats = await _reportService.GetStatisticsAsync(start, boundaryEnd);
         byte[] excelFile = _reportService.GenerateExcelReport(stats, start, end);
 
         return File(

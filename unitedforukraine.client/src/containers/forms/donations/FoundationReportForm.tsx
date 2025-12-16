@@ -13,7 +13,6 @@ const getDefaultData = (): DateRange => ({
 
 const FoundationReportForm: FC = () => {
   const [formData, setFormData] = useState<DateRange>(getDefaultData());
-  //   const [errors, setErrors] = useState<Record<string, string>>({});
   const [requestError, setRequestError] = useState<string>("");
   const { handleDateChange } = useCustomForm(setFormData);
 
@@ -27,8 +26,16 @@ const FoundationReportForm: FC = () => {
       const contentDisposition = response.headers["content-disposition"];
       let filename = "report.xlsx";
       if (contentDisposition) {
-        const match = contentDisposition.match(/filename="?(.+)"?/);
-        if (match && match[1]) filename = match[1];
+        const rfc5987Match = contentDisposition.match(
+          /filename\*=UTF-8''([^;]+)/
+        );
+        if (rfc5987Match && rfc5987Match[1]) {
+          filename = decodeURIComponent(rfc5987Match[1]);
+        } else {
+          const fallbackMatch =
+            contentDisposition.match(/filename="?([^"]+)"?/);
+          if (fallbackMatch && fallbackMatch[1]) filename = fallbackMatch[1];
+        }
       }
 
       const blob = new Blob([response.data], {
@@ -49,6 +56,7 @@ const FoundationReportForm: FC = () => {
   };
   const handleReset = (): void => {
     setFormData(getDefaultData());
+    setRequestError("");
   };
   return (
     <Card className="report__card" isLite={false}>
