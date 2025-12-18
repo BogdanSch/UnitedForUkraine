@@ -168,6 +168,12 @@ section {
   }
 }
 
+.mark {
+  &--match {
+    padding: 0;
+  }
+}
+
 .card {
   border: none;
   border-radius: 10px;

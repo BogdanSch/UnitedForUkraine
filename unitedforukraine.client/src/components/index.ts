@@ -21,3 +21,4 @@ export { default as OrSeparator } from "./formElements/OrSeparator";
 export { default as SearchBar } from "./formElements/SearchBar";
 export { default as ThemeSwitchButton } from "./buttons/ThemeSwitchButton";
 export { default as DeleteButton } from "./buttons/DeleteButton";
+export { default as MatchHighlight } from "./highlights/MatchHighlight";

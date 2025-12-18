@@ -26,7 +26,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
         aria-valuemin={0}
         aria-valuemax={requiredAmount}
       >
-        {percentage.toFixed(0)}%
+        {percentage > 8 ? `${percentage.toFixed(0)}%` : ""}
       </div>
     </div>
   );

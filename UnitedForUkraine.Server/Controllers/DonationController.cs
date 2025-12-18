@@ -7,15 +7,17 @@ using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
+using UnitedForUkraine.Server.Services;
 
 namespace UnitedForUkraine.Server.Controllers;
 
 [ApiController]
 [Route("api/donations")]
-public class DonationController(IDonationRepository donationRepository, ICampaignRepository campaignRepository) : ControllerBase
+public class DonationController(IDonationRepository donationRepository, ICampaignRepository campaignRepository, ICurrencyConverterService currencyConverterService) : ControllerBase
 {
     private readonly IDonationRepository _donationRepository = donationRepository;
     private readonly ICampaignRepository _campaignRepository = campaignRepository;
+    private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
     private const int NUMBER_OF_DONATIONS_PER_PAGE = 8;
     [HttpGet]
     public async Task<IActionResult> GetPaginatedDontaionsData([FromQuery] QueryObject queryObject)
@@ -71,6 +73,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
         try
         {
             Donation newDonation = createdDonationDto.FromCreateDonationDtoToDonation();
+            newDonation.AmountInUah = await _currencyConverterService.ConvertToUahAsync(newDonation.Amount, newDonation.Currency);
             await _donationRepository.AddAsync(newDonation);
             return Ok(new { id = newDonation.Id });
         }

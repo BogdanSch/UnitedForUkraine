@@ -32,8 +32,8 @@ const CampaignsList: FC<CampaignsListProps> = ({
   const [pageIndex, setPageIndex] = useState<number>(1);
 
   const [category, setCategory] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
   const [currency, setCurrency] = useState<string>("");
+  const [status, setStatus] = useState<string>("1");
 
   const { user } = useContext(AuthContext);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -69,6 +69,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
         const { data } = await axiosInstance.get<PaginatedCampaignsDto>(
           requestUrl
         );
+
         setPaginatedCampaigns(data);
       } catch (error) {
         console.log(`Error fetching campaigns: ${error}`);
@@ -105,9 +106,8 @@ const CampaignsList: FC<CampaignsListProps> = ({
               >
                 <option data-value="date_dsc">Most Recent</option>
                 <option data-value="title_asc">Title</option>
-                <option data-value="mostFunded_dsc">Most Funded</option>
                 <option data-value="nearGoal_dsc">Near Goal</option>
-                <option data-value="nearEnd_dsc">Near End</option>
+                <option data-value="nearEnd_asc">Near End</option>
               </select>
               <select
                 name="category"
@@ -181,7 +181,11 @@ const CampaignsList: FC<CampaignsListProps> = ({
       {paginatedCampaigns.campaigns.length > 0 ? (
         <ul className="campaigns__list mt-5">
           {paginatedCampaigns.campaigns.map((campaign: CampaignDto) => (
-            <CampaignItem key={campaign.id} campaign={campaign} />
+            <CampaignItem
+              key={campaign.id}
+              campaign={campaign}
+              searchQuery={searchQuery}
+            />
           ))}
         </ul>
       ) : (

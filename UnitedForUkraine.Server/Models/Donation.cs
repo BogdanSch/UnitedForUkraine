@@ -11,6 +11,8 @@ public class Donation
     public int Id { get; set; }
     [Precision(18, 2)]
     public required decimal Amount { get; set; }
+    [Precision(18, 2)]
+    public decimal? AmountInUah { get; set; }
     public CurrencyType Currency { get; set; }
     public required DateTime PaymentDate { get; set; }
     public PaymentMethod PaymentMethod { get; set; }

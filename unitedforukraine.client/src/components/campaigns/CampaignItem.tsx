@@ -1,7 +1,13 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import { CampaignDto } from "../../types";
-import { CampaignActionButton, Card, ProgressBar, ShareButton } from "..";
+import {
+  CampaignActionButton,
+  Card,
+  ProgressBar,
+  ShareButton,
+  MatchHighlight,
+} from "..";
 import {
   convertCampaignCategoryToString,
   convertCampaignStatusToString,
@@ -14,9 +20,10 @@ import formatNumber from "../../utils/helpers/formatNumber";
 
 interface ICampaignItemProps {
   campaign: CampaignDto;
+  searchQuery: string;
 }
 
-const CampaignItem: FC<ICampaignItemProps> = ({ campaign }) => {
+const CampaignItem: FC<ICampaignItemProps> = ({ campaign, searchQuery }) => {
   return (
     <li className="campaigns__item" key={`campaign-${campaign.id}`}>
       <Card
@@ -29,8 +36,12 @@ const CampaignItem: FC<ICampaignItemProps> = ({ campaign }) => {
           to={`/campaigns/detail/${campaign.id}/`}
           className="campaigns__item-link"
         >
-          <h3 className="card-title mb-0">{campaign.title}</h3>
-          <p className="card-text text-muted mb-1">{campaign.slogan}</p>
+          <h3 className="card-title mb-0">
+            <MatchHighlight text={campaign.title} query={searchQuery} />
+          </h3>
+          <p className="card-text text-muted mb-1">
+            <MatchHighlight text={campaign.slogan} query={searchQuery} />
+          </p>
           <ul className="card-category">
             <li className="card-category__item">
               {convertCampaignCategoryToString(campaign.category)}
@@ -39,7 +50,9 @@ const CampaignItem: FC<ICampaignItemProps> = ({ campaign }) => {
               {formatNumber(campaign.donorsCount)} donors
             </li>
           </ul>
-          <p className="card-text text-muted">{campaign.description}</p>
+          <p className="card-text text-muted">
+            <MatchHighlight text={campaign.description} query={searchQuery} />
+          </p>
           <p className="card-text text-muted">
             <strong>Goal:</strong> {formatMoney(campaign.goalAmount)}{" "}
             {convertCurrencyToString(campaign.currency)}

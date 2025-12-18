@@ -2,11 +2,11 @@ import axios from "axios";
 import { Link, useSearchParams } from "react-router-dom";
 import { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
-import { Card, Paginator, SearchBar } from "../../components";
+import { Card, MatchHighlight, Paginator, SearchBar } from "../../components";
 import { PaginatedNewsUpdatesDto } from "../../types";
 import { API_URL } from "../../variables";
 import { convertToReadableDate } from "../../utils/helpers/dateHelper";
-import { convertToPreviewText } from "../../utils/helpers/stringHelper";
+// import { convertToPreviewText } from "../../utils/helpers/stringHelper";
 
 interface INewsUpdatesListProps {
   className?: string;
@@ -109,9 +109,17 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                     to={`/newsUpdates/detail/${newsUpdate.id}/`}
                     className="news__item-link"
                   >
-                    <h3 className="card-title">{newsUpdate.title}</h3>
+                    <h3 className="card-title">
+                      <MatchHighlight
+                        text={newsUpdate.title}
+                        query={searchQuery}
+                      />
+                    </h3>
                     <p className="card-text text-muted">
-                      {convertToPreviewText(newsUpdate.content)}
+                      <MatchHighlight
+                        text={newsUpdate.content}
+                        query={searchQuery}
+                      />
                     </p>
                     <p className="card-text text-muted">
                       <strong>Reading Time:</strong>{" "}

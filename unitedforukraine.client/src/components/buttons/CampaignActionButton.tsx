@@ -28,6 +28,13 @@ const CampaignActionButton: FC<CampaignActionButtonProps> = ({
         <i className="bi bi-check-all"></i>
       </div>
     </Link>
+  ) : campaignStatus === CampaignStatus.Cancelled ? (
+    <Link className="btn btn-danger" to={`/campaigns/detail/${campaignId}/`}>
+      <div className="d-flex flex-row align-items-center gap-2">
+        <span>Cancelled</span>
+        <i className="bi bi-x-lg"></i>
+      </div>
+    </Link>
   ) : (
     <Link className="btn btn-info" to={`/campaigns/detail/${campaignId}/`}>
       <span>Coming soon...</span>

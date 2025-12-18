@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Net;
+using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Interfaces;
 
 namespace UnitedForUkraine.Server.Services
@@ -49,6 +50,16 @@ namespace UnitedForUkraine.Server.Services
             decimal rate = await GetCurrencyRate(fromCurrency, toCurrency);
             decimal convertedAmount = amount * rate;
             return convertedAmount;
+        }
+        public async Task<decimal> ConvertToUahAsync(decimal amount, CurrencyType currency)
+        {
+            if (currency == CurrencyType.UAH)
+                return amount;
+
+            string from = Enum.GetName(currency)!;
+            string to = Enum.GetName(CurrencyType.UAH)!;
+
+            return await ConvertCurrency(amount, from, to);
         }
     }
 }

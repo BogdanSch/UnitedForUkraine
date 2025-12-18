@@ -72,9 +72,9 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
             {
                 "title_asc" => campaigns.OrderBy(c => c.Title),
                 "date_dsc" => campaigns.OrderByDescending(c => c.StartDate),
-                "mostFunded_dsc" => campaigns.OrderByDescending(c => c.RaisedAmount),
+                //"mostFunded_dsc" => campaigns.OrderByDescending(c => c.RaisedAmount),
                 "nearGoal_dsc" => campaigns.OrderByDescending(c => c.GoalAmount <= 0m ? 0m : c.RaisedAmount / c.GoalAmount),
-                "nearEnd_dsc" => campaigns.OrderByDescending(c => c.EndDate),
+                "nearEnd_asc" => campaigns.OrderBy(c => c.EndDate),
                 _ => campaigns.OrderByDescending(c => c.StartDate),
             };
         }
