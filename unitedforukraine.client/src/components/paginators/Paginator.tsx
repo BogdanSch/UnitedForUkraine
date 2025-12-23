@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 type PaginatorProps = {
   linkPath: string;
+  linkHash?: string;
   currentPageIndex: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
@@ -10,6 +11,7 @@ type PaginatorProps = {
 
 const Paginator: FC<PaginatorProps> = ({
   linkPath,
+  linkHash,
   currentPageIndex,
   hasNextPage,
   hasPreviousPage,
@@ -23,6 +25,7 @@ const Paginator: FC<PaginatorProps> = ({
             to={{
               pathname: linkPath,
               search: `?page=${currentPageIndex - 1}`,
+              hash: linkHash ?? "",
             }}
           >
             Previous
@@ -34,6 +37,7 @@ const Paginator: FC<PaginatorProps> = ({
             to={{
               pathname: linkPath,
               search: `?page=${currentPageIndex + 1}`,
+              hash: linkHash ?? "",
             }}
           >
             Next

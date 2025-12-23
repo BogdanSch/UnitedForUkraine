@@ -3,7 +3,7 @@
 namespace UnitedForUkraine.Server.Helpers;
 public class PaginatedListConstants
 {
-    public const int NUMBER_OF_ITEMS_PER_PAGE = 6;
+    public const int PAGE_SIZE = 6;
 }
 public class PaginatedList<T> : List<T>
 {
@@ -14,7 +14,6 @@ public class PaginatedList<T> : List<T>
     {
         PageIndex = pageIndex;
         TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-
         AddRange(items);
     }
 
@@ -22,7 +21,7 @@ public class PaginatedList<T> : List<T>
 
     public bool HasNextPage => PageIndex < TotalPages;
 
-    public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize = PaginatedListConstants.NUMBER_OF_ITEMS_PER_PAGE)
+    public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
     {
         var count = await source.CountAsync();
         var items = await source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();

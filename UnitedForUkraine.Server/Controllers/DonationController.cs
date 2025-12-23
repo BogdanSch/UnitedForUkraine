@@ -7,7 +7,6 @@ using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.Services;
 
 namespace UnitedForUkraine.Server.Controllers;
 

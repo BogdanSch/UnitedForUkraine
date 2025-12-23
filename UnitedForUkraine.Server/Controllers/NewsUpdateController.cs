@@ -18,7 +18,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
     [HttpGet]
     public async Task<IActionResult> GetPaginatedNewsUpdates([FromQuery] QueryObject queryObject)
     {
-        PaginatedList<NewsUpdate> paginatedNews = await _newsUpdateRepository.GetPaginatedAsync(queryObject, PaginatedListConstants.NUMBER_OF_ITEMS_PER_PAGE);
+        PaginatedList<NewsUpdate> paginatedNews = await _newsUpdateRepository.GetPaginatedAsync(queryObject, PaginatedListConstants.PAGE_SIZE);
         List<NewsUpdateDto> newsUpdateDtos = [.. paginatedNews.Select(n => n.ToNewsUpdateDto())];
 
         return Ok(new PaginatedNewsUpdatesDto(newsUpdateDtos, paginatedNews.HasPreviousPage, paginatedNews.HasNextPage));

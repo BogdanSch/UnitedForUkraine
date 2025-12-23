@@ -10,6 +10,7 @@ import {
   Timeline,
 } from "../../components";
 import {
+  CampaignLikeButton,
   CampaignStatisticsList,
   DeleteCampaignForm,
   DonationsList,
@@ -33,16 +34,13 @@ const CampaignsDetail: FC = () => {
   const message: string = location.state?.message || "";
 
   useEffect(() => {
-    const fetcher = () => {
-      fetchCampaignData(Number(id)).then((data) => {
-        if (!data) {
-          navigate("/notFound");
-          return;
-        }
-        setCampaign(data);
-      });
-    };
-    fetcher();
+    fetchCampaignData(Number(id)).then((data) => {
+      if (!data) {
+        navigate("/notFound");
+        return;
+      }
+      setCampaign(data);
+    });
   }, [id]);
 
   return (
@@ -125,21 +123,36 @@ const CampaignsDetail: FC = () => {
                 />
               </div>
               <div className="campaigns-detail__buttons mt-3">
-                <CampaignActionButton
-                  campaignId={campaign?.id!}
-                  campaignStatus={campaign?.status!}
-                />
-                <ShareButton
-                  relativeUrl={`/campaigns/detail/${id}`}
-                  campaignTitle={campaign?.title ?? ""}
-                  campaignGoalAmount={campaign?.goalAmount ?? 0}
-                  campaignRaisedAmount={campaign?.raisedAmount ?? 0}
-                />
+                <ul className="campaigns-detail__buttons-list">
+                  <li className="campaigns-detail__buttons-item">
+                    <CampaignActionButton
+                      campaignId={campaign?.id!}
+                      campaignStatus={campaign?.status!}
+                    />
+                  </li>
+                  <li className="campaigns-detail__buttons-item">
+                    <ShareButton
+                      relativeUrl={`/campaigns/detail/${id}`}
+                      campaignTitle={campaign?.title ?? ""}
+                      campaignGoalAmount={campaign?.goalAmount ?? 0}
+                      campaignRaisedAmount={campaign?.raisedAmount ?? 0}
+                    />
+                  </li>
+                  {isAuthenticated() && campaign && (
+                    <li className="campaigns-detail__buttons-item">
+                      <CampaignLikeButton
+                        campaignId={campaign.id}
+                        campaignLiked={campaign.isLiked}
+                      />
+                    </li>
+                  )}
+                </ul>
               </div>
             </div>
           </div>
           <h3 className="mt-5 sub-heading">
-            In total {campaign?.donorsCount} donors contributed
+            In total {campaign?.donorsCount}{" "}
+            {campaign?.donorsCount == 1 ? "donor" : "donors"} contributed
           </h3>
           <DonationsList
             name="campaignDonations"

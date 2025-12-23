@@ -19,7 +19,6 @@
     &-search {
       flex-grow: 1;
       min-width: 280px;
-      // max-width: 50%;
 
       .form-outline {
         flex-grow: 1;
@@ -42,10 +41,7 @@
     }
 
     &-filter {
-      // min-width: 80px;
       max-width: 220px;
-      // border-radius: 36px;
-      // flex-shrink: 0;
     }
   }
 
@@ -53,7 +49,7 @@
     padding-left: 0;
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(316px, 1fr));
     column-gap: 12px;
     row-gap: 8px;
   }

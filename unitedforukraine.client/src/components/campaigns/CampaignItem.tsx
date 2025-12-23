@@ -1,13 +1,7 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { Card, ProgressBar, MatchHighlight } from "..";
 import { CampaignDto } from "../../types";
-import {
-  CampaignActionButton,
-  Card,
-  ProgressBar,
-  ShareButton,
-  MatchHighlight,
-} from "..";
 import {
   convertCampaignCategoryToString,
   convertCampaignStatusToString,
@@ -21,9 +15,14 @@ import formatNumber from "../../utils/helpers/formatNumber";
 interface ICampaignItemProps {
   campaign: CampaignDto;
   searchQuery: string;
+  buttons?: ReactNode;
 }
 
-const CampaignItem: FC<ICampaignItemProps> = ({ campaign, searchQuery }) => {
+const CampaignItem: FC<ICampaignItemProps> = ({
+  campaign,
+  searchQuery,
+  buttons,
+}) => {
   return (
     <li className="campaigns__item" key={`campaign-${campaign.id}`}>
       <Card
@@ -31,6 +30,7 @@ const CampaignItem: FC<ICampaignItemProps> = ({ campaign, searchQuery }) => {
         imageAlt={campaign.title}
         cardStatus={convertCampaignStatusToString(campaign.status)}
         isLite={false}
+        cardButtons={buttons}
       >
         <Link
           to={`/campaigns/detail/${campaign.id}/`}
@@ -63,22 +63,6 @@ const CampaignItem: FC<ICampaignItemProps> = ({ campaign, searchQuery }) => {
           currentAmount={campaign.raisedAmount}
           requiredAmount={campaign.goalAmount}
         />
-        <ul className="campaigns__item-buttons">
-          <li className="campaigns__item-button">
-            <CampaignActionButton
-              campaignId={campaign.id}
-              campaignStatus={campaign.status}
-            />
-          </li>
-          <li className="campaigns__item-button">
-            <ShareButton
-              relativeUrl={`/campaigns/detail/${campaign.id}/`}
-              campaignTitle={campaign.title}
-              campaignGoalAmount={campaign.goalAmount}
-              campaignRaisedAmount={campaign.raisedAmount}
-            />
-          </li>
-        </ul>
       </Card>
     </li>
   );

@@ -7,6 +7,7 @@ type CardProps = {
   imageAlt?: string;
   cardStatus?: string;
   isLite: boolean;
+  cardButtonsList?: ReactNode;
   children: ReactNode;
   [key: string]: any;
 };
@@ -16,6 +17,7 @@ const Card: FC<CardProps> = ({
   imageSrc = "",
   imageAlt = "",
   cardStatus = "",
+  cardButtons,
   isLite,
   children,
   ...rest
@@ -32,6 +34,7 @@ const Card: FC<CardProps> = ({
         )}
       </div>
       <div className="card-body">{children}</div>
+      {cardButtons && <div className="card-body">{cardButtons}</div>}
     </div>
   );
 };

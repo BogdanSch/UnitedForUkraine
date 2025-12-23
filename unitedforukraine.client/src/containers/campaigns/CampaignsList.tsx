@@ -2,24 +2,37 @@
 import { protectedAxios } from "../../utils/axiosInstances";
 import { FC, useEffect, useState, useRef, FormEvent, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
+import {
+  CampaignActionButton,
+  CampaignItem,
+  Paginator,
+  SearchBar,
+  ShareButton,
+} from "../../components";
+import { CampaignLikeButton } from "../";
+import AuthContext from "../../contexts/AuthContext";
+import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
 import { CampaignDto, PaginatedCampaignsDto } from "../../types";
 import { CampaignCategory, CampaignStatus, Currency } from "../../types/enums";
-import { CampaignItem, Paginator, SearchBar } from "../../components";
-import AuthContext from "../../contexts/AuthContext";
 import { API_URL } from "../../variables";
-import { handleSelectWithDataTagChange } from "../../hooks/useCustomForm";
 import { isNullOrWhitespace } from "../../utils/helpers/stringHelper";
 
 type CampaignsListProps = {
   showPaginationButtons: boolean;
   showQueryCriteria: boolean;
   showUserCampaigns: boolean;
+  showOnlyLikedCampaigns?: boolean;
+  paginationLinkPath?: string;
+  paginationLinkHash?: string;
 };
 
 const CampaignsList: FC<CampaignsListProps> = ({
   showPaginationButtons,
   showQueryCriteria,
   showUserCampaigns,
+  showOnlyLikedCampaigns = false,
+  paginationLinkPath,
+  paginationLinkHash,
 }) => {
   const [paginatedCampaigns, setPaginatedCampaigns] =
     useState<PaginatedCampaignsDto>({
@@ -35,7 +48,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
   const [currency, setCurrency] = useState<string>("");
   const [status, setStatus] = useState<string>("1");
 
-  const { user } = useContext(AuthContext);
+  const { user, isAuthenticated } = useContext(AuthContext);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [searchParams] = useSearchParams();
   const page = searchParams.get("page");
@@ -47,8 +60,10 @@ const CampaignsList: FC<CampaignsListProps> = ({
     const fetchData = async () => {
       let requestUrl: string;
 
-      if (showUserCampaigns) {
-        requestUrl = `${API_URL}/campaigns/users/${user?.id}/supports`;
+      if (showOnlyLikedCampaigns) {
+        requestUrl = `${API_URL}/campaigns/liked?page=${currentPage}`;
+      } else if (showUserCampaigns) {
+        requestUrl = `${API_URL}/campaigns/users/${user?.id}/supports?page=${currentPage}`;
       } else {
         requestUrl = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}`;
         requestUrl += !isNullOrWhitespace(category)
@@ -63,13 +78,16 @@ const CampaignsList: FC<CampaignsListProps> = ({
         ? `&searchedQuery=${searchQuery}`
         : "";
 
-      let axiosInstance = showUserCampaigns ? protectedAxios : axios;
+      let axiosInstance =
+        showUserCampaigns || showOnlyLikedCampaigns ? protectedAxios : axios;
 
       try {
         const { data } = await axiosInstance.get<PaginatedCampaignsDto>(
-          requestUrl
+          requestUrl,
+          {
+            withCredentials: true,
+          }
         );
-
         setPaginatedCampaigns(data);
       } catch (error) {
         console.log(`Error fetching campaigns: ${error}`);
@@ -185,6 +203,36 @@ const CampaignsList: FC<CampaignsListProps> = ({
               key={campaign.id}
               campaign={campaign}
               searchQuery={searchQuery}
+              buttons={
+                <ul className="campaigns__item-buttons">
+                  <li className="campaigns__item-button">
+                    <CampaignActionButton
+                      campaignId={campaign.id}
+                      campaignStatus={campaign.status}
+                    />
+                  </li>
+                  <li className="campaigns__item-button">
+                    <ul className="campaigns__item-buttons">
+                      <li className="campaigns__item-button">
+                        <ShareButton
+                          relativeUrl={`/campaigns/detail/${campaign.id}/`}
+                          campaignTitle={campaign.title}
+                          campaignGoalAmount={campaign.goalAmount}
+                          campaignRaisedAmount={campaign.raisedAmount}
+                        />
+                      </li>
+                      {isAuthenticated() && (
+                        <li className="campaigns__item-button">
+                          <CampaignLikeButton
+                            campaignId={campaign.id}
+                            campaignLiked={campaign.isLiked}
+                          />
+                        </li>
+                      )}
+                    </ul>
+                  </li>
+                </ul>
+              }
             />
           ))}
         </ul>
@@ -193,7 +241,8 @@ const CampaignsList: FC<CampaignsListProps> = ({
       )}
       {showPaginationButtons && paginatedCampaigns.campaigns.length > 0 && (
         <Paginator
-          linkPath={"/campaigns"}
+          linkHash={paginationLinkHash ?? ""}
+          linkPath={paginationLinkPath ?? "/campaigns"}
           currentPageIndex={pageIndex}
           hasPreviousPage={paginatedCampaigns.hasPreviousPage}
           hasNextPage={paginatedCampaigns.hasNextPage}

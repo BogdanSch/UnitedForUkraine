@@ -23,8 +23,6 @@ namespace UnitedForUkraine.Server.Controllers
     [ApiController]
     public class AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService, IEmailService emailService, ILogger<AuthController> logger, IUserService userService) : ControllerBase
     {
-        private const int NUMBER_OF_ITEMS_PER_PAGE = 6;
-
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly SignInManager<AppUser> _signInManager = signInManager;
         private readonly IAuthTokenService _authTokenService = authTokenService;
@@ -269,7 +267,7 @@ namespace UnitedForUkraine.Server.Controllers
         [HttpGet("users")]
         public async Task<IActionResult> GetPaginatedAppUsers([FromQuery] QueryObject queryObject)
         {
-            PaginatedList<AppUser> paginatedUsers = await _userService.GetPaginatedUsersAsync(queryObject, NUMBER_OF_ITEMS_PER_PAGE);
+            PaginatedList<AppUser> paginatedUsers = await _userService.GetPaginatedUsersAsync(queryObject, PaginatedListConstants.PAGE_SIZE);
             List<UserDto> newsUpdateDtos = [.. paginatedUsers.Select(u => u.ToDto())];
 
             return Ok(new PaginatedUsersDto(newsUpdateDtos, paginatedUsers.HasPreviousPage, paginatedUsers.HasNextPage));

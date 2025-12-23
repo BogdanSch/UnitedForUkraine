@@ -19,6 +19,7 @@ export type CampaignDto = {
   startDate: string;
   endDate: string;
   imageUrl: string;
+  isLiked: boolean;
 };
 
 export type PaginatedCampaignsDto = {

@@ -13,10 +13,24 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
 {
     private readonly ILogger<CampaignRepository> _logger = logger;
     private readonly ApplicationDbContext _context = context;
-    public async Task<PaginatedList<Campaign>> GetPaginatedCampaigns(QueryObject queryObject, int itemsPerPageCount)
+    private async Task<HashSet<int>> GetUserLikedCampaignsAsync(string userId)
+    {
+        return await _context.CampaignLikes.Where(cl => cl.UserId == userId).Select(cl => cl.LikedCampaignId).ToHashSetAsync();
+    }
+    public async Task<PaginatedList<CampaignDto>> GetPaginatedCampaigns(QueryObject queryObject, int pageSize, bool showOnlyLiked = false, string? userId = null)
     {
         IQueryable<Campaign> campaigns = _context.Campaigns.AsNoTracking();
 
+        HashSet<int> likedCampaignIds = [];
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            likedCampaignIds = await GetUserLikedCampaignsAsync(userId);
+        }
+
+        if (showOnlyLiked && !string.IsNullOrWhiteSpace(userId))
+        {
+            campaigns = campaigns.Where(c => likedCampaignIds.Contains(c.Id));
+        }
         if (!string.IsNullOrWhiteSpace(queryObject.SearchedQuery))
         {
             string query = queryObject.SearchedQuery;
@@ -83,7 +97,7 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
             campaigns = campaigns.OrderByDescending(c => c.StartDate);
         }
 
-        return await PaginatedList<Campaign>.CreateAsync(campaigns, queryObject.Page, itemsPerPageCount);
+        return await PaginatedList<CampaignDto>.CreateAsync(campaigns.Select(c => c.ToCampaignDto(likedCampaignIds.Contains(c.Id))), queryObject.Page, pageSize);
     }
     public async Task<bool> UpdateExpiredCampaignsAsync()
     {
@@ -168,16 +182,47 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
             .Select(d => d.Campaign)
             .Distinct();
     }
-    public async Task<List<CampaignDto>> GetAllUserSupportedCampaignsAsync(string? userId)
+    public async Task<PaginatedList<CampaignDto>> GetPaginatedUserSupportedCampaignsAsync(QueryObject queryObject, int pageSize, string userId)
     {
-        if (string.IsNullOrWhiteSpace(userId))
-            return [];
-        return await GetAllUserSupportedCampaigns(userId).Select(c => c.ToCampaignDto()).ToListAsync();
+        IQueryable<Campaign> campaigns = GetAllUserSupportedCampaigns(userId);
+        HashSet<int> likedCampaignIds = await GetUserLikedCampaignsAsync(userId);
+
+        return await PaginatedList<CampaignDto>.CreateAsync(campaigns.Select(c => c.ToCampaignDto(likedCampaignIds.Contains(c.Id))), queryObject.Page, pageSize);
     }
     public async Task<int> GetAllUserSupportedCampaignsCount(string? userId)
     {
-        if (string.IsNullOrWhiteSpace(userId))
-            return 0;
+        if (string.IsNullOrWhiteSpace(userId)) return 0;
         return await GetAllUserSupportedCampaigns(userId).CountAsync();
+    }
+    private async Task<CampaignLike?> GetCampaignLikeForUser(int campaignId, string userId)
+    {
+        return await _context.CampaignLikes.FirstOrDefaultAsync(cl => cl.UserId == userId && cl.LikedCampaignId == campaignId);
+    }
+    public async Task<bool> IsCampaignLikedByUser(int campaignId, string userId)
+    {
+        CampaignLike? campaignLike = await GetCampaignLikeForUser(campaignId, userId);
+        return campaignLike is not null;
+    }
+    public async Task<bool> LikeOrDislikeCampaignAsync(int campaignId, string userId)
+    {
+        CampaignLike? campaignLike = await GetCampaignLikeForUser(campaignId, userId);
+        bool isNowLiked = false;
+
+        if (campaignLike is null)
+        {
+            await _context.CampaignLikes.AddAsync(new()
+            {
+                LikedCampaignId = campaignId,
+                UserId = userId
+            });
+            isNowLiked = true;
+        }
+        else
+        {
+            _context.CampaignLikes.Remove(campaignLike);
+        }
+
+        await SaveAsync();
+        return isNowLiked;
     }
 }

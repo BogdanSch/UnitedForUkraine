@@ -32,7 +32,7 @@ const ShareButton: FC<ShareButtonProps> = ({
   };
 
   return (
-    <button className="btn btn-secondary btn-share" onClick={handleShare}>
+    <button className="btn btn-sm btn-secondary btn-share" onClick={handleShare}>
       {isCopied ? (
         <i className="bi bi-file-earmark-check-fill"></i>
       ) : (

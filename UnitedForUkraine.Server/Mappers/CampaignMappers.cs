@@ -7,7 +7,7 @@ namespace UnitedForUkraine.Server.Mappers;
 
 public static class CampaignMappers
 {
-    public static CampaignDto ToCampaignDto(this Campaign campaign)
+    public static CampaignDto ToCampaignDto(this Campaign campaign, bool isLiked = false)
     {
         return new CampaignDto
         {
@@ -23,7 +23,8 @@ public static class CampaignMappers
             StartDate = campaign.StartDate.ToString(DateSettings.DEFAULT_DATE_FORMAT),
             EndDate = campaign.EndDate.ToString(DateSettings.DEFAULT_DATE_FORMAT),
             ImageUrl = campaign.ImageUrl,
-            DonorsCount = campaign.DonorsCount
+            DonorsCount = campaign.DonorsCount,
+            IsLiked = isLiked,
         };
     }
     public static Campaign FromCreateCampaignDtoToCampaign(this CreateCampaignRequestDto newCampaign)

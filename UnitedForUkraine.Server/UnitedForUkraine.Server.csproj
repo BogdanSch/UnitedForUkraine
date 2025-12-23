@@ -46,10 +46,6 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DTOs\Reports\" />
-  </ItemGroup>
 	
   <ItemGroup>
   	<Content Update="Templates\**\*">

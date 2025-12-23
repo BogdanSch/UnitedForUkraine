@@ -27,8 +27,8 @@ const Dashboard: FC = () => {
               </h1>
               <p className="dashboard__description">
                 We're glad to have you back! Here you can view and edit your
-                profile details, track the statistics of your donations, and
-                explore the campaigns you've supported.
+                profile details, track the statistics of your donations, explore
+                the campaigns you've supported and liked.
               </p>
             </div>
             <Card className="px-5 py-4" isLite={false}>
@@ -101,7 +101,7 @@ const Dashboard: FC = () => {
         <div className="container">
           <div className="dashboard__wrap">
             <SectionHeadline
-              title={`We've gathered some basic statistics about your donations`}
+              title={`We've gathered some basic statistics about your donations that you can read beneath`}
               sectionIndicatorTitle={`Donations statistics`}
             />
             <UserStatisticsList />
@@ -129,7 +129,7 @@ const Dashboard: FC = () => {
               </h2>
               <p className="dashboard__description">
                 Each donation of yours makes a great contribution into our
-                victory
+                victory and well-being of Ukrainian citizens.
               </p>
               <DonationsList
                 name="userDonations"
@@ -142,7 +142,28 @@ const Dashboard: FC = () => {
       </section>
       <section
         className="dashboard campaigns dashboard--campaigns"
-        id="dashboardCampaigns"
+        id="likedCampaigns"
+      >
+        <div className="container">
+          <div className="dashboard__wrap">
+            <SectionHeadline
+              title={`These campaigns were liked by you.`}
+              sectionIndicatorTitle={`Liked campaigns`}
+            />
+            <CampaignsList
+              showPaginationButtons={true}
+              paginationLinkPath={"/dashboard"}
+              paginationLinkHash="likedCampaigns"
+              showOnlyLikedCampaigns={true}
+              showUserCampaigns={true}
+              showQueryCriteria={false}
+            />
+          </div>
+        </div>
+      </section>
+      <section
+        className="dashboard campaigns dashboard--campaigns"
+        id="supportedCampaigns"
       >
         <div className="container">
           <div className="dashboard__wrap">
@@ -152,8 +173,10 @@ const Dashboard: FC = () => {
             />
             <CampaignsList
               showPaginationButtons={true}
-              showQueryCriteria={false}
+              paginationLinkPath={"/dashboard"}
+              paginationLinkHash="supportedCampaigns"
               showUserCampaigns={true}
+              showQueryCriteria={false}
             />
           </div>
         </div>

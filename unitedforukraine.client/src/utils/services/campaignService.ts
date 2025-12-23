@@ -56,16 +56,13 @@ export const getCampaignTimelines = (campaign: CampaignDto): TimelineItem[] => {
 export const fetchCampaignData = async (
   id: number
 ): Promise<CampaignDto | null> => {
-  const options = {
-    method: "GET",
-    url: `${API_URL}/campaigns/${id}`,
-  };
-
   try {
-    const { data } = await axios.request<CampaignDto>(options);
+    const { data } = await axios.get<CampaignDto>(
+      `${API_URL}/campaigns/${id}`,
+      { withCredentials: true }
+    );
 
     console.log(data);
-
     return data;
   } catch (error) {
     console.log(error);

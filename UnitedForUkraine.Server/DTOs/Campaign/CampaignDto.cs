@@ -15,5 +15,6 @@ public record CampaignDto
     public required string StartDate { get; init; }
     public required string EndDate { get; init; }
     public required string ImageUrl { get; init; }
+    public bool IsLiked { get; init; } = false;
 }
 
