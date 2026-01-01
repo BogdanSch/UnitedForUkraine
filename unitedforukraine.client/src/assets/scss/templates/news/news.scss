@@ -1,7 +1,7 @@
 .news {
   &__query {
     &-container {
-      @include flex-row();
+      @include flex-col();
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
@@ -23,6 +23,15 @@
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
       }
+    }
+    &-label {
+      margin-bottom: 2px;
+    }
+    &-item {
+      text-align: center;
+    }
+    &-filter {
+      min-width: 280px;
     }
   }
   &__list {

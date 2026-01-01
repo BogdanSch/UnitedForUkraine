@@ -25,18 +25,6 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ value, onChange }) => {
         aria-describedby="passwordHelpInline"
         isRequired={true}
       />
-      {/* <input
-        type={showPassword ? "text" : "password"}
-        id="password"
-        name="password"
-        className="form-control form-password"
-        value={value}
-        placeholder="Enter password"
-        onChange={onChange}
-        autoComplete="current-password"
-        aria-describedby="passwordHelpInline"
-        required
-      /> */}
       <button
         type="button"
         className="form-password__button input-group-text"

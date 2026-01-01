@@ -7,7 +7,7 @@
 
   &__query {
     &-container {
-      @include flex-row();
+      @include flex-col();
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
@@ -15,7 +15,6 @@
       row-gap: 12px;
       width: 100%;
     }
-
     &-search {
       flex-grow: 1;
       min-width: 280px;
@@ -31,20 +30,24 @@
         border-bottom-right-radius: 0;
       }
     }
-
     &-group {
       width: 100%;
       @include flex-row();
       justify-content: center;
       column-gap: 8px;
+      row-gap: 12px;
       flex-wrap: wrap;
     }
-
+    &-label {
+      margin-bottom: 2px;
+    }
+    &-item {
+      text-align: center;
+    }
     &-filter {
       max-width: 220px;
     }
   }
-
   &__list {
     padding-left: 0;
     list-style: none;

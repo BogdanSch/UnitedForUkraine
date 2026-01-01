@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
@@ -13,12 +10,12 @@ namespace UnitedForUkraine.Server.Repositories;
 
 public class DonationRepository(ApplicationDbContext context) : IDonationRepository
 {
+    private readonly ApplicationDbContext _context = context;
     public const string DEFAULT_CITY_NAME = "Kharkiv";
     public const string DEFAULT_COUNTRY_NAME = "Ukraine";
     public const string DEFAULT_FREQUENT_DONOR_NAME = "bogsvity777";
-    public const int DEFAULT_DONATIONS_COUNT = 100;
-    private readonly ApplicationDbContext _context = context;
-    private IQueryable<Donation> ApplyDonationsFilters(QueryObject queryObject, IQueryable<Donation> donations)
+    public const int DEFAULT_DONATIONS_COUNT = 0;
+    private static IQueryable<Donation> ApplyDonationsFilters(QueryObject queryObject, IQueryable<Donation> donations)
     {
         if(!string.IsNullOrWhiteSpace(queryObject.Currencies))
         {
@@ -27,7 +24,7 @@ public class DonationRepository(ApplicationDbContext context) : IDonationReposit
 
             foreach (var cur in currencyList)
             {
-                if (Enum.TryParse<CurrencyType>(cur.Trim(), out CurrencyType result))
+                if (Enum.TryParse(cur.Trim(), out CurrencyType result))
                     parsedCurrencies.Add(result);
             }
 
@@ -246,12 +243,26 @@ public class DonationRepository(ApplicationDbContext context) : IDonationReposit
     public async Task<DateTime?> GetFirstDonationDateAsync(string? userId)
     {
         IQueryable<Donation> donations = GetDonationsQuery(userId);
-        return await donations.Select(d => d.PaymentDate).MinAsync(); 
+        try
+        {
+            return await donations.Select(d => d.PaymentDate).MinAsync();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
     public async Task<DateTime?> GetLastDonationDateAsync(string? userId)
     {
         IQueryable<Donation> donations = GetDonationsQuery(userId);
-        return await donations.Select(d => d.PaymentDate).MaxAsync();
+        try
+        {
+            return await donations.Select(d => d.PaymentDate).MaxAsync();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
     public async Task<int> GetDonationsCountByCampaingIdAsync(int campaignId) => await _context.Donations.Where(d => d.CampaignId == campaignId).CountAsync();
     public async Task<decimal> GetReapeatDonorsRate(int campaignId)

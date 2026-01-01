@@ -22,7 +22,10 @@ import {
   fetchCampaignData,
   getCampaignTimelines,
 } from "../../utils/services/campaignService";
-import { convertCurrencyToString } from "../../utils/helpers/currencyHelper";
+import {
+  convertCurrencyToString,
+  formatMoney,
+} from "../../utils/helpers/currencyHelper";
 
 const CampaignsDetail: FC = () => {
   const [campaign, setCampaign] = useState<CampaignDto | null>(null);
@@ -108,11 +111,12 @@ const CampaignsDetail: FC = () => {
             <h2 className="sub-heading">{campaign?.title} - Progress</h2>
             <div className="mt-3">
               <p>
-                <strong>Raised:</strong> {campaign?.raisedAmount}{" "}
+                <strong>Raised:</strong>{" "}
+                {formatMoney(campaign?.raisedAmount ?? 0)}{" "}
                 {convertCurrencyToString(campaign?.currency || 0)}
               </p>
               <p>
-                <strong>Goal:</strong> {campaign?.goalAmount}{" "}
+                <strong>Goal:</strong> {formatMoney(campaign?.goalAmount ?? 0)}{" "}
                 {convertCurrencyToString(campaign?.currency || 0)}
               </p>
               <div className="w-50 mx-auto">

@@ -33,11 +33,12 @@
       row-gap: 12px;
       width: 100%;
     }
-
+    &-item {
+      text-align: center;
+    }
     &-label {
       margin-bottom: 0;
     }
-
     &-group {
       width: 100%;
       @include flex-row();
@@ -46,7 +47,6 @@
       column-gap: 8px;
       flex-wrap: wrap;
     }
-
     &-filter {
       min-width: 80px;
       max-width: 160px;

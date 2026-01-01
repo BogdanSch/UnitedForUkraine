@@ -1,5 +1,4 @@
 export { default as CampaignsList } from "./campaigns/CampaignsList";
-export { default as CampaignsTable } from "./campaigns/CampaignsTable";
 export { default as CampaignLikeButton } from "./campaigns/CampaignLikeButton";
 export { default as CampaignStatisticsList } from "./campaigns/CampaignStatisticsList";
 
@@ -19,7 +18,6 @@ export { default as DonateForm } from "./forms/donations/DonateForm";
 export { default as DeleteDonationForm } from "./forms/donations/DeleteDonationForm";
 export { default as FoundationReportForm } from "./forms/donations/FoundationReportForm";
 export { default as DonationsList } from "./donations/DonationsList";
-export { default as DonationsTable } from "./donations/DonationsTable";
 
 export { default as FoundationStatisticsList } from "./donations/FoundationStatisticsList";
 export { default as UserStatisticsList } from "./donations/UserStatisticsList";

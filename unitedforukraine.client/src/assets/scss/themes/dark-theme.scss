@@ -191,4 +191,10 @@
   [class$="__content"] {
     color: $text-light-gray;
   }
+  input[type="date"] {
+    color-scheme: dark;
+    &::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+  }
 }

@@ -25,7 +25,6 @@ import {
   NewsUpdatesIndex,
   NewsUpdateCreate,
   UsersIndex,
-  DonationsIndex,
   NewsUpdateEdit,
   NewsUpdateDetail,
   FoundationReport,
@@ -152,14 +151,6 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute requireAdmin>
             <UsersIndex />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "donations",
-        element: (
-          <ProtectedRoute requireAdmin>
-            <DonationsIndex />
           </ProtectedRoute>
         ),
       },

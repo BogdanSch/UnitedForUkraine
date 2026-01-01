@@ -68,23 +68,33 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
   return (
     <>
       {showQueryCriteria && (
-        <form className="news__query" onSubmit={handleSearch}>
-          <div className="news__query-container">
-            <SearchBar className="news" searchInputReference={searchInputRef} />
-            <div className="news__query-group">
-              <select
-                className="form-select news__query-filter"
-                id="sortOrder"
-                name="sortOrder"
-                onChange={(e) => handleSelectWithDataTagChange(e, setSortOrder)}
-              >
-                <option data-value="viewsCount_dsc">Most Popular</option>
-                <option data-value="date_dsc">Most Recent</option>
-                <option data-value="date_asc">Most Latest</option>
-                <option data-value="title_asc">Title</option>
-                <option data-value="readingTime_asc">Fastest to read</option>
-                <option data-value="readingTime_dsc">Longest to read</option>
-              </select>
+        <form className="query" onSubmit={handleSearch}>
+          <div className="query__container">
+            <SearchBar searchInputReference={searchInputRef} />
+            <div className="query__group">
+              <div className="query__item">
+                <label
+                  className="form-label query__label"
+                  htmlFor="sortOrderSelect"
+                >
+                  Select how to sort:
+                </label>
+                <select
+                  className="form-select query__filter"
+                  id="sortOrderSelect"
+                  name="sortOrder"
+                  onChange={(e) =>
+                    handleSelectWithDataTagChange(e, setSortOrder)
+                  }
+                >
+                  <option data-value="viewsCount_dsc">Most Popular</option>
+                  <option data-value="date_dsc">Most Recent</option>
+                  <option data-value="date_asc">Most Latest</option>
+                  <option data-value="title_asc">Title</option>
+                  <option data-value="readingTime_asc">Fastest to read</option>
+                  <option data-value="readingTime_dsc">Longest to read</option>
+                </select>
+              </div>
             </div>
           </div>
         </form>
@@ -135,7 +145,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
             );
           })
         ) : (
-          <p className="text-center">No news updates have been found.</p>
+          <p className="mt-5 text-center">No news updates have been found.</p>
         )}
       </ul>
       {showPaginationButtons && paginatedNewsUpdates.newsUpdates.length > 0 && (

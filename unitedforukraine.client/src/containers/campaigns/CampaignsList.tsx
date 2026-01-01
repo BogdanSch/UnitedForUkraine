@@ -102,97 +102,134 @@ const CampaignsList: FC<CampaignsListProps> = ({
 
     const searchInput: HTMLInputElement | null = searchInputRef.current;
     if (!searchInput) return;
-
     setSearchQuery(searchInput.value);
   };
 
   return (
     <>
       {showQueryCriteria && (
-        <form className="campaigns__query" onSubmit={handleSearch}>
-          <div className="campaigns__query-container">
-            <SearchBar
-              searchInputReference={searchInputRef}
-              className={"campaigns"}
-            />
-            <div className="campaigns__query-group">
-              <select
-                className="form-select campaigns__query-filter"
-                id="sortOrder"
-                name="sortOrder"
-                onChange={(e) => handleSelectWithDataTagChange(e, setSortOrder)}
-              >
-                <option data-value="date_dsc">Most Recent</option>
-                <option data-value="title_asc">Title</option>
-                <option data-value="nearGoal_dsc">Near Goal</option>
-                <option data-value="nearEnd_asc">Near End</option>
-              </select>
-              <select
-                name="category"
-                className="form-select campaigns__query-filter"
-                value={category}
-                onChange={(e) => {
-                  handleSelectWithDataTagChange(e, setCategory);
-                }}
-              >
-                {Object.keys(CampaignCategory)
-                  .filter((key) => !isNaN(Number(CampaignCategory[key as any])))
-                  .map((key, index) => (
-                    <option
-                      key={key}
-                      value={
-                        CampaignCategory[key as keyof typeof CampaignCategory]
-                      }
-                      data-value={index}
-                    >
-                      {key}
-                    </option>
-                  ))}
-              </select>
-              <select
-                name="currency"
-                className="form-select campaigns__query-filter"
-                value={currency}
-                onChange={(e) => {
-                  handleSelectWithDataTagChange(e, setCurrency);
-                }}
-              >
-                <option value="" data-value="">
-                  All Currencies
-                </option>
-                {Object.keys(Currency)
-                  .filter((key) => !isNaN(Number(Currency[key as any])))
-                  .map((key, index) => (
-                    <option
-                      key={key}
-                      value={Currency[key as keyof typeof Currency]}
-                      data-value={index}
-                    >
-                      {key}
-                    </option>
-                  ))}
-              </select>
-              <select
-                name="status"
-                className="form-select campaigns__query-filter"
-                value={status}
-                onChange={(e) => {
-                  handleSelectWithDataTagChange(e, setStatus);
-                }}
-              >
-                {Object.keys(CampaignStatus)
-                  .filter((key) => !isNaN(Number(CampaignStatus[key as any])))
-                  .map((key, index) => (
-                    <option
-                      key={key}
-                      value={CampaignStatus[key as keyof typeof CampaignStatus]}
-                      data-value={index}
-                    >
-                      {key}
-                    </option>
-                  ))}
-              </select>
-            </div>
+        <form className="query" onSubmit={handleSearch}>
+          <div className="query__container">
+            <SearchBar searchInputReference={searchInputRef} />
+            <fieldset className="query__group">
+              <div className="query__item">
+                <label
+                  className="form-label query__label"
+                  htmlFor="sortOrderSelect"
+                >
+                  Select how to sort:
+                </label>
+                <select
+                  className="form-select query__filter"
+                  id="sortOrderSelect"
+                  name="sortOrder"
+                  onChange={(e) =>
+                    handleSelectWithDataTagChange(e, setSortOrder)
+                  }
+                >
+                  <option data-value="date_dsc">Most Recent</option>
+                  <option data-value="title_asc">Title</option>
+                  <option data-value="nearGoal_dsc">Near Goal</option>
+                  <option data-value="nearEnd_asc">Near End</option>
+                </select>
+              </div>
+              <div className="query__item">
+                <label
+                  className="form-label query__label"
+                  htmlFor="categoryFilter"
+                >
+                  Select category:
+                </label>
+                <select
+                  name="category"
+                  id="categoryFilter"
+                  className="form-select query__filter"
+                  value={category}
+                  onChange={(e) => {
+                    handleSelectWithDataTagChange(e, setCategory);
+                  }}
+                >
+                  {Object.keys(CampaignCategory)
+                    .filter(
+                      (key) => !isNaN(Number(CampaignCategory[key as any]))
+                    )
+                    .map((key, index) => (
+                      <option
+                        key={key}
+                        value={
+                          CampaignCategory[key as keyof typeof CampaignCategory]
+                        }
+                        data-value={index}
+                      >
+                        {key}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              <div className="query__item">
+                <label
+                  className="form-label query__label"
+                  htmlFor="currencyFilter"
+                >
+                  Select currency:
+                </label>
+                <select
+                  name="currency"
+                  id="currencyFilter"
+                  className="form-select query__filter"
+                  value={currency}
+                  onChange={(e) => {
+                    handleSelectWithDataTagChange(e, setCurrency);
+                  }}
+                >
+                  <option value="" data-value="">
+                    All Currencies
+                  </option>
+                  {Object.keys(Currency)
+                    .filter((key) => !isNaN(Number(Currency[key as any])))
+                    .map((key, index) => (
+                      <option
+                        key={key}
+                        value={Currency[key as keyof typeof Currency]}
+                        data-value={index}
+                      >
+                        {key}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              <div className="query__item">
+                <label
+                  className="form-label query__label"
+                  htmlFor="statusFilter"
+                >
+                  Select status:
+                </label>
+                <select
+                  name="status"
+                  id="statusFilter"
+                  className="form-select query__filter"
+                  value={status}
+                  onChange={(e) => {
+                    handleSelectWithDataTagChange(e, setStatus);
+                  }}
+                >
+                  {Object.keys(CampaignStatus)
+                    .filter((key) => !isNaN(Number(CampaignStatus[key as any])))
+                    .map((key, index) => (
+                      <option
+                        key={key}
+                        value={
+                          CampaignStatus[key as keyof typeof CampaignStatus]
+                        }
+                        data-value={index}
+                      >
+                        {key}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </fieldset>
           </div>
         </form>
       )}
@@ -237,7 +274,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
           ))}
         </ul>
       ) : (
-        <p className="text-center">No campaigns have been found.</p>
+        <p className="mt-5 text-center">No campaigns have been found.</p>
       )}
       {showPaginationButtons && paginatedCampaigns.campaigns.length > 0 && (
         <Paginator

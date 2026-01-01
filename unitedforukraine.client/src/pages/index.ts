@@ -7,7 +7,6 @@ export { default as LoginPage } from "./auth/LoginPage";
 export { default as RegisterPage } from "./auth/RegisterPage";
 export { default as SuccessfulRegistration } from "./auth/SuccessfulRegistration";
 export { default as VerifyRegistration } from "./auth/VerifyRegistration";
-export { default as Dashboard } from "./dashboard/Dashboard";
 export { default as Authentication } from "./auth/Authentication";
 export { default as UpdateUserProfile } from "./dashboard/UpdateUserProfile";
 
@@ -29,5 +28,5 @@ export { default as NewsUpdateEdit } from "./newsUpdates/NewsUpdatesEdit";
 export { default as NewsUpdateDetail } from "./newsUpdates/NewsUpdatesDetail";
 export { default as FoundationReport } from "./dashboard/FoundationReport";
 
+export { default as Dashboard } from "./dashboard/Dashboard";
 export { default as UsersIndex } from "./dashboard/UsersIndex";
-export { default as DonationsIndex } from "./dashboard/DonationsIndex";

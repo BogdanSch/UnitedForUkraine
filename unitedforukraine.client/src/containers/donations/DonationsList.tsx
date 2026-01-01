@@ -11,6 +11,11 @@ import {
 } from "react";
 import { API_URL, LOAD_MORE_SELECT_VALUE } from "../../variables";
 import AuthContext from "../../contexts/AuthContext";
+import useCustomForm, {
+  handleSelectWithDataTagChange,
+} from "../../hooks/useCustomForm";
+import { Alert, Input } from "../../components";
+import { DeleteDonationForm } from "..";
 import {
   DonationDto,
   PaginatedCampaignsDto,
@@ -18,13 +23,12 @@ import {
   DateRange,
 } from "../../types";
 import { Currency } from "../../types/enums";
-import { convertDonationCurrencyToString } from "../../utils/helpers/donationHelper";
+import {
+  convertDonationCurrencyToString,
+  convertDonationStatusToString,
+} from "../../utils/helpers/donationHelper";
 import { fetchAllActiveAndCompletedCampaigns } from "../../utils/services/campaignService";
 import { isNullOrWhitespace } from "../../utils/helpers/stringHelper";
-import useCustomForm, {
-  handleSelectWithDataTagChange,
-} from "../../hooks/useCustomForm";
-import { Input } from "../../components";
 
 interface IDonationsListProps {
   name: string;
@@ -44,7 +48,8 @@ const DonationsList: FC<IDonationsListProps> = ({
   showUserDonations,
   showQueryCriteria,
 }) => {
-  const { user } = useContext(AuthContext);
+  const { user, isAdmin } = useContext(AuthContext);
+  const isAdminView: boolean = isAdmin();
 
   const [paginatedDonations, setPaginatedDonations] =
     useState<PaginatedDonationsDto>(getDefaultPaginatedDonations());
@@ -54,9 +59,10 @@ const DonationsList: FC<IDonationsListProps> = ({
       hasNextPage: false,
       hasPreviousPage: false,
     });
+  const [deleteMessage, setDeleteMessage] = useState<string>("");
+
   const [currentDonationsPage, setCurrentDonationsPage] = useState<number>(1);
   const [campaignPageIndex, setCampaignPageIndex] = useState<number>(1);
-
   const [sortOrder, setSortOrder] = useState<string>("date_dsc");
   const [currencies, setCurrencies] = useState<string>("");
   const [campaignIds, setCampaignIds] = useState<string>("");
@@ -149,19 +155,20 @@ const DonationsList: FC<IDonationsListProps> = ({
 
   return (
     <>
+      {deleteMessage && <Alert message={deleteMessage} />}
       {showQueryCriteria && (
-        <form className="donations__query">
-          <div className="donations__query-container">
-            <div className="donations__query-group">
-              <fieldset>
+        <form className="query">
+          <div className="query__container">
+            <div className="query__group">
+              <div className="query__item">
                 <label
-                  className="form-label donations__query-label"
+                  className="form-label query__label"
                   htmlFor={`sortOrder-${name}`}
                 >
-                  Select how to sort:{" "}
+                  Select how to sort:
                 </label>
                 <select
-                  className="form-select donations__query-filter"
+                  className="form-select query__filter"
                   id={`sortOrder-${name}`}
                   name="sortOrder"
                   onChange={(e) =>
@@ -181,18 +188,18 @@ const DonationsList: FC<IDonationsListProps> = ({
                     User Name A-Z
                   </option>
                 </select>
-              </fieldset>
-              <fieldset>
+              </div>
+              <div className="query__item">
                 <label
-                  className="form-label donations__query-label"
-                  htmlFor={`currencies-${name}`}
+                  className="form-label query__label"
+                  htmlFor={`currenciesFilter-${name}`}
                 >
-                  Select how to filter:{" "}
+                  Select currency:
                 </label>
                 <select
-                  className="form-select donations__query-filter"
+                  className="form-select query__filter"
                   name="currencies"
-                  id={`currencies-${name}`}
+                  id={`currenciesFilter-${name}`}
                   onChange={(e) =>
                     handleChangeWithDonationsReset(e, setCurrencies)
                   }
@@ -212,9 +219,18 @@ const DonationsList: FC<IDonationsListProps> = ({
                       </option>
                     ))}
                 </select>
+              </div>
+              <div className="query__item">
+                <label
+                  className="form-label query__label"
+                  htmlFor={`campaignsFilter-${name}`}
+                >
+                  Select currency:
+                </label>
                 <select
-                  className="form-select donations__query-filter"
+                  className="form-select query__filter"
                   name="campaignIds"
+                  id={`campaignsFilter-${name}`}
                   value={campaignIds}
                   onChange={(e) =>
                     handleSelectChange(
@@ -243,68 +259,102 @@ const DonationsList: FC<IDonationsListProps> = ({
                     Load more
                   </option>
                 </select>
-              </fieldset>
-              <fieldset>
+              </div>
+              <div className="query__item">
                 <label
-                  className="form-label donations__query-label"
+                  className="form-label query__label"
                   htmlFor={`startDate-${name}`}
                 >
                   Select period to filter:{" "}
-                </label>{" "}
-                <Input
-                  type="date"
-                  className="form-control"
-                  id={`startDate-${name}`}
-                  name="startDate"
-                  value={dateRange.startDate}
-                  onChange={(e) =>
-                    handleDateChangeWithCallback(e, resetDonationsList)
-                  }
-                  placeholder="Period start date"
-                  isRequired={false}
-                />
-                <Input
-                  type="date"
-                  className="form-control"
-                  id={`endDate-${name}`}
-                  name="endDate"
-                  value={dateRange.endDate}
-                  onChange={(e) =>
-                    handleDateChangeWithCallback(e, resetDonationsList)
-                  }
-                  placeholder="Period start date"
-                  isRequired={false}
-                />
-              </fieldset>
+                </label>
+                <div className="query__item-dates">
+                  <Input
+                    type="date"
+                    className="form-control"
+                    id={`startDate-${name}`}
+                    name="startDate"
+                    value={dateRange.startDate}
+                    onChange={(e) =>
+                      handleDateChangeWithCallback(e, resetDonationsList)
+                    }
+                    placeholder="Period start date"
+                    isRequired={false}
+                  />
+                  <Input
+                    type="date"
+                    className="form-control"
+                    id={`endDate-${name}`}
+                    name="endDate"
+                    value={dateRange.endDate}
+                    onChange={(e) =>
+                      handleDateChangeWithCallback(e, resetDonationsList)
+                    }
+                    placeholder="Period end date"
+                    isRequired={false}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </form>
       )}
       {paginatedDonations.donations.length > 0 ? (
         <ul className="donations-list mt-4">
-          {paginatedDonations.donations.map((donation: DonationDto) => (
-            <li
-              className="donations-list__item card p-3"
-              key={`donations-${donation.id}`}
-            >
-              <div className="donations-list__item-userInfo">
-                <span className="donations-list__item-date">
-                  {donation.paymentDate}
-                </span>
-                <strong className="ms-2">{donation.userName}</strong>
-              </div>
-              <div className="donations-list__item-amount">
-                <span>
-                  +{donation.amount}
-                  {` `}
-                  {convertDonationCurrencyToString(donation.currency)}
-                </span>
-              </div>
-            </li>
-          ))}
+          {paginatedDonations.donations.map((donation: DonationDto) => {
+            const isNoteAvailable: boolean = !isNullOrWhitespace(
+              donation.notes
+            );
+
+            return (
+              <li
+                className="donations-list__item card p-3"
+                key={`donations-${donation.id}`}
+              >
+                <div className="donations-list__item-userInfo">
+                  <span className="donations-list__item-date">
+                    {donation.paymentDate}
+                  </span>
+                  <strong className="ms-2">{donation.userName}</strong>
+                </div>
+                <div className="donations-list__item-amount">
+                  <span>
+                    +{donation.amount}
+                    {` `}
+                    {convertDonationCurrencyToString(donation.currency)}
+                  </span>
+                </div>
+                {(isAdminView || isNoteAvailable) && (
+                  <div className="donations-list__item-extra">
+                    {isAdminView && (
+                      <p>
+                        Donation status:{" "}
+                        <strong>
+                          {convertDonationStatusToString(donation.status)}
+                        </strong>
+                      </p>
+                    )}
+                    {isNoteAvailable && (
+                      <p>
+                        Message: <strong>{donation.notes}</strong>
+                      </p>
+                    )}
+                  </div>
+                )}
+                {isAdminView && (
+                  <div className="donations-list__item-actions">
+                    <DeleteDonationForm
+                      id={donation.id}
+                      setPaginatedDonations={setPaginatedDonations}
+                      setMessage={setDeleteMessage}
+                    />
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ul>
       ) : (
-        <p className="text-center mt-4">
+        <p className="mt-5 text-center">
           There are no donations yet. But you can change this situation by
           supporting one of our campaigns!
         </p>

@@ -1,19 +1,18 @@
 import { protectedAxios } from "../../../utils/axiosInstances";
 import { Dispatch, FC, FormEvent, SetStateAction } from "react";
-import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../variables";
-import { DonationDto } from "../../../types";
+import { PaginatedDonationsDto } from "../../../types";
 
 interface IDeleteDonationFormProps {
   id: number;
-  setDonations: Dispatch<SetStateAction<DonationDto[]>>;
+  setPaginatedDonations: Dispatch<SetStateAction<PaginatedDonationsDto>>;
+  setMessage: Dispatch<SetStateAction<string>>;
 }
 const DeleteDonationForm: FC<IDeleteDonationFormProps> = ({
   id,
-  setDonations,
+  setPaginatedDonations,
+  setMessage,
 }) => {
-  const navigate = useNavigate();
-
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
   ): Promise<void> => {
@@ -21,14 +20,19 @@ const DeleteDonationForm: FC<IDeleteDonationFormProps> = ({
 
     try {
       await protectedAxios.delete(`${API_URL}/donations/${id}`);
-      setDonations((prev) => prev.filter((donation) => donation.id !== id));
-      navigate(`/dashboard/donations`, {
-        state: {
-          message: "Donation was successfully deleted.",
-        },
+      setPaginatedDonations((prev) => {
+        const filteredDonations = prev.donations.filter(
+          (donation) => donation.id !== id
+        );
+        return {
+          donations: filteredDonations,
+          hasNextPage: prev.hasNextPage,
+        };
       });
+      setMessage("Donation was successfully deleted.");
     } catch (error) {
       console.error(`Error deleting the donation: ${error}`);
+      setMessage("We couldn't delete the donation. Please, try again later!");
     }
   };
 

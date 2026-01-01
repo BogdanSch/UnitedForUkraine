@@ -46,7 +46,7 @@ public class Seed
                     Category = CampaignCategory.Health,
                     StartDate = new DateTime(2025, 11, 6, 0, 0, 0, DateTimeKind.Utc),
                     EndDate = new DateTime(2026, 2, 6, 0, 0, 0, DateTimeKind.Utc),
-                    ImageUrl = DEFAULT_IMAGE_URL,
+                    ImageUrl = "https://res.cloudinary.com/danl4sj0w/image/upload/v1767187177/wa4bvp5hk7avdsir4ymc.jpg",
                     DonorsCount = 0
                 },
                 new()
@@ -54,14 +54,14 @@ public class Seed
                     Title = "Winter Relief for our soldiers",
                     Slogan = "Warmth in every home",
                     Description = "Our goal is to supply warm clothes, blankets, and heating equipment for our warriors before winter.",
-                    GoalAmount = 40000.00m,
+                    GoalAmount = 400000.00m,
                     RaisedAmount = 0m,
                     Currency = CurrencyType.UAH,
                     Status = CampaignStatus.Ongoing,
                     Category = CampaignCategory.Military,
                     StartDate = new DateTime(2025, 11, 6, 0, 0, 0, DateTimeKind.Utc),
                     EndDate = new DateTime(2026, 3, 6, 0, 0, 0, DateTimeKind.Utc),
-                    ImageUrl = DEFAULT_IMAGE_URL,
+                    ImageUrl = "https://res.cloudinary.com/danl4sj0w/image/upload/v1767187261/mr11emqcxjflxily7zpt.jpg",
                     DonorsCount = 0
                 },
                 new()
@@ -111,7 +111,7 @@ public class Seed
             [
                 new()
                 {
-                    Title = "Winter Defense: Thermal Imagers and Clothing for the 3rd Brigade",
+                    Title = "Winter Defense: Thermal Imagers and Clothing for the 3rd Corps",
                     KeyWords = "Winter, Military, Clothing, ThermalImagers, Aid",
                     Content = "The funds raised went towards purchasing 150 sets of thermal underwear, warm sleeping bags, and three thermal imagers. This is critically important aid for our defenders ahead of the cold weather.",
                     ImageUrl = DEFAULT_IMAGE_URL,
@@ -173,7 +173,7 @@ public class Seed
                 {
                     Title = "Thermal Blankets Reach Eastern Front Positions",
                     KeyWords = "Heating, Blankets, Logistics, Frontline, Winter",
-                    Content = "Our latest shipment successfully delivered 400 specialized thermal blankets and 20 field heaters directly to the forward operating bases in the East. This rapid deployment ensures immediate protection against the upcoming freezing temperatures.",
+                    Content = "Our latest shipment successfully delivered 100 specialized thermal blankets and 20 field heaters directly to the forward operating bases in the East. This rapid deployment ensures immediate protection against the upcoming freezing temperatures.",
                     ImageUrl = "https://res.cloudinary.com/danl4sj0w/image/upload/v1764871711/pwrvrxkqszkz1qp9hwyc.png",
                     ReadingTimeInMinutes = 3,
                     PostedAt = new DateTime(2025, 12, 4, 18, 8, 35, 639, DateTimeKind.Utc),

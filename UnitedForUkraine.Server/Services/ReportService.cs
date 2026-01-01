@@ -1,7 +1,6 @@
 ﻿using ClosedXML.Excel;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
@@ -44,7 +43,6 @@ namespace UnitedForUkraine.Server.Services
             var ws = wb.Worksheet(1);
 
             ws.Cell("B1").Value = $"Foundation report on period from {startDate.ToString(DateSettings.DEFAULT_DATE_FORMAT)} to {endDate.ToString(DateSettings.DEFAULT_DATE_FORMAT)}";
-
             ws.Cell("C5").Value = stats.DonationsCount;
             ws.Cell("C6").Value = stats.UsersCount;
             ws.Cell("C7").Value = stats.UniqueDonors;

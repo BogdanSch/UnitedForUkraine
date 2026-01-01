@@ -2,6 +2,12 @@
   width: 100%;
   margin: 0 auto;
 
+  &-password {
+    &::-ms-reveal,
+    &::-ms-clear {
+      display: none;
+    }
+  }
   &-text {
     font-size: 12px;
     font-weight: $fw-light;
@@ -16,7 +22,7 @@
         cursor: pointer;
         border: none;
         border-radius: 1rem;
-        padding: .5rem 1rem;
+        padding: 0.5rem 1rem;
       }
     }
   }
