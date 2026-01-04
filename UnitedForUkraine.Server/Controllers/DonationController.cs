@@ -21,7 +21,7 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     [HttpGet]
     public async Task<IActionResult> GetPaginatedDontaionsData([FromQuery] QueryObject queryObject)
     {
-        var paginatedDonations = await _donationRepository.GetPaginatedDonationsAsync(queryObject, NUMBER_OF_DONATIONS_PER_PAGE);
+        PaginatedList<Donation> paginatedDonations = await _donationRepository.GetPaginatedDonationsAsync(queryObject, NUMBER_OF_DONATIONS_PER_PAGE);
 
         if (!paginatedDonations.Any()) return Ok(new PaginatedDonationsDto([], false));
         List<DonationDto> donationDtos = [.. paginatedDonations.Select(d => d.ToDonationDto())];

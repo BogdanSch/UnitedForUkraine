@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text;
 using UnitedForUkraine.Server.Data;
@@ -16,6 +18,7 @@ using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
+using UnitedForUkraine.Server.Repositories;
 
 namespace UnitedForUkraine.Server.Controllers
 {
@@ -95,22 +98,22 @@ namespace UnitedForUkraine.Server.Controllers
 
             AuthenticateResult authResult = await HttpContext.AuthenticateAsync(authScheme);
             if (!authResult.Succeeded)
-                return Unauthorized(new { message = $"{authScheme} authentication failed. Try again later" });
+                return Unauthorized(new { message = $"{authScheme} authentication failed. Please, try again later" });
 
             ClaimsPrincipal? userPrincipal = authResult.Principal;
             if (userPrincipal is null)
-                return Unauthorized(new { message = $"{authScheme} authentication failed, because user claims are empty" });
+                return Unauthorized(new { message = $"{authScheme} authentication failed. We are unable to verify the user" });
 
             string? email = userPrincipal.FindFirstValue(ClaimTypes.Email);
             if (email is null)
-                return Unauthorized(new { message = $"{authScheme} authentication failed, because email is empty" });
+                return Unauthorized(new { message = $"{authScheme} authentication failed. Email address is empty" });
 
             AppUser? user = await _userService.GetOrCreateUserAsync(
                 email,
                 userPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
                 null);
             if (user is null)
-                return Unauthorized(new { message = $"{authScheme} authentication failed, because we weren't able to create a new user" });
+                return Unauthorized(new { message = $"{authScheme} authentication failed. We weren't able to create a new user" });
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
             TokenObject token = _authTokenService.CreateToken(user, roles, true);
@@ -124,8 +127,6 @@ namespace UnitedForUkraine.Server.Controllers
 
             Dictionary<string, string?> parameters = new()
             {
-                //{ "accessToken", token.AccessTokenValue },
-                //{ "refreshToken", token.RefreshTokenValue },
                 { "accessTokenExpirationTime", token.AccessTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT) },
                 { "refreshTokenExpirationTime", token.RefreshTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT) }
             };
@@ -136,7 +137,6 @@ namespace UnitedForUkraine.Server.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken()
         {
-            //HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken);
             HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
             if(string.IsNullOrWhiteSpace(refreshToken))
                 return Unauthorized(new { message = "The refresh token was empty" });
@@ -158,8 +158,6 @@ namespace UnitedForUkraine.Server.Controllers
 
             TokenDateDto tokenDateDto = new()
             {
-                // AccessToken = token.AccessTokenValue,
-                // RefreshToken = token.RefreshTokenValue,
                 AccessTokenExpirationTime = token.AccessTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT),
                 RefreshTokenExpirationTime = token.RefreshTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT)
             };
@@ -236,14 +234,18 @@ namespace UnitedForUkraine.Server.Controllers
                 appUser.Address.Street = updateProfileDto.UpdatedAddress.Street;
                 appUser.Address.PostalCode = updateProfileDto.UpdatedAddress.PostalCode;
 
-                bool isUpdated = await _userService.UpdateAsync(appUser);
-
-                if (isUpdated) return Ok(new { message = "Profile information was successfully updated" });
-                return BadRequest(new { message = "An error has occurred during the profile update. Please, try again later" });
+                IdentityResult result = await _userManager.UpdateAsync(appUser);
+                if (!result.Succeeded)
+                {
+                    string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
+                    _logger.LogError($"User profile update error: {errorMessage}");
+                    return BadRequest(new { message = "We couldn't update the profile. Please, try again later" });
+                }
+                return Ok(new { message = "Profile information was successfully updated" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, message: $"Error updating profile for user {userId}");
+                _logger.LogError(ex, $"Error updating profile for user {userId}");
                 return BadRequest(new { message = "An error has occurred during the profile update. Please, try again later" });
             }
         }
@@ -279,6 +281,21 @@ namespace UnitedForUkraine.Server.Controllers
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Successfully logged out" });
         }
+        [HttpGet("me/has-password")]
+        [Authorize]
+        public async Task<IActionResult> HasPassword()
+        {
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized(new { message = "Invalid user confirmation token" });
+
+            AppUser? appUser = await _userService.GetByIdAsync(userId);
+            if (appUser is null)
+                return Unauthorized(new { message = "User was not found" });
+
+            bool hasPassword = await _userManager.HasPasswordAsync(appUser);
+            return Ok(new { hasPassword });
+        }
         [HttpDelete]
         [Authorize]
         public async Task<IActionResult> DeleteUser([FromBody] DeleteUserDto deleteUserDto)
@@ -286,19 +303,37 @@ namespace UnitedForUkraine.Server.Controllers
             if(!ModelState.IsValid) 
                 return BadRequest(ModelState);
 
-            AppUser? user = await _userManager.FindByEmailAsync(deleteUserDto.Email);
-            if (user is null)
-                return NotFound(new { message = $"User with email={deleteUserDto.Email} was not found" });
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
 
-            bool isPasswordValid = await _userManager.CheckPasswordAsync(user, deleteUserDto.Password);
-            if (!isPasswordValid)
-                return BadRequest(new { password = "Incorrect password" });
+            AppUser? user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return Unauthorized();
+
+            if (!string.Equals(user.Email, deleteUserDto.ConfirmEmail, StringComparison.OrdinalIgnoreCase))
+                return BadRequest(new { confirmEmail = "Email addresses do not match" });
+
+            bool hasPassword = await _userManager.HasPasswordAsync(user);
+            if (hasPassword)
+            {
+                if (string.IsNullOrWhiteSpace(deleteUserDto.Password))
+                    return BadRequest(new { password = "Password is required" });
+
+                bool isPasswordValid = await _userManager.CheckPasswordAsync(user, deleteUserDto.Password);
+                if (!isPasswordValid)
+                    return BadRequest(new { password = "Incorrect password." });
+            }
+
+            if(await _userService.HasDonationsAsync(user.Id))
+                return BadRequest(new { message = "User cannot be deleted because they have associated donations." });
+            if(await _userService.HasNewsUpdatesAsync(user.Id))
+                return BadRequest(new { message = "User cannot be deleted because they have associated news updates." });
 
             IdentityResult result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
-                return BadRequest(new { message = "Deletion failed. Try again later" });
-
-            return Ok(new { message = "Account deleted" });
+            if (!result.Succeeded) 
+                return BadRequest(new { message = "Deletion failed. Please, try again later" });
+            return Ok(new { message = "Account successfully deleted" });
         }
     }
 }

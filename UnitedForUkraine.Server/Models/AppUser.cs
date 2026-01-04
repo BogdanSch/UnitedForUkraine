@@ -11,4 +11,6 @@ public class AppUser : IdentityUser
     public DateTime? RefreshTokenExpiresAtUtc { get; set; }
     public required DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
     public Address Address { get; set; } = null!;
+    public ICollection<Donation> Donations { get; set; } = [];
+    public ICollection<NewsUpdate> NewsUpdates { get; set; } = [];
 }

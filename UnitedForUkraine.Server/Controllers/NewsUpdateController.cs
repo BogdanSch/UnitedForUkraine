@@ -58,7 +58,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
 
         NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(id);
         if (newsUpdate is null)
-            return NotFound(new { message = "Error, we weren't able to retrieve this news update" });
+            return NotFound(new { message = "Error, this news update doesn't exist" });
 
         try
         {
@@ -83,7 +83,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
     {
         NewsUpdate? newsUpdate = await _newsUpdateRepository.GetByIdAsync(id);
         if (newsUpdate is null)
-            return NotFound(new { message = "Error, we weren't able to find this news update" });
+            return NotFound(new { message = "Error, this news update doesn't exist" });
         try
         {
             newsUpdate.ViewsCount += 1;
@@ -92,7 +92,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         }
         catch (Exception)
         {
-            return BadRequest(new { message = "Error, we weren't able to update views count! Please, refresh the page" });
+            return BadRequest(new { message = "Error, we weren't able to update the views count! Please, refresh the page" });
         }
     }
     [HttpDelete("{id:int}")]

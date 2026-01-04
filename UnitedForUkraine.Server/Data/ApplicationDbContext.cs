@@ -18,7 +18,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         builder.Entity<Donation>()
             .HasOne(d => d.User)
-            .WithMany()
+            .WithMany(u => u.Donations)
             .HasForeignKey(d => d.UserId)
             .OnDelete(DeleteBehavior.Restrict);
         builder.Entity<Donation>()
@@ -36,6 +36,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(n => n.TargetCampaign)
             .WithMany(c => c.NewsUpdates)
             .HasForeignKey(n => n.CampaignId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<NewsUpdate>()
+            .HasOne(n => n.Author)
+            .WithMany(u => u.NewsUpdates)
+            .HasForeignKey(n => n.AuthorId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Address>()

@@ -17,7 +17,6 @@ namespace UnitedForUkraine.Server.Controllers
     [Route("api/payments")]
     public class PaymentController(IOptions<FrontendSettings> frontendSettings, UserManager<AppUser> userManager, IDonationRepository donationRepository, ICampaignRepository campaignRepository) : ControllerBase
     {
-        public const string DEFAULT_STRIPE_CURRENCY = "uah";
         private readonly FrontendSettings _frontendSettings = frontendSettings.Value;
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly IDonationRepository _donationRepository = donationRepository;
@@ -41,7 +40,7 @@ namespace UnitedForUkraine.Server.Controllers
 
             Campaign? targetCampaign = await _campaignRepository.GetByIdAsync(currentDonation.CampaignId);
             if (targetCampaign is null)
-                return BadRequest(new { message = "Invalid campaign data within the donation" });
+                return BadRequest(new { message = "Invalid campaign data" });
             if(targetCampaign.Status != CampaignStatus.Ongoing)
                 return BadRequest(new { message = "Campaign is not active for donations" } );
 
@@ -60,8 +59,8 @@ namespace UnitedForUkraine.Server.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = Convert.ToInt64(currentDonation.Amount * 100) ,
-                            Currency = Enum.GetName(currentDonation.Currency)?.ToLower() ?? DEFAULT_STRIPE_CURRENCY,
+                            UnitAmount = Convert.ToInt64(currentDonation.Amount * 100),
+                            Currency = Enum.GetName(currentDonation.Currency)?.ToLower() ?? StripeSettings.DEFAULT_CURRENCY_NAME.ToLower(),
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
                                 Name = targetCampaign.Title,

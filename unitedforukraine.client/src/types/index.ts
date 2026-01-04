@@ -140,8 +140,8 @@ export type UpdateUserProfileDto = {
 };
 
 export type DeleteUserDto = {
-  email: string;
-  password: string;
+  confirmEmail: string;
+  password?: string;
 };
 
 export type Statistics = {

@@ -61,6 +61,7 @@ namespace UnitedForUkraine.Server.Services
                 _logger.LogError($"An error has occurred during registration: {errorMessage}");
                 return null;
             }
+
             await CreateUserAddress(newUser.Id);
             await _userManager.AddToRoleAsync(newUser, UserRoles.User);
             return newUser;
@@ -75,17 +76,8 @@ namespace UnitedForUkraine.Server.Services
             if(string.IsNullOrWhiteSpace(id)) return null;
             return await _userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id == id);
         }
-        public async Task<bool> UpdateAsync(AppUser user)
-        {
-            IdentityResult result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-            {
-                string errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
-                _logger.LogError($"An error has occurred during updating user profile: {errorMessage}");
-                return false;
-            }
-            return true;
-        }
+        public async Task<bool> HasDonationsAsync(string userId) => await _context.Donations.AnyAsync(d => d.UserId == userId);
+        public async Task<bool> HasNewsUpdatesAsync(string userId) => await _context.NewsUpdates.AnyAsync(d => d.AuthorId == userId);
         public async Task<int> GetNumberOfRegisteredUsers(DateTime? start = null, DateTime? end = null)
         {
             IQueryable<AppUser> users = _context.Users.AsQueryable();

@@ -40,7 +40,7 @@ namespace UnitedForUkraine.Server.Controllers
                 {
                     if (stripeEvent.Data.Object is not Session session)
                     {
-                        _logger.LogError("Session is empty!");
+                        _logger.LogError("The payment session is empty!");
                         return BadRequest(new { message = "Session is empty!" });
                     }
 
@@ -97,7 +97,7 @@ namespace UnitedForUkraine.Server.Controllers
                     {
                         await _donationRepository.DeleteAsync(donation.Id);
                     }
-                    return BadRequest(new { message = "An error has occured during check-out" });
+                    return BadRequest(new { message = "An error has occured during check-out. Please, try again later" });
                 }
 
                 return Ok(new { message = "Event processed successfully" });

@@ -1,28 +1,29 @@
 import axios from "axios";
 import { protectedAxios } from "../../../utils/axiosInstances";
 import { useNavigate } from "react-router-dom";
-import { FC, FormEvent, useContext, useRef } from "react";
+import { FC, FormEvent, useContext, useRef, useEffect, useState } from "react";
 import { Modal } from "bootstrap";
 import AuthContext from "../../../contexts/AuthContext";
 import { API_URL } from "../../../variables";
 import { useCustomForm, useAuthForm } from "../../../hooks";
-import { ErrorAlert, PasswordInput } from "../../../components";
-import { DeleteUserDto, UserDto } from "../../../types";
+import { ErrorAlert, Input, PasswordInput } from "../../../components";
+import { DeleteUserDto } from "../../../types";
 import { isNullOrWhitespace } from "../../../utils/helpers/stringHelper";
 
-const getFormData = (user: UserDto | null): DeleteUserDto => {
+const getFormData = (): DeleteUserDto => {
   return {
-    email: user?.email || "",
     password: "",
+    confirmEmail: "",
   };
 };
 
 const DeleteUserForm: FC = () => {
-  const navigate = useNavigate();
+  const [hasPassword, setHasPassword] = useState<boolean>(true);
+
   const modalElementRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
   const { user, isAuthenticated, logoutUser } = useContext(AuthContext);
-
   const {
     formData,
     setFormData,
@@ -30,23 +31,42 @@ const DeleteUserForm: FC = () => {
     setErrors,
     requestError,
     setRequestError,
-  } = useAuthForm(getFormData(user));
+  } = useAuthForm(getFormData());
   const { handleChange } = useCustomForm(setFormData);
 
-  async function handleSubmit(
+  useEffect(() => {
+    userHasPassword()
+      .then((hasPassword) => {
+        setHasPassword(hasPassword);
+      })
+      .catch(() => {
+        navigate("/home");
+      });
+  }, [navigate]);
+
+  const userHasPassword = async (): Promise<boolean> => {
+    try {
+      const response = await protectedAxios.get<{ hasPassword: boolean }>(
+        `${API_URL}/Auth/me/has-password`
+      );
+      return response.data.hasPassword;
+    } catch (error) {
+      console.error("Error checking password:", error);
+      return false;
+    }
+  };
+
+  const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
-  ): Promise<void> {
+  ): Promise<void> => {
     event.preventDefault();
 
-    if (!isValid()) return;
     if (!isAuthenticated()) return;
+    if (!isValid()) return;
 
     try {
       await protectedAxios.delete(`${API_URL}/Auth`, {
-        data: {
-          email: user!.email,
-          password: formData.password,
-        },
+        data: formData,
       });
       const modalElement = modalElementRef.current;
       if (modalElement) {
@@ -62,13 +82,17 @@ const DeleteUserForm: FC = () => {
         },
       });
 
-      setTimeout(async () => await logoutUser(), 100);
+      setTimeout(async () => await logoutUser(), 200);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const data = error.response?.data;
         if (data?.password) {
           setErrors({
             password: data?.password,
+          });
+        } else if (data?.confirmEmail) {
+          setErrors({
+            confirmEmail: data?.confirmEmail,
           });
         } else {
           setRequestError(
@@ -80,9 +104,14 @@ const DeleteUserForm: FC = () => {
         setRequestError("An unexpected error has occurred!");
       }
     }
-  }
+  };
+
   const isValid = (): boolean => {
     const newErrors: Record<string, string> = {};
+
+    if (formData.confirmEmail !== user?.email) {
+      newErrors.confirmEmail = "Email addresses do not match!";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -115,18 +144,33 @@ const DeleteUserForm: FC = () => {
             <form
               className="form dashboard__form"
               id="deleteUserForm"
-              aria-labelledby="updateUserProfileForm"
+              aria-labelledby="delete user form"
               onSubmit={handleSubmit}
             >
-              <fieldset className="form-group">
-                <PasswordInput
-                  value={formData.password}
+              <div className="form-group">
+                <Input
+                  type="email"
+                  name="confirmEmail"
+                  id="confirmEmailInput"
+                  isRequired={true}
+                  value={formData.confirmEmail}
                   onChange={handleChange}
                 />
-                {!isNullOrWhitespace(errors.password) && (
-                  <ErrorAlert errorMessage={errors.password} />
+                {!isNullOrWhitespace(errors.confirmEmail) && (
+                  <ErrorAlert errorMessage={errors.confirmEmail} />
                 )}
-              </fieldset>
+              </div>
+              {hasPassword && (
+                <div className="form-group">
+                  <PasswordInput
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                  {!isNullOrWhitespace(errors.password) && (
+                    <ErrorAlert errorMessage={errors.password} />
+                  )}
+                </div>
+              )}
             </form>
           </div>
           <div className="modal-footer">

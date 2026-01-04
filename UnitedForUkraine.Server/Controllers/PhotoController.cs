@@ -19,8 +19,7 @@ public class PhotoController(IPhotoService photoService) : ControllerBase
         }
 
         ImageUploadResult result = await _photoService.AddPhotoAsync(imageFile!);
-
-        if(result.Error != null)
+        if(result.Error is not null)
             return BadRequest(new { message = result.Error.Message });
 
         return Ok(result.SecureUrl.ToString());
@@ -32,8 +31,7 @@ public class PhotoController(IPhotoService photoService) : ControllerBase
             BadRequest(new { message = "Image's public id is empty!" });
 
         DeletionResult result = await _photoService.RemovePhotoAsync(publicId);
-
-        if (result.Error != null)
+        if (result.Error is not null)
             return BadRequest(new { message = result.Error.Message });
 
         return NoContent();

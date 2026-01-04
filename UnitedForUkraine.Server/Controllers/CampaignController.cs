@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
@@ -166,8 +167,21 @@ public class CampaignController(ICampaignRepository campaignRepository, INewsUpd
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> DeleteCampaign([FromRoute] int id)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        await _campaignRepository.DeleteAsync(id);
-        return NoContent();
+        try
+        {
+            await _campaignRepository.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (DbUpdateException)
+        {
+            return Conflict(new
+            {
+                message = "This campaign cannot be deleted because it has related donations or news updates. Remove them first"
+            });
+        }
+        catch (Exception ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
     }
 }

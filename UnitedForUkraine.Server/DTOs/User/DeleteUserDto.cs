@@ -3,9 +3,8 @@
 namespace UnitedForUkraine.Server.DTOs.User;
 public record DeleteUserDto
 {
-
     [EmailAddress]
-    public required string Email { get; init; }
+    public required string ConfirmEmail { get; init; }
     [DataType(DataType.Password)]
-    public required string Password { get; init; }
+    public string? Password { get; init; } = string.Empty;
 }
