@@ -139,7 +139,7 @@ const DeleteUserForm: FC = () => {
           </div>
           <div className="modal-body">
             {!isNullOrWhitespace(requestError) && (
-              <ErrorAlert errorMessage={requestError} />
+              <ErrorAlert className="mb-4" errorMessage={requestError} />
             )}
             <form
               className="form dashboard__form"
@@ -147,14 +147,18 @@ const DeleteUserForm: FC = () => {
               aria-labelledby="delete user form"
               onSubmit={handleSubmit}
             >
-              <div className="form-group">
+              <div className="form-group mb-3">
+                <label htmlFor="confirmEmailInput" className="form-label">
+                  Confirm your email address*:
+                </label>
                 <Input
                   type="email"
                   name="confirmEmail"
                   id="confirmEmailInput"
-                  isRequired={true}
                   value={formData.confirmEmail}
                   onChange={handleChange}
+                  placeholder="Enter your email"
+                  isRequired
                 />
                 {!isNullOrWhitespace(errors.confirmEmail) && (
                   <ErrorAlert errorMessage={errors.confirmEmail} />
@@ -162,6 +166,10 @@ const DeleteUserForm: FC = () => {
               </div>
               {hasPassword && (
                 <div className="form-group">
+                  {" "}
+                  <label htmlFor="password" className="form-label">
+                    Confirm your password*:
+                  </label>
                   <PasswordInput
                     value={formData.password}
                     onChange={handleChange}

@@ -1,22 +1,30 @@
 import { FC, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 import { CampaignsList, FoundationStatisticsList } from "../../containers";
 import {
+  Alert,
   CallToActionSection,
   Card,
   Image,
   SectionHeadline,
 } from "../../components";
 import aboutImage from "/assets/img/aboutPreviewAbstract.webp";
+import { isNullOrWhitespace } from "../../utils/helpers/stringHelper";
 
 const HomePage: FC = () => {
+  const location = useLocation();
+  const message: string = location.state?.message || "";
   const { isAuthenticated } = useContext(AuthContext);
+
   return (
     <>
       <section className="hero" id="hero">
         <div className="container">
           <div className="hero__wrap">
+            {!isNullOrWhitespace(message) && (
+              <Alert className="mb-3" message={message} />
+            )}
             <Card className="hero__card" isLite={true}>
               <h1 className="heading hero__title">
                 United for Ukraine:{" "}

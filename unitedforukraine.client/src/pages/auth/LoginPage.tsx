@@ -1,9 +1,10 @@
 import { FC } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { SignInForm } from "../../containers/";
-import { Card, Image, Logo, ThemeSwitchButton } from "../../components";
+import { Alert, Card, Image, Logo, ThemeSwitchButton } from "../../components";
 
 import loginImage from "/assets/img/loginImage.png";
+import { isNullOrWhitespace } from "../../utils/helpers/stringHelper";
 
 const LoginPage: FC = () => {
   const location = useLocation();
@@ -31,10 +32,14 @@ const LoginPage: FC = () => {
             <div className="auth__hero-content">
               <div className="text-content">
                 <h2 className="sub-heading auth__title">Welcome back, mate!</h2>
-                <p className="auth__description">
-                  {message ||
-                    "We have been missing you so much! Please fill in your credentials to log in."}
-                </p>
+                {!isNullOrWhitespace(message) ? (
+                  <Alert className="text-center mt-4" message={message} />
+                ) : (
+                  <p className="auth__description">
+                    We have been missing you so much! Please fill in your
+                    credentials to log in.
+                  </p>
+                )}
               </div>
               <SignInForm />
             </div>

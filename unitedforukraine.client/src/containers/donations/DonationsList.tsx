@@ -225,7 +225,7 @@ const DonationsList: FC<IDonationsListProps> = ({
                   className="form-label query__label"
                   htmlFor={`campaignsFilter-${name}`}
                 >
-                  Select currency:
+                  Select campaign:
                 </label>
                 <select
                   className="form-select query__filter"

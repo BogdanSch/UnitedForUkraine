@@ -19,7 +19,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ value, onChange }) => {
         name="password"
         className="form-password"
         value={value}
-        placeholder="Enter password"
+        placeholder="Enter your password"
         onChange={onChange}
         autoComplete="current-password"
         aria-describedby="passwordHelpInline"

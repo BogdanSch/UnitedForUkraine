@@ -110,7 +110,7 @@ namespace UnitedForUkraine.Server.Controllers
 
             AppUser? user = await _userService.GetOrCreateUserAsync(
                 email,
-                userPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
+                email,
                 null);
             if (user is null)
                 return Unauthorized(new { message = $"{authScheme} authentication failed. We weren't able to create a new user" });
