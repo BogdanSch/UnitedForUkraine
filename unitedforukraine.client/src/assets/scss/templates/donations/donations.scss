@@ -1,4 +1,5 @@
 .donations {
+  text-align: center;
   &-list {
     @include flex-col();
     align-items: center;

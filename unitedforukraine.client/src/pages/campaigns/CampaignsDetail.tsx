@@ -14,6 +14,7 @@ import {
   CampaignStatisticsList,
   DeleteCampaignForm,
   DonationsList,
+  NewsUpdatesList,
 } from "../../containers/";
 import AuthContext from "../../contexts/AuthContext";
 import {
@@ -154,16 +155,28 @@ const CampaignsDetail: FC = () => {
               </div>
             </div>
           </div>
-          <h3 className="mt-5 sub-heading">
-            In total {campaign?.donorsCount}{" "}
-            {campaign?.donorsCount == 1 ? "donor" : "donors"} contributed
-          </h3>
-          <DonationsList
-            name="campaignDonations"
-            campaignId={Number(id)}
-            showUserDonations={false}
-            showQueryCriteria={false}
-          />
+          <div className="donations mt-5">
+            <h3 className="sub-heading">
+              In total {campaign?.donorsCount}{" "}
+              {campaign?.donorsCount == 1 ? "donor" : "donors"} contributed
+            </h3>
+            <DonationsList
+              name="campaignDonations"
+              campaignId={Number(id)}
+              showUserDonations={false}
+              showQueryCriteria={false}
+            />
+          </div>
+          {campaign?.id && (
+            <div className="news mt-5">
+              <h3 className="sub-heading">All related news and updates</h3>
+              <NewsUpdatesList
+                campaignId={Number(campaign?.id)}
+                showQueryCriteria={false}
+                showPaginationButtons={false}
+              />
+            </div>
+          )}
         </article>
       </div>
     </section>

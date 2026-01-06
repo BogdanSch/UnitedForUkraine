@@ -39,6 +39,12 @@ namespace UnitedForUkraine.Server.Repositories
             {
                 newsUpdates = newsUpdates.OrderByDescending(n => n.PostedAt);
             }
+            if(!string.IsNullOrWhiteSpace(queryObject.CampaignIds))
+            {
+                string[] campaignIds = queryObject.CampaignIds.Split('+', StringSplitOptions.RemoveEmptyEntries);
+                if (campaignIds.Length != 0)
+                    newsUpdates = newsUpdates.Where(n => campaignIds.Contains(n.CampaignId.ToString()));
+            }
             
             return await PaginatedList<NewsUpdate>.CreateAsync(newsUpdates, queryObject.Page, itemsPerPageCount);
         }

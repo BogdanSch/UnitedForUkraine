@@ -3,6 +3,10 @@
   width: 100%;
   background: url("/assets/img/donatePrompt.jpg") no-repeat center center;
   background-size: cover;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &::after {
     content: "";
@@ -18,11 +22,10 @@
   &__wrap {
     position: relative;
     z-index: 1;
+
     @include flex-col;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    min-height: 400px;
   }
   &__title {
     color: $text-light-gray;

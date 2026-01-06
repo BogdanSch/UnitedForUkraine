@@ -164,11 +164,6 @@ const Header: FC = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to={`/dashboard/donations`}>
-                    Donations list
-                  </Link>
-                </li>
-                <li>
                   <Link className="dropdown-item" to={`/dashboard/report`}>
                     Reports
                   </Link>

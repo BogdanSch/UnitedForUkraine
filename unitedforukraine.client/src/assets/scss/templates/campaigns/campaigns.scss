@@ -4,50 +4,6 @@
     justify-content: space-between;
     align-items: center;
   }
-
-  &__query {
-    &-container {
-      @include flex-col();
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      column-gap: 12px;
-      row-gap: 12px;
-      width: 100%;
-    }
-    &-search {
-      flex-grow: 1;
-      min-width: 280px;
-
-      .form-outline {
-        flex-grow: 1;
-      }
-
-      &-input {
-        width: 100%;
-        height: 100%;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-    }
-    &-group {
-      width: 100%;
-      @include flex-row();
-      justify-content: center;
-      column-gap: 8px;
-      row-gap: 12px;
-      flex-wrap: wrap;
-    }
-    &-label {
-      margin-bottom: 2px;
-    }
-    &-item {
-      text-align: center;
-    }
-    &-filter {
-      max-width: 220px;
-    }
-  }
   &__list {
     padding-left: 0;
     list-style: none;

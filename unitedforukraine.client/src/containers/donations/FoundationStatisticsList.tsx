@@ -18,6 +18,8 @@ const getDefaultStatistics = (): Statistics => ({
     amount: 0,
     currency: 0,
   },
+  biggestDonationAmount: 0,
+  smallestDonationAmount: 0,
   averageDonationsAmount: 0,
   uniqueDonorsCount: 0,
   cityWithMostDonations: "",
@@ -95,6 +97,20 @@ const FoundationStatisticsList: FC = () => {
       <li className="statistics__item">
         <Card className="card-border p-3" isLite={false}>
           <div className="statistics__item-group">
+            <i className="statistics__item-icon bi bi-box2-heart"></i>
+            <h4 className="sub-heading statistics__item-title">
+              Smallest Donation
+            </h4>
+          </div>
+          <p className="statistics__item-amount">
+            {formatMoney(statistics.smallestDonationAmount)}{" "}
+            <span className="currency">UAH</span>
+          </p>
+        </Card>
+      </li>
+      <li className="statistics__item">
+        <Card className="card-border p-3" isLite={false}>
+          <div className="statistics__item-group">
             <i className="statistics__item-icon bi bi-arrow-left-right"></i>
             <h4 className="sub-heading statistics__item-title">
               Average Donation
@@ -109,13 +125,14 @@ const FoundationStatisticsList: FC = () => {
       <li className="statistics__item">
         <Card className="card-border p-3" isLite={false}>
           <div className="statistics__item-group">
-            <i className="statistics__item-icon bi bi-people"></i>
+            <i className="statistics__item-icon bi bi-award-fill"></i>
             <h4 className="sub-heading statistics__item-title">
-              Unique Donors
+              Biggest Donation
             </h4>
           </div>
           <p className="statistics__item-amount">
-            {formatNumber(statistics.uniqueDonorsCount)}+
+            {formatMoney(statistics.biggestDonationAmount)}{" "}
+            <span className="currency">UAH</span>
           </p>
         </Card>
       </li>
@@ -134,6 +151,19 @@ const FoundationStatisticsList: FC = () => {
                 statistics.mostFrequentDonation.currency
               )}
             </span>
+          </p>
+        </Card>
+      </li>
+      <li className="statistics__item">
+        <Card className="card-border p-3" isLite={false}>
+          <div className="statistics__item-group">
+            <i className="statistics__item-icon bi bi-people"></i>
+            <h4 className="sub-heading statistics__item-title">
+              Unique Donors
+            </h4>
+          </div>
+          <p className="statistics__item-amount">
+            {formatNumber(statistics.uniqueDonorsCount)}+
           </p>
         </Card>
       </li>

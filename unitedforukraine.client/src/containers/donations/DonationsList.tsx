@@ -29,6 +29,7 @@ import {
 } from "../../utils/helpers/donationHelper";
 import { fetchAllActiveAndCompletedCampaigns } from "../../utils/services/campaignService";
 import { isNullOrWhitespace } from "../../utils/helpers/stringHelper";
+import { convertToReadableDate } from "../../utils/helpers/dateHelper";
 
 interface IDonationsListProps {
   name: string;
@@ -326,17 +327,25 @@ const DonationsList: FC<IDonationsListProps> = ({
                 {(isAdminView || isNoteAvailable) && (
                   <div className="donations-list__item-extra">
                     {isAdminView && (
-                      <p>
-                        Donation status:{" "}
-                        <strong>
-                          {convertDonationStatusToString(donation.status)}
-                        </strong>
-                      </p>
+                      <>
+                        <p className="mb-1">
+                          Donation status:{" "}
+                          <strong>
+                            {convertDonationStatusToString(donation.status)}
+                          </strong>
+                        </p>
+                        <p>
+                          Payment date:{" "}
+                          <strong>
+                            {convertToReadableDate(
+                              donation.paymentDate
+                            )}
+                          </strong>
+                        </p>
+                      </>
                     )}
                     {isNoteAvailable && (
-                      <p>
-                        Message: <strong>{donation.notes}</strong>
-                      </p>
+                      <p className="mb-0">{donation.notes}</p>
                     )}
                   </div>
                 )}

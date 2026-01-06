@@ -157,7 +157,7 @@ export const router = createBrowserRouter([
       {
         path: "report",
         element: (
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin>
             <FoundationReport />
           </ProtectedRoute>
         ),

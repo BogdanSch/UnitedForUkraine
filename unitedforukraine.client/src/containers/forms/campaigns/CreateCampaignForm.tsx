@@ -119,7 +119,7 @@ const CreateCampaignForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="slogan" className="form-label">
-          Campaign Slogan
+          Campaign Slogan*
         </label>
         <Input
           type="text"
@@ -135,7 +135,7 @@ const CreateCampaignForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="description" className="form-label">
-          Campaign Description
+          Campaign Description*
         </label>
         <textarea
           rows={5}
@@ -152,7 +152,7 @@ const CreateCampaignForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="goalAmount" className="form-label">
-          Campaign Goal Amount
+          Campaign Goal Amount*
         </label>
         <Input
           type="number"
@@ -169,7 +169,7 @@ const CreateCampaignForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="status" className="form-label">
-          Campaign Status
+          Campaign Status*
         </label>
         <select
           id="status"
@@ -189,14 +189,11 @@ const CreateCampaignForm: FC = () => {
                 {key}
               </option>
             ))}
-          {/* <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option> */}
         </select>
       </div>
       <div className="mb-3">
         <label htmlFor="category" className="form-label">
-          Campaign Category
+          Campaign Category*
         </label>
         <select
           id="category"
@@ -220,7 +217,7 @@ const CreateCampaignForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="currency" className="form-label">
-          Campaign Currency
+          Campaign Currency*
         </label>
         <select
           id="currency"
@@ -237,14 +234,11 @@ const CreateCampaignForm: FC = () => {
                 {key}
               </option>
             ))}
-          {/* <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option> */}
         </select>
       </div>
       <div className="mb-3">
         <label htmlFor="startDate" className="form-label">
-          Campaign Start Date
+          Campaign Start Date*
         </label>
         <Input
           type="date"
@@ -254,13 +248,13 @@ const CreateCampaignForm: FC = () => {
           value={formData.startDate}
           onChange={handleDateChange}
           placeholder="Campaign start date"
-          isRequired={true}
+          isRequired
         />
         {errors.startDate && <ErrorAlert errorMessage={errors.startDate} />}
       </div>
       <div className="mb-3">
         <label htmlFor="endDate" className="form-label">
-          Campaign End Date
+          Campaign End Date*
         </label>
         <Input
           type="date"
@@ -270,13 +264,13 @@ const CreateCampaignForm: FC = () => {
           value={formData.endDate}
           onChange={handleDateChange}
           placeholder="Campaign end date"
-          isRequired={true}
+          isRequired
         />
         {errors.endDate && <ErrorAlert errorMessage={errors.endDate} />}
       </div>
       <div className="mb-3">
         <label htmlFor="image" className="form-label">
-          Campaign Image
+          Campaign Image*
         </label>
         <input
           className="form-control"
@@ -290,6 +284,9 @@ const CreateCampaignForm: FC = () => {
           accept="image/png, image/jpeg"
           required
         />
+      </div>
+      <div id="formHelpBlock" className="form-text mb-2">
+        All fields marked with an asterisk (*) are required.
       </div>
       <div className="form-buttons">
         <button type="submit" className="btn btn-primary">

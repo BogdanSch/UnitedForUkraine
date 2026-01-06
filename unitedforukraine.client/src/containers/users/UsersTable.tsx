@@ -58,7 +58,6 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
                 <th scope="col">Місто</th>
                 <th scope="col">Вулиця</th>
                 <th scope="col">Поштовий індекс</th>
-                <th scope="col">Check user donations</th>
               </tr>
             </thead>
             <tbody>
@@ -75,16 +74,6 @@ const UsersTable: FC<UsersTableTableProps> = ({ showPaginationButtons }) => {
                   <td>{user.address.city}</td>
                   <td>{user.address.street}</td>
                   <td>{user.address.postalCode}</td>
-                  <td>
-                    <a
-                      className="btn btn-light"
-                      href={`/dashboard/donations?userId=${encodeURIComponent(
-                        user.id
-                      )}`}
-                    >
-                      Examine
-                    </a>
-                  </td>
                 </tr>
               ))}
             </tbody>

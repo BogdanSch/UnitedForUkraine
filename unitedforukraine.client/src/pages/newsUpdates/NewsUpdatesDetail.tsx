@@ -63,7 +63,7 @@ const NewsUpdatesDetail: FC = () => {
                 <p className="news-detail__description">
                   {newsUpdate?.keyWords}
                 </p>
-                <p>
+                <p className="mt-0">
                   <strong>{newsUpdate?.viewsCount}</strong> views
                 </p>
               </div>
@@ -73,17 +73,20 @@ const NewsUpdatesDetail: FC = () => {
                 alt={newsUpdate?.title!}
               />
               <div className="mt-4 text-content">
-                <ul className="news-detail__meta-list">
+                <ul className="news-detail__meta-list mb-5">
                   <li className="news-detail__meta-item">
-                    <strong>Published on:</strong>{" "}
+                    <i className="bi bi-calendar-plus"></i>
+                    {/* <strong>Published on:</strong>{" "} */}
                     {convertToReadableDate(newsUpdate?.postedAt || "")}
                   </li>
                   <li className="news-detail__meta-item">
-                    <strong> by </strong> {newsUpdate?.authorName}
+                    <i className="bi bi-pencil-square"></i>
+                    {/* <strong> by </strong>  */}
+                    {newsUpdate?.authorName}
                   </li>
                   <li className="news-detail__meta-item">
-                    <strong>{newsUpdate?.readingTimeInMinutes} min.</strong> to
-                    read
+                    <i className="bi bi-clock"></i>
+                    <strong>{newsUpdate?.readingTimeInMinutes} min.</strong>
                   </li>
                 </ul>
                 <div className="news-detail__content">
@@ -91,10 +94,13 @@ const NewsUpdatesDetail: FC = () => {
                 </div>
                 <div className="mt-3">
                   <Link
-                    className="news-detail__link"
+                    className="news-detail__link btn btn-secondary"
                     to={`/campaigns/detail/${newsUpdate?.targetCampaign.id}`}
                   >
-                    Check out the campaign
+                    <div className="d-flex align-items-center gap-2">
+                      <i className="bi bi-search"></i>
+                      <span>Check out the campaign</span>
+                    </div>
                   </Link>
                 </div>
               </div>
@@ -104,11 +110,18 @@ const NewsUpdatesDetail: FC = () => {
                 Related to: {newsUpdate?.targetCampaign.title}
               </h2>
               {newsUpdate && (
-                <CampaignItem campaign={newsUpdate.targetCampaign} />
+                <ul className="campaigns__list">
+                  {
+                    <CampaignItem
+                      campaign={newsUpdate.targetCampaign}
+                      searchQuery={""}
+                    />
+                  }
+                </ul>
               )}
             </div>
             {newsUpdate?.targetCampaign.id && (
-              <div className="mt-5">
+              <div className="donations mt-5">
                 <h3 className="sub-heading">
                   All contribution from the community to this campaign
                 </h3>

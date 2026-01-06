@@ -12,6 +12,18 @@ const FoundationReport: FC = () => {
             title="Report Generator"
             headingClassName="heading"
           />
+          <div className="dashboard__intro">
+            <p className="dashboard__description">
+              Generate official foundation reports for selected periods. Reports
+              include donations, campaigns, and financial summaries.
+            </p>
+            <ul className="dashboard__features">
+              <li>✔ Donations summary</li>
+              <li>✔ Campaign performance</li>
+              <li>✔ Currency breakdown</li>
+              <li>✔ Export-ready format</li>
+            </ul>
+          </div>
           <FoundationReportForm />
         </div>
       </div>

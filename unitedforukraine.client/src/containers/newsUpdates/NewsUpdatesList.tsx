@@ -12,6 +12,7 @@ interface INewsUpdatesListProps {
   className?: string;
   showQueryCriteria: boolean;
   showPaginationButtons: boolean;
+  campaignId?: number;
   [key: string]: any;
 }
 
@@ -25,6 +26,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
   showQueryCriteria,
   showPaginationButtons,
   className = "",
+  campaignId,
   ...rest
 }) => {
   const [paginatedNewsUpdates, setPaginatedNewsUpdates] =
@@ -43,6 +45,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
       let requestUrl: string = `${API_URL}/newsUpdates?page=${pageIndex}`;
       if (showQueryCriteria)
         requestUrl += `&searchedQuery=${searchQuery}&sortOrder=${sortOrder}`;
+      if (campaignId) requestUrl += `&campaignIds=${campaignId}`;
 
       const { data } = await axios.get<PaginatedNewsUpdatesDto>(requestUrl);
       setPaginatedNewsUpdates(data);
@@ -99,14 +102,14 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
           </div>
         </form>
       )}
-      <ul
-        className={`news__list mt-5 ${
-          className.length > 0 ? " " + className : ""
-        }`}
-        {...rest}
-      >
-        {paginatedNewsUpdates.newsUpdates.length > 0 ? (
-          paginatedNewsUpdates.newsUpdates.map((newsUpdate) => {
+      {paginatedNewsUpdates.newsUpdates.length > 0 ? (
+        <ul
+          className={`news__list mt-5 ${
+            className.length > 0 ? " " + className : ""
+          }`}
+          {...rest}
+        >
+          {paginatedNewsUpdates.newsUpdates.map((newsUpdate) => {
             return (
               <li key={newsUpdate.id} className="news__item">
                 <Card
@@ -143,11 +146,11 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                 </Card>
               </li>
             );
-          })
-        ) : (
-          <p className="mt-5 text-center">No news updates have been found.</p>
-        )}
-      </ul>
+          })}
+        </ul>
+      ) : (
+        <p className="mt-4 text-center">No news updates have been found.</p>
+      )}
       {showPaginationButtons && paginatedNewsUpdates.newsUpdates.length > 0 && (
         <Paginator
           linkPath={"/newsUpdates"}

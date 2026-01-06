@@ -12,7 +12,7 @@ export const getTransactionReceipt = async (
     return null;
   } catch (error) {
     if (isAxiosError(error))
-      return error.response?.data.message || "Failed to get receipt";
-    return "Failed to get receipt";
+      return error.response?.data.message || "Failed to get the receipt";
+    return "Failed to get the receipt";
   }
 };
