@@ -14,7 +14,7 @@ public interface ICampaignRepository
     Task<Campaign> DeleteAsync(int id);
     Task<bool> UpdateAsync(Campaign campaign);
     Task<bool> SaveAsync();
-    Task<int> GetTotalCreatedCampaignsCountAsync(DateTime? start = null, DateTime? end = null);
+    Task<int> GetCampaignsCountAsync(DateTime? start = null, DateTime? end = null);
     Task<PaginatedList<CampaignDto>> GetPaginatedUserSupportedCampaignsAsync(QueryObject queryObject, int pageSize, string userId);
     Task<int> GetAllUserSupportedCampaignsCount(string? userId);
     Task<bool> IsCampaignLikedByUser(int campaignId, string userId);

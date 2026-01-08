@@ -132,13 +132,13 @@ const Header: FC = () => {
             </li>
           </ul>
           <Link
-            className="btn btn-primary rounded-pill mb-2 mb-lg-0"
+            className="btn btn-primary btn-icon rounded-pill mb-2 mb-lg-0"
             to={`/campaigns`}
           >
-            <span className="d-flex align-items-center">
-              <i className="bi bi-balloon-heart-fill me-2"></i>
+            {/* <span className="d-flex align-items-center"> */}
+              <i className="bi bi-balloon-heart-fill"></i>
               <span className="small">Donate Now</span>
-            </span>
+            {/* </span> */}
           </Link>
           {isAuthenticated() ? (
             <div className="header__profile dropdown">

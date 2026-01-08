@@ -14,5 +14,5 @@ public record ReportStats
     public required decimal AverageDonation { get; init; }
     public required decimal MinDonation { get; init; }
     public required (decimal, CurrencyType) ModeDonation { get; init; }
-    public required (string, int) MostFrequentDonorStats { get; init; }
+    public required (string, int, decimal) MostFrequentDonorStats { get; init; }
 }

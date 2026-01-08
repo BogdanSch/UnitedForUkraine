@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../../variables";
+import { isNullOrWhitespace } from "../helpers/stringHelper";
 
 export const uploadImageAsync = async (file: File): Promise<string | null> => {
   const formData = new FormData();
@@ -23,7 +24,7 @@ export const uploadImageAsync = async (file: File): Promise<string | null> => {
 export const deleteImageAsync = async (imageUrl: string): Promise<boolean> => {
   try {
     const publicId = imageUrl.split("/").pop()?.split(".")[0];
-    if (!publicId) throw new Error("Invalid image URL");
+    if (isNullOrWhitespace(publicId)) throw new Error("Invalid image URL");
 
     await axios.delete(`${API_URL}/photos/${publicId}`);
     return true;

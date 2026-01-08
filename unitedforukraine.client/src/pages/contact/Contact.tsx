@@ -90,8 +90,8 @@ const Contact: FC = () => {
             <div className="text-content text-center">
               <h2 className="sub-heading">Our physical location</h2>
               <p className="text">
-                123 Main Street, Kharkiv, Ukraine. Visit us during business
-                hours or find us on the map below.
+                14 Nauky Avenue, Kharkiv, Kharkiv Region, Ukraine, 61166. Visit
+                us during business hours or find us on the map below.
               </p>
             </div>
             <iframe

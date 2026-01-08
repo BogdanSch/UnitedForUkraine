@@ -21,14 +21,10 @@ namespace UnitedForUkraine.Server.Controllers
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly IDonationRepository _donationRepository = donationRepository;
         private readonly ICampaignRepository _campaignRepository = campaignRepository;
-        private static List<string> GetStripePaymentMethod(CustomDonationMethod paymentMethod)
+        private static List<string> GetStripePaymentMethods()
         {
-            return paymentMethod switch
-            {
-                CustomDonationMethod.CreditCard => ["card"],
-                CustomDonationMethod.BankTransfer => ["customer_balance"],
-                _ => ["card"],
-            };
+            return ["card"];
+            //return ["card", "customer_balance"];
         }
         [HttpPost("{createdDonationId:int}")]
         [Authorize]
@@ -42,7 +38,10 @@ namespace UnitedForUkraine.Server.Controllers
             if (targetCampaign is null)
                 return BadRequest(new { message = "Invalid campaign data" });
             if(targetCampaign.Status != CampaignStatus.Ongoing)
-                return BadRequest(new { message = "Campaign is not active for donations" } );
+            {
+                await _donationRepository.DeleteAsync(currentDonation.Id);
+                return BadRequest(new { message = "Campaign is not open for donations at the moment" });
+            }
 
             AppUser? contributor = await _userManager.FindByIdAsync(currentDonation.UserId);
             if(contributor is null)
@@ -52,7 +51,7 @@ namespace UnitedForUkraine.Server.Controllers
 
             var options = new SessionCreateOptions
             {
-                PaymentMethodTypes = GetStripePaymentMethod(currentDonation.PaymentMethod),
+                PaymentMethodTypes = GetStripePaymentMethods(),
                 LineItems =
                 [
                     new SessionLineItemOptions
@@ -74,7 +73,7 @@ namespace UnitedForUkraine.Server.Controllers
                 ClientReferenceId = contributor.Id,
                 SuccessUrl = $"{requestOrigin}/donate/confirmation?donationId={currentDonation.Id}",
                 CancelUrl = $"{requestOrigin}/donate/failed",
-                CustomerEmail = contributor.Email,                
+                CustomerEmail = contributor.Email,
             };
 
             try

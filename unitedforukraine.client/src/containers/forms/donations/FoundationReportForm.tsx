@@ -59,7 +59,7 @@ const FoundationReportForm: FC = () => {
     setRequestError("");
   };
   return (
-    <Card className="report__card" isLite={false}>
+    <Card className="report__card  mt-4" isLite={false}>
       {!isNullOrWhitespace(requestError) && (
         <ErrorAlert errorMessage={requestError} />
       )}
@@ -80,9 +80,6 @@ const FoundationReportForm: FC = () => {
             onChange={handleDateChange}
             isRequired={true}
           />
-          {/* {!isNullOrWhitespace(errors.startDate) && (
-            <ErrorAlert errorMessage={errors.startDate} />
-          )} */}
         </div>
         <div className="mb-3">
           <label htmlFor="endDateInput" className="form-label">
@@ -96,13 +93,14 @@ const FoundationReportForm: FC = () => {
             onChange={handleDateChange}
             isRequired={true}
           />
-          {/* {!isNullOrWhitespace(errors.endDate) && (
-            <ErrorAlert errorMessage={errors.endDate} />
-          )} */}
+          <div id="passwordHelpBlock" className="form-text mt-3">
+            All fields marked with an asterisk (*) are required.
+          </div>
         </div>
         <div className="form-buttons">
-          <button type="submit" className="btn btn-primary">
-            Create the report
+          <button type="submit" className="btn btn-sky btn-icon">
+            <i className="bi bi-filetype-xlsx"></i>
+            <span className="small">Generate the report</span>
           </button>
           <button type="reset" className="btn btn-outline-danger">
             Reset

@@ -320,6 +320,12 @@ section {
       transform: scale(0.9);
     }
   }
+  &-icon {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: .25rem;
+  }
 }
 
 .disabled {

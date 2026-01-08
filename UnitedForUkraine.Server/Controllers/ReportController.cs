@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using UnitedForUkraine.Server.Data;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
@@ -20,6 +21,7 @@ public class ReportController(IReportService reportService, IDonationRepository 
     private readonly IUserService _userService = userService;
     private readonly IEmailService _emailService = emailService;
     [HttpGet]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetFoundationReport([FromQuery] DateTime start, [FromQuery] DateTime end)
     {
         DateTime boundaryEnd = end.AddDays(1);

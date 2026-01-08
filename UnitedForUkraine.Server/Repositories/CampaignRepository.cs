@@ -168,11 +168,11 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
         int saved = await _context.SaveChangesAsync();
         return saved > 0;
     }
-    public async Task<int> GetTotalCreatedCampaignsCountAsync(DateTime? start = null, DateTime? end = null)
+    public async Task<int> GetCampaignsCountAsync(DateTime? start = null, DateTime? end = null)
     {
         IQueryable<Campaign> campaigns = _context.Campaigns.AsQueryable();
         if (start is not null && end is not null) 
-            campaigns = campaigns.Where(c => c.StartDate >= start || c.EndDate <= end);
+            campaigns = campaigns.Where(c => c.StartDate >= start && c.StartDate <= end);
         return await campaigns.CountAsync(); 
     }
     private IQueryable<Campaign> GetAllUserSupportedCampaigns(string userId)

@@ -12,7 +12,7 @@ public interface IDonationRepository
     Task<PaginatedList<Donation>> GetPaginatedDonationsByNewsUpdate(NewsUpdate newsUpdate, int page, int itemsPerPageCount);
     Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, QueryObject queryObject, int itemsPerPageCount);
     Task<Donation?> GetByIdAsync(int id);
-    Task<int> GetTotalDonationsCountAsync(string? userId = null, DateTime? start = null, DateTime? end = null);
+    Task<int> GetDonationsCountAsync(string? userId = null, DateTime? start = null, DateTime? end = null);
     Task<decimal> GetTotalDonationsAmountAsync(string? userId = null, DateTime? start = null, DateTime? end = null);
     Task<int> GetAverageDonationsAmountAsync(string? userId = null, DateTime? start = null, DateTime? end = null);
     Task<(decimal, CurrencyType)> GetMostFrequentUserDonationAsync(DateTime? start = null, DateTime? end = null);
@@ -21,7 +21,7 @@ public interface IDonationRepository
     Task<int> GetUniqueDonorsCountAsync(DateTime? start = null, DateTime? end = null);
     Task<string> GetCityWithMostDonationsAsync();
     Task<string> GetCountryWithMostDonationsAsync();
-    Task<(string donorName, int donationsCount)> GetMostFrequentDonorInformationAsync(DateTime? start = null, DateTime? end = null);
+    Task<(string donorName, int donationsCount, decimal totalAmountInUah)> GetMostFrequentDonorInformationAsync(DateTime? start = null, DateTime? end = null);
     Task<decimal> GetDonationsGrowthRateAsync(DateTime period);
     Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId);
     Task<DateTime?> GetFirstDonationDateAsync(string? userId);

@@ -18,6 +18,11 @@
       max-width: 60%;
     }
   }
+  &__features {
+    &-list {
+      list-style-type: "✔  ";
+    }
+  }
 }
 
 @media screen and (max-width: 768px) {

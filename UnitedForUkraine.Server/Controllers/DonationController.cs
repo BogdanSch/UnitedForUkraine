@@ -97,8 +97,8 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
 
         FoundationDonationsStatisticsDto statisticsDto = new()
         {
-            DonationsCount = await _donationRepository.GetTotalDonationsCountAsync(),
-            CampaignsCount = await _campaignRepository.GetTotalCreatedCampaignsCountAsync(),
+            DonationsCount = await _donationRepository.GetDonationsCountAsync(),
+            CampaignsCount = await _campaignRepository.GetCampaignsCountAsync(),
             TotalDonationsAmount = await _donationRepository.GetTotalDonationsAmountAsync(),
             BiggestDonationAmount = await _donationRepository.GetBiggestDonationAmountAsync(),
             AverageDonationsAmount = await _donationRepository.GetAverageDonationsAmountAsync(),
@@ -124,12 +124,14 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
             return BadRequest("User Id can't be empty");
 
         string donorId = userId.ToString();
-        string firstDonationDate = (await _donationRepository.GetFirstDonationDateAsync(donorId))?.ToString(DateSettings.DEFAULT_DATE_FORMAT) ?? DateSettings.UNDEFINED_DATE;
-        string lastDonatioDate = (await _donationRepository.GetLastDonationDateAsync(donorId))?.ToString(DateSettings.DEFAULT_DATE_FORMAT) ?? DateSettings.UNDEFINED_DATE;
+        string firstDonationDate = (await _donationRepository.GetFirstDonationDateAsync(donorId))?.ToString(DateSettings.DEFAULT_DATE_FORMAT) 
+            ?? DateSettings.UNDEFINED_DATE;
+        string lastDonatioDate = (await _donationRepository.GetLastDonationDateAsync(donorId))?.ToString(DateSettings.DEFAULT_DATE_FORMAT) 
+            ?? DateSettings.UNDEFINED_DATE;
 
         UserDonationsStatisticsDto statisticsDto = new()
         {
-            DonationsCount = await _donationRepository.GetTotalDonationsCountAsync(donorId),
+            DonationsCount = await _donationRepository.GetDonationsCountAsync(donorId),
             TotalDonationsAmount = await _donationRepository.GetTotalDonationsAmountAsync(donorId),
             AverageDonationsAmount = await _donationRepository.GetAverageDonationsAmountAsync(donorId),
             SmallestDonationAmount = await _donationRepository.GetSmallestDonationAmountAsync(donorId),

@@ -1,12 +1,10 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text;
 using UnitedForUkraine.Server.Data;
@@ -18,7 +16,6 @@ using UnitedForUkraine.Server.Helpers.Settings;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Mappers;
 using UnitedForUkraine.Server.Models;
-using UnitedForUkraine.Server.Repositories;
 
 namespace UnitedForUkraine.Server.Controllers
 {

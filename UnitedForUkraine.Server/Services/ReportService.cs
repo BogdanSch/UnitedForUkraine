@@ -18,10 +18,10 @@ namespace UnitedForUkraine.Server.Services
         {
             return new ReportStats
             {
-                DonationsCount = await _donationRepository.GetTotalDonationsCountAsync(start: startDate, end: endDate),
+                DonationsCount = await _donationRepository.GetDonationsCountAsync(start: startDate, end: endDate),
                 UsersCount = await _userService.GetNumberOfRegisteredUsers(start: startDate, end: endDate),
                 UniqueDonors = await _donationRepository.GetUniqueDonorsCountAsync(start: startDate, end: endDate),
-                CampaignsCount = await _campaignRepository.GetTotalCreatedCampaignsCountAsync(start: startDate, end: endDate),
+                CampaignsCount = await _campaignRepository.GetCampaignsCountAsync(start: startDate, end: endDate),
                 NewsUpdatesCount = await _newsUpdateRepository.GetNewsUpdatesCount(start: startDate, end: endDate),
                 TotalAmount = await _donationRepository.GetTotalDonationsAmountAsync(start: startDate, end: endDate),
                 MaxDonation = await _donationRepository.GetBiggestDonationAmountAsync(start: startDate, end: endDate),
@@ -58,6 +58,7 @@ namespace UnitedForUkraine.Server.Services
 
             ws.Cell("C15").Value = stats.MostFrequentDonorStats.Item1;
             ws.Cell("C16").Value = stats.MostFrequentDonorStats.Item2;
+            ws.Cell("C17").Value = stats.MostFrequentDonorStats.Item3;
 
             using var stream = new MemoryStream();
             wb.SaveAs(stream);

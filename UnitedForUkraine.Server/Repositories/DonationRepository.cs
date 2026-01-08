@@ -13,8 +13,6 @@ public class DonationRepository(ApplicationDbContext context) : IDonationReposit
     private readonly ApplicationDbContext _context = context;
     public const string DEFAULT_CITY_NAME = "Kharkiv";
     public const string DEFAULT_COUNTRY_NAME = "Ukraine";
-    public const string DEFAULT_FREQUENT_DONOR_NAME = "bogsvity777";
-    public const int DEFAULT_DONATIONS_COUNT = 0;
     private static IQueryable<Donation> ApplyDonationsFilters(QueryObject queryObject, IQueryable<Donation> donations)
     {
         if(!string.IsNullOrWhiteSpace(queryObject.Currencies))
@@ -155,7 +153,7 @@ public class DonationRepository(ApplicationDbContext context) : IDonationReposit
         }
         return query;
     }
-    public async Task<int> GetTotalDonationsCountAsync(string? userId = null, DateTime? start = null, DateTime? end = null) => await GetDonationsQuery(userId, start, end).CountAsync();
+    public async Task<int> GetDonationsCountAsync(string? userId = null, DateTime? start = null, DateTime? end = null) => await GetDonationsQuery(userId, start, end).CountAsync();
     public async Task<decimal> GetTotalDonationsAmountAsync(string? userId = null, DateTime? start = null, DateTime? end = null)
     {
         IQueryable<Donation> donations = GetDonationsQuery(userId, start, end);
@@ -163,7 +161,7 @@ public class DonationRepository(ApplicationDbContext context) : IDonationReposit
     }
     public async Task<int> GetAverageDonationsAmountAsync(string? userId = null, DateTime? start = null, DateTime? end = null)
     {
-        int totalDonationsCount = await GetTotalDonationsCountAsync(userId, start, end);
+        int totalDonationsCount = await GetDonationsCountAsync(userId, start, end);
         decimal totalDonationsAmount = await GetTotalDonationsAmountAsync(userId, start, end);
 
         if (totalDonationsCount == 0) return 0;
@@ -204,17 +202,17 @@ public class DonationRepository(ApplicationDbContext context) : IDonationReposit
            .Distinct()
            .CountAsync();
     }
-    public async Task<(string donorName, int donationsCount)> GetMostFrequentDonorInformationAsync(DateTime? start = null, DateTime? end = null)
+    public async Task<(string donorName, int donationsCount, decimal totalAmountInUah)> GetMostFrequentDonorInformationAsync(DateTime? start = null, DateTime? end = null)
     {
         IQueryable<Donation> donations = GetDonationsQuery(startDate: start, endDate: end);
         var result = await donations.Include(d => d.User)
             .Where(d => !string.IsNullOrWhiteSpace(d.User.UserName))
             .GroupBy(d => d.User.UserName )
             .OrderByDescending(g => g.Count())
-            .Select(g => new { Name = g.Key, Count = g.Count() })
+            .Select(g => new { Name = g.Key, Count = g.Count(), TotalAmountInUah = g.Sum(d => d.AmountInUah ?? d.Amount) })
             .FirstOrDefaultAsync();
 
-        return result is not null ? (result.Name!, result.Count) : (DEFAULT_FREQUENT_DONOR_NAME, DEFAULT_DONATIONS_COUNT);
+        return result is not null ? (result.Name!, result.Count, result.TotalAmountInUah) : (string.Empty, 0, 0);
     }
     public async Task<decimal> GetDonationsGrowthRateAsync(DateTime currentPeriod)
     {
@@ -232,7 +230,6 @@ public class DonationRepository(ApplicationDbContext context) : IDonationReposit
             return currentPeriodTotal > decimal.Zero ? 100m : decimal.Zero;
 
         decimal growthRate = Math.Round((currentPeriodTotal - previousPeriodTotal) * 100 / previousPeriodTotal, 2);
-
         return growthRate > 100 ? 100 : growthRate;
     }
     public async Task<Donation?> GetDonationByCheckoutSessionId(string checkoutSessionId)
