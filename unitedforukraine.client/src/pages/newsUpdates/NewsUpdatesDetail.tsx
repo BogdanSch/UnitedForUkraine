@@ -45,14 +45,14 @@ const NewsUpdatesDetail: FC = () => {
               <ul className="news-detail__buttons-list">
                 <li className="news-detail__buttons-item">
                   <Link
-                    className="btn btn-primary"
+                    className="btn btn-primary btn-icon"
                     to={`/newsUpdates/edit/${id}`}
                   >
                     <span>Edit this News update</span>
                     <i className="bi bi-pencil-square"></i>
                   </Link>
                 </li>
-                <li className="news-detail__button-item">
+                <li className="news-detail__button-item btn-icon">
                   <DeleteNewsUpdateForm id={Number(id)} />
                 </li>
               </ul>
