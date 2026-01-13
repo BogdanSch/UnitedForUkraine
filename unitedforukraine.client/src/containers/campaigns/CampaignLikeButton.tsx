@@ -8,7 +8,7 @@ import { CampaignDto } from "../../types";
 
 interface ICampaignLikeButtonProps {
   campaign: CampaignDto;
-  handleDislike: () => void;
+  handleDislike?: () => void;
   // campaignId: number;
   // campaignLiked: boolean;
 }
@@ -26,7 +26,7 @@ const CampaignLikeButton: FC<ICampaignLikeButtonProps> = ({
       );
       setIsLiked(data);
       campaign.isLiked = data;
-      if (!data) handleDislike();
+      if (!data && handleDislike) handleDislike();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setRequestError(error.response?.data.message);
