@@ -5,4 +5,5 @@ public record CampaignStatistics
     public required int NewsUpdatesCount { get; init; }
     public required int DonationsCount { get; init; }
     public required decimal RepeatDonorRate { get; init; }
+    public required int LikesCount { get; init; }
 }

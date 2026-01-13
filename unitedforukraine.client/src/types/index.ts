@@ -174,6 +174,7 @@ export type CampaignStatistics = {
   newsUpdatesCount: number;
   donationsCount: number;
   repeatDonorRate: number;
+  likesCount: number;
 };
 
 export type TimelineItem = {
@@ -182,8 +183,6 @@ export type TimelineItem = {
 };
 
 export type TokenDateDto = {
-  // accessToken: string;
-  // refreshToken: string;
   accessTokenExpirationTime: string;
   refreshTokenExpirationTime: string;
 };

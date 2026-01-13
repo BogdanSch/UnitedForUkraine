@@ -4,24 +4,29 @@ import { FC, useState } from "react";
 import { ErrorAlert } from "../../components";
 import { API_URL } from "../../variables";
 import { isNullOrWhitespace } from "../../utils/helpers/stringHelper";
+import { CampaignDto } from "../../types";
 
 interface ICampaignLikeButtonProps {
-  campaignId: number;
-  campaignLiked: boolean;
+  campaign: CampaignDto;
+  handleDislike: () => void;
+  // campaignId: number;
+  // campaignLiked: boolean;
 }
 
 const CampaignLikeButton: FC<ICampaignLikeButtonProps> = ({
-  campaignId,
-  campaignLiked,
+  campaign,
+  handleDislike,
 }) => {
   const [requestError, setRequestError] = useState<string | null>(null);
-  const [isLiked, setIsLiked] = useState<boolean>(campaignLiked);
+  const [isLiked, setIsLiked] = useState<boolean>(campaign.isLiked);
   const likeOrDislikeCampaign = async () => {
     try {
       const { data } = await protectedAxios.post(
-        `${API_URL}/campaigns/${campaignId}/like`
+        `${API_URL}/campaigns/${campaign.id}/like`
       );
       setIsLiked(data);
+      campaign.isLiked = data;
+      if (!data) handleDislike();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setRequestError(error.response?.data.message);

@@ -17,7 +17,7 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
     {
         return await _context.CampaignLikes.Where(cl => cl.UserId == userId).Select(cl => cl.LikedCampaignId).ToHashSetAsync();
     }
-    public async Task<PaginatedList<CampaignDto>> GetPaginatedCampaigns(QueryObject queryObject, int pageSize, bool showOnlyLiked = false, string? userId = null)
+    public async Task<PaginatedList<CampaignDto>> GetPaginatedCampaignsAsync(QueryObject queryObject, int pageSize, bool showOnlyLiked = false, string? userId = null)
     {
         IQueryable<Campaign> campaigns = _context.Campaigns.AsNoTracking();
 
@@ -96,6 +96,12 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
             campaigns = campaigns.OrderByDescending(c => c.StartDate);
         }
 
+        return await PaginatedList<CampaignDto>.CreateAsync(campaigns.Select(c => c.ToCampaignDto(likedCampaignIds.Contains(c.Id))), queryObject.Page, pageSize);
+    }
+    public async Task<PaginatedList<CampaignDto>> GetPaginatedUserSupportedCampaignsAsync(QueryObject queryObject, int pageSize, string userId)
+    {
+        IQueryable<Campaign> campaigns = GetAllUserSupportedCampaigns(userId);
+        HashSet<int> likedCampaignIds = await GetUserLikedCampaignsAsync(userId);
         return await PaginatedList<CampaignDto>.CreateAsync(campaigns.Select(c => c.ToCampaignDto(likedCampaignIds.Contains(c.Id))), queryObject.Page, pageSize);
     }
     public async Task<bool> UpdateExpiredCampaignsAsync()
@@ -181,13 +187,6 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
             .Select(d => d.Campaign)
             .Distinct();
     }
-    public async Task<PaginatedList<CampaignDto>> GetPaginatedUserSupportedCampaignsAsync(QueryObject queryObject, int pageSize, string userId)
-    {
-        IQueryable<Campaign> campaigns = GetAllUserSupportedCampaigns(userId);
-        HashSet<int> likedCampaignIds = await GetUserLikedCampaignsAsync(userId);
-
-        return await PaginatedList<CampaignDto>.CreateAsync(campaigns.Select(c => c.ToCampaignDto(likedCampaignIds.Contains(c.Id))), queryObject.Page, pageSize);
-    }
     public async Task<int> GetAllUserSupportedCampaignsCount(string? userId)
     {
         if (string.IsNullOrWhiteSpace(userId)) return 0;
@@ -223,5 +222,9 @@ public class CampaignRepository(ApplicationDbContext context, ILogger<CampaignRe
 
         await SaveAsync();
         return isNowLiked;
+    }
+    public async Task<int> GetLikesCountAsync(int campaignId)
+    {
+        return await _context.CampaignLikes.Where(cl => cl.LikedCampaignId == campaignId).CountAsync();
     }
 }

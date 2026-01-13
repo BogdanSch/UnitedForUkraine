@@ -1,5 +1,4 @@
 import axios from "axios";
-import { protectedAxios } from "../../utils/axiosInstances";
 import {
   ChangeEvent,
   Dispatch,
@@ -76,13 +75,13 @@ const DonationsList: FC<IDonationsListProps> = ({
   const { handleSelectChange } = useCustomForm(setCampaignIds);
 
   useEffect(() => {
-    let requestUrl: string;
+    let requestUrl: string = `${API_URL}/donations/`;
     if (campaignId) {
-      requestUrl = `${API_URL}/donations/campaign/${campaignId}?page=${currentDonationsPage}`;
+      requestUrl += `?campaignId=${campaignId}&page=${currentDonationsPage}`;
     } else if (showUserDonations && user) {
-      requestUrl = `${API_URL}/donations/user/${user.id}?page=${currentDonationsPage}`;
+      requestUrl += `?userId=${user.id}&page=${currentDonationsPage}`;
     } else {
-      requestUrl = `${API_URL}/donations?page=${currentDonationsPage}`;
+      requestUrl += `?page=${currentDonationsPage}`;
     }
     requestUrl += sortOrder ? `&sortOrder=${sortOrder}` : "";
     requestUrl += currencies ? `&currencies=${currencies}` : "";
@@ -90,15 +89,14 @@ const DonationsList: FC<IDonationsListProps> = ({
     if (
       !isNullOrWhitespace(dateRange.startDate) &&
       !isNullOrWhitespace(dateRange.endDate)
-    )
+    ) {
       requestUrl += `&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`;
+    }
 
     const fetchDonationsData = () => {
       if (showUserDonations && !user) return;
 
-      let axiosInstance = showUserDonations ? protectedAxios : axios;
-
-      axiosInstance
+      axios
         .get<PaginatedDonationsDto>(requestUrl)
         .then((response) => {
           console.log(response.data);
@@ -305,7 +303,6 @@ const DonationsList: FC<IDonationsListProps> = ({
             const isNoteAvailable: boolean = !isNullOrWhitespace(
               donation.notes
             );
-
             return (
               <li
                 className="donations-list__item card p-3"
@@ -337,9 +334,7 @@ const DonationsList: FC<IDonationsListProps> = ({
                         <p>
                           Payment date:{" "}
                           <strong>
-                            {convertToReadableDate(
-                              donation.paymentDate
-                            )}
+                            {convertToReadableDate(donation.paymentDate)}
                           </strong>
                         </p>
                       </>

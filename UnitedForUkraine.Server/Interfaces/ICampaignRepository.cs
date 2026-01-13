@@ -6,7 +6,7 @@ namespace UnitedForUkraine.Server.Interfaces;
 
 public interface ICampaignRepository
 {
-    Task<PaginatedList<CampaignDto>> GetPaginatedCampaigns(QueryObject queryObject, int pageSize, bool showOnlyLiked = false, string? userId = null);
+    Task<PaginatedList<CampaignDto>> GetPaginatedCampaignsAsync(QueryObject queryObject, int pageSize, bool showOnlyLiked = false, string? userId = null);
     Task<bool> UpdateExpiredCampaignsAsync();
     Task<bool> UpdateJustStartedCampaignsAsync();
     Task<Campaign?> GetByIdAsync(int id);
@@ -19,4 +19,5 @@ public interface ICampaignRepository
     Task<int> GetAllUserSupportedCampaignsCount(string? userId);
     Task<bool> IsCampaignLikedByUser(int campaignId, string userId);
     Task<bool> LikeOrDislikeCampaignAsync(int campaignId, string userId);
+    Task<int> GetLikesCountAsync(int campaignId);
 }

@@ -12,6 +12,7 @@ const getDefaultData = (): CampaignStatistics => ({
   donationsCount: 0,
   newsUpdatesCount: 0,
   repeatDonorRate: 0,
+  likesCount: 0,
 });
 
 const CampaignStatisticsList: FC<ICampaignStatisticsListProps> = ({ id }) => {
@@ -20,18 +21,15 @@ const CampaignStatisticsList: FC<ICampaignStatisticsListProps> = ({ id }) => {
   );
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get<CampaignStatistics>(
-          `${API_URL}/campaigns/${id}/statistics`
-        );
-        console.log("Campaign statistics data: " + data);
-        setStatistics(data || getDefaultData());
-      } catch (error) {
+    axios
+      .get<CampaignStatistics>(`${API_URL}/campaigns/${id}/statistics`)
+      .then((response) => {
+        console.log("Campaign statistics data: " + response.data);
+        setStatistics(response.data || getDefaultData());
+      })
+      .catch((error) => {
         console.log(error);
-      }
-    };
-    fetchData();
+      });
   }, [id]);
 
   return (
@@ -74,6 +72,15 @@ const CampaignStatisticsList: FC<ICampaignStatisticsListProps> = ({ id }) => {
             {statistics.repeatDonorRate}
             <span className="currency">%</span>
           </p>
+        </Card>
+      </li>
+      <li className="statistics__item">
+        <Card className="card-border p-3" isLite={false}>
+          <div className="statistics__item-group">
+            <i className="statistics__item-icon bi bi-hearts"></i>
+            <h4 className="sub-heading statistics__item-title">Likes Number</h4>
+          </div>
+          <p className="statistics__item-amount">{statistics.likesCount}</p>
         </Card>
       </li>
     </ul>

@@ -19,13 +19,26 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     private readonly ICurrencyConverterService _currencyConverterService = currencyConverterService;
     private const int NUMBER_OF_DONATIONS_PER_PAGE = 8;
     [HttpGet]
-    public async Task<IActionResult> GetPaginatedDontaionsData([FromQuery] QueryObject queryObject)
+    public async Task<IActionResult> GetPaginatedDonationsData([FromQuery] int? campaignId, [FromQuery] Guid? userId, [FromQuery] QueryObject queryObject)
     {
-        PaginatedList<Donation> paginatedDonations = await _donationRepository.GetPaginatedDonationsAsync(queryObject, NUMBER_OF_DONATIONS_PER_PAGE);
+        PaginatedList<Donation> paginatedDonations;
 
-        if (!paginatedDonations.Any()) return Ok(new PaginatedDonationsDto([], false));
+        if(campaignId.HasValue)
+        {
+            paginatedDonations = await _donationRepository.GetPaginatedCampaignDonationsAsync(campaignId.Value, queryObject, NUMBER_OF_DONATIONS_PER_PAGE);
+        }
+        else if(userId.HasValue)
+        {
+            if (userId == Guid.Empty)
+                return BadRequest(new { message = "User's identifier cannot be empty." });
+            paginatedDonations = await _donationRepository.GetPaginatedUserDonationsAsync(userId.Value.ToString(), queryObject, NUMBER_OF_DONATIONS_PER_PAGE);
+        }
+        else
+        {
+            paginatedDonations = await _donationRepository.GetPaginatedDonationsAsync(queryObject, NUMBER_OF_DONATIONS_PER_PAGE);
+        }
+
         List<DonationDto> donationDtos = [.. paginatedDonations.Select(d => d.ToDonationDto())];
-
         return Ok(new PaginatedDonationsDto(donationDtos, paginatedDonations.HasNextPage));
     }
     [HttpGet("{id:int}")]
@@ -33,35 +46,11 @@ public class DonationController(IDonationRepository donationRepository, ICampaig
     {
         Donation? targetDonation = await _donationRepository.GetByIdAsync(id);
 
-        if (targetDonation == null)
+        if (targetDonation is null)
             return NotFound();
 
         DonationDto donationDto = targetDonation.ToDonationDto();
         return Ok(donationDto);
-    }
-    [HttpGet("campaign/{campaignId:int}")]
-    public async Task<IActionResult> GetCampaignDonations(int campaignId, [FromQuery] int page = 1)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        PaginatedList<Donation> paginatedDonations = await _donationRepository.GetPaginatedDonationsByCampaignId(campaignId, page, NUMBER_OF_DONATIONS_PER_PAGE);
-        List<DonationDto> donationDtos = [.. paginatedDonations.Select(d => d.ToDonationDto())];
-
-        return Ok(new PaginatedDonationsDto(donationDtos, paginatedDonations.HasNextPage));
-    }
-    [HttpGet("user/{userId:guid}")]
-    public async Task<IActionResult> GetPaginatedUserDonations(Guid userId, [FromQuery] QueryObject queryObject)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        if (userId == Guid.Empty)
-            return BadRequest(new { message = "User's ID cannot be empty." });
-
-        PaginatedList<Donation> loadedDonations = await _donationRepository.GetPaginatedDonationsByUserId(userId.ToString(), queryObject, NUMBER_OF_DONATIONS_PER_PAGE);
-        List<DonationDto> donationDtos = [.. loadedDonations.Select(d => d.ToDonationDto())];
-
-        return Ok(new PaginatedDonationsDto(donationDtos, loadedDonations.HasNextPage));
     }
     [HttpPost]
     [Authorize]

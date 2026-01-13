@@ -8,9 +8,9 @@ namespace UnitedForUkraine.Server.Interfaces;
 public interface IDonationRepository
 {
     Task<PaginatedList<Donation>> GetPaginatedDonationsAsync(QueryObject queryObject, int itemsPerPageCount);
-    Task<PaginatedList<Donation>> GetPaginatedDonationsByCampaignId(int campaignId, int page, int itemsPerPageCount);
-    Task<PaginatedList<Donation>> GetPaginatedDonationsByNewsUpdate(NewsUpdate newsUpdate, int page, int itemsPerPageCount);
-    Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, QueryObject queryObject, int itemsPerPageCount);
+    Task<PaginatedList<Donation>> GetPaginatedCampaignDonationsAsync(int campaignId, QueryObject queryObject, int itemsPerPageCount);
+    Task<PaginatedList<Donation>> GetPaginatedNewsUpdateDonations(NewsUpdate newsUpdate, QueryObject queryObject, int itemsPerPageCount);
+    Task<PaginatedList<Donation>> GetPaginatedUserDonationsAsync(string userId, QueryObject queryObject, int itemsPerPageCount);
     Task<Donation?> GetByIdAsync(int id);
     Task<int> GetDonationsCountAsync(string? userId = null, DateTime? start = null, DateTime? end = null);
     Task<decimal> GetTotalDonationsAmountAsync(string? userId = null, DateTime? start = null, DateTime? end = null);

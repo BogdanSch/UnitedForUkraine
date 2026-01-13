@@ -61,8 +61,6 @@ namespace UnitedForUkraine.Server.Controllers
             _authTokenService.SetTokensInsideCookie(token, HttpContext);
             TokenDateDto tokenDateDto = new()
             {
-                // AccessToken = token.AccessTokenValue,
-                // RefreshToken = token.RefreshTokenValue,
                 AccessTokenExpirationTime = token.AccessTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT),
                 RefreshTokenExpirationTime = token.RefreshTokenExpirationTime.ToString(DateSettings.UTC_DATE_FORMAT)
             };
@@ -192,7 +190,7 @@ namespace UnitedForUkraine.Server.Controllers
             }
             return Ok(new { message = "Successful registration! We've sent you a verification token via email! Now, please, confirm your email" });
         }
-        [HttpGet("emailConfirmation")]
+        [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
             AppUser? user = await _userManager.FindByEmailAsync(email);
@@ -246,7 +244,22 @@ namespace UnitedForUkraine.Server.Controllers
                 return BadRequest(new { message = "An error has occurred during the profile update. Please, try again later" });
             }
         }
-        [HttpGet("userInfo")]
+        [HttpGet("users")]
+        public async Task<IActionResult> GetPaginatedAppUsers([FromQuery] QueryObject queryObject)
+        {
+            PaginatedList<AppUser> paginatedUsers = await _userService.GetPaginatedUsersAsync(queryObject, PaginatedListConstants.PAGE_SIZE);
+            List<UserDto> newsUpdateDtos = [.. paginatedUsers.Select(u => u.ToDto())];
+
+            return Ok(new PaginatedUsersDto(newsUpdateDtos, paginatedUsers.HasPreviousPage, paginatedUsers.HasNextPage));
+        }
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok(new { message = "Successfully logged out" });
+        }
+        [HttpGet("me")]
         [Authorize]
         public async Task<IActionResult> GetUserInfo()
         {
@@ -262,21 +275,6 @@ namespace UnitedForUkraine.Server.Controllers
             userDto.IsAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin);
 
             return Ok(userDto);
-        }
-        [HttpGet("users")]
-        public async Task<IActionResult> GetPaginatedAppUsers([FromQuery] QueryObject queryObject)
-        {
-            PaginatedList<AppUser> paginatedUsers = await _userService.GetPaginatedUsersAsync(queryObject, PaginatedListConstants.PAGE_SIZE);
-            List<UserDto> newsUpdateDtos = [.. paginatedUsers.Select(u => u.ToDto())];
-
-            return Ok(new PaginatedUsersDto(newsUpdateDtos, paginatedUsers.HasPreviousPage, paginatedUsers.HasNextPage));
-        }
-        [HttpPost("logout")]
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return Ok(new { message = "Successfully logged out" });
         }
         [HttpGet("me/has-password")]
         [Authorize]

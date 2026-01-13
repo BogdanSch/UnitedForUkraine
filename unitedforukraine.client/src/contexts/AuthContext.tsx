@@ -55,9 +55,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     }
 
     try {
-      const { data } = await protectedAxios.get<UserDto>(
-        `${API_URL}/Auth/userInfo`
-      );
+      const { data } = await protectedAxios.get<UserDto>(`${API_URL}/Auth/me`);
       setUser(data);
     } catch (error) {
       await logoutUser();

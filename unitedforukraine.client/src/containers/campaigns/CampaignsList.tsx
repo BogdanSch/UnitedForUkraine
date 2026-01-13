@@ -48,7 +48,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
   const [currency, setCurrency] = useState<string>("");
   const [status, setStatus] = useState<string>("1");
 
-  const { user, isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [searchParams] = useSearchParams();
   const page = searchParams.get("page");
@@ -61,9 +61,9 @@ const CampaignsList: FC<CampaignsListProps> = ({
       let requestUrl: string;
 
       if (showOnlyLikedCampaigns) {
-        requestUrl = `${API_URL}/campaigns/liked?page=${currentPage}`;
+        requestUrl = `${API_URL}/campaigns/me/liked?page=${currentPage}`;
       } else if (showUserCampaigns) {
-        requestUrl = `${API_URL}/campaigns/users/${user?.id}/supports?page=${currentPage}`;
+        requestUrl = `${API_URL}/campaigns/me/supported?page=${currentPage}`;
       } else {
         requestUrl = `${API_URL}/campaigns?page=${currentPage}&sortOrder=${sortOrder}`;
         requestUrl += !isNullOrWhitespace(category)
@@ -261,8 +261,19 @@ const CampaignsList: FC<CampaignsListProps> = ({
                       {isAuthenticated() && (
                         <li className="campaigns__item-button">
                           <CampaignLikeButton
-                            campaignId={campaign.id}
-                            campaignLiked={campaign.isLiked}
+                            campaign={campaign}
+                            handleDislike={() => {
+                              if (!showOnlyLikedCampaigns) return;
+
+                              setPaginatedCampaigns((prev) => {
+                                return {
+                                  ...prev,
+                                  campaigns: prev.campaigns.filter(
+                                    (c) => c.id !== campaign.id
+                                  ),
+                                };
+                              });
+                            }}
                           />
                         </li>
                       )}

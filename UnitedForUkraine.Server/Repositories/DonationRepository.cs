@@ -63,17 +63,17 @@ public class DonationRepository(ApplicationDbContext context) : IDonationReposit
         donations = ApplyDonationsFilters(queryObject, donations);
         return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
-    public async Task<PaginatedList<Donation>> GetPaginatedDonationsByCampaignId(int campaignId, int page, int itemsPerPageCount)
+    public async Task<PaginatedList<Donation>> GetPaginatedCampaignDonationsAsync(int campaignId, QueryObject queryObject, int itemsPerPageCount)
     {
         var donations = _context.Donations.Where(d => d.CampaignId == campaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
-        return await PaginatedList<Donation>.CreateAsync(donations, page, itemsPerPageCount);
+        return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
-    public async Task<PaginatedList<Donation>> GetPaginatedDonationsByNewsUpdate(NewsUpdate newsUpdate, int page, int itemsPerPageCount)
+    public async Task<PaginatedList<Donation>> GetPaginatedNewsUpdateDonations(NewsUpdate newsUpdate, QueryObject queryObject, int itemsPerPageCount)
     {
         var donations = _context.Donations.Where(d => d.CampaignId == newsUpdate.CampaignId).Include(d => d.User).OrderByDescending(d => d.PaymentDate);
-        return await PaginatedList<Donation>.CreateAsync(donations, page, itemsPerPageCount);
+        return await PaginatedList<Donation>.CreateAsync(donations, queryObject.Page, itemsPerPageCount);
     }
-    public async Task<PaginatedList<Donation>> GetPaginatedDonationsByUserId(string userId, QueryObject queryObject, int itemsPerPageCount)
+    public async Task<PaginatedList<Donation>> GetPaginatedUserDonationsAsync(string userId, QueryObject queryObject, int itemsPerPageCount)
     {
         IQueryable<Donation> donations = _context.Donations.Where(d => d.UserId == userId).Include(d => d.User);
         donations = ApplyDonationsFilters(queryObject, donations);

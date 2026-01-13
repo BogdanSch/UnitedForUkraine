@@ -20,12 +20,37 @@ public class CampaignController(ICampaignRepository campaignRepository, INewsUpd
     private readonly ICampaignRepository _campaignRepository = campaignRepository;
     private readonly INewsUpdateRepository _newsUpdateRepository = newsUpdateRepository;
     private readonly IDonationRepository _donationRepository = donationRepository;
-
     [HttpGet]
     public async Task<IActionResult> GetPaginatedCampaignsData([FromQuery] QueryObject queryObject)
     {
         string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        PaginatedList<CampaignDto> paginatedCampaigns = await _campaignRepository.GetPaginatedCampaigns(queryObject, PaginatedListConstants.PAGE_SIZE, userId: userId);
+        PaginatedList<CampaignDto> paginatedCampaigns = await _campaignRepository.GetPaginatedCampaignsAsync(queryObject, PaginatedListConstants.PAGE_SIZE, userId: userId);
+        List<CampaignDto> campainsList = [.. paginatedCampaigns];
+
+        return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
+    }
+    [HttpGet("me/supported")]
+    [Authorize]
+    public async Task<IActionResult> GetPaginatedUserSupportedCampaignsData([FromQuery] QueryObject queryObject)
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized(new { message = "Invalid user confirmation token. Please, log in again!" });
+
+        PaginatedList<CampaignDto> paginatedCampaigns = await _campaignRepository.GetPaginatedUserSupportedCampaignsAsync(queryObject, PaginatedListConstants.PAGE_SIZE, userId.ToString());
+        List<CampaignDto> campainsList = [.. paginatedCampaigns];
+
+        return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
+    }
+    [HttpGet("me/liked")]
+    [Authorize]
+    public async Task<IActionResult> GetPaginatedLikedCampaignsData([FromQuery] QueryObject queryObject)
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized(new { message = "Invalid user confirmation token. Please, log in again!" });
+
+        PaginatedList<CampaignDto> paginatedCampaigns = await _campaignRepository.GetPaginatedCampaignsAsync(queryObject, PaginatedListConstants.PAGE_SIZE, true, userId);
         List<CampaignDto> campainsList = [.. paginatedCampaigns];
 
         return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
@@ -51,41 +76,15 @@ public class CampaignController(ICampaignRepository campaignRepository, INewsUpd
     public async Task<IActionResult> GetCampaignStatistics([FromRoute] int id)
     {
         Campaign? targetCampaign = await _campaignRepository.GetByIdAsync(id);
-        if (targetCampaign == null)
+        if (targetCampaign is null)
             return NotFound();
         return Ok(new CampaignStatistics() 
         { 
             DonationsCount = await _donationRepository.GetDonationsCountByCampaingIdAsync(id),
             RepeatDonorRate = await _donationRepository.GetReapeatDonorsRate(id),
-            NewsUpdatesCount = await _newsUpdateRepository.GetNewsUpdatesCountByCampaignIdAsync(id)
+            NewsUpdatesCount = await _newsUpdateRepository.GetNewsUpdatesCountByCampaignIdAsync(id),
+            LikesCount = await _campaignRepository.GetLikesCountAsync(id)
         });
-    }
-    [HttpGet("users/{userId:guid}/supports")]
-    [Authorize]
-    public async Task<IActionResult> GetPaginatedUserSupportedCampaigns([FromRoute] Guid userId, [FromQuery] QueryObject queryObject)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        if (userId == Guid.Empty)
-            return BadRequest(new { message = "The user id can't be empty" });
-
-        PaginatedList<CampaignDto> paginatedCampaigns = await _campaignRepository.GetPaginatedUserSupportedCampaignsAsync(queryObject, PaginatedListConstants.PAGE_SIZE, userId.ToString());
-        List<CampaignDto> campainsList = [.. paginatedCampaigns];
-
-        return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
-    }
-    [HttpGet("liked")]
-    [Authorize]
-    public async Task<IActionResult> GetPaginatedLikedCampaignsData([FromQuery] QueryObject queryObject)
-    {
-        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-            return Unauthorized(new { message = "Invalid user confirmation token. Please log in again!" });
-
-        PaginatedList<CampaignDto> paginatedCampaigns = await _campaignRepository.GetPaginatedCampaigns(queryObject, PaginatedListConstants.PAGE_SIZE, true, userId);
-        List<CampaignDto> campainsList = [.. paginatedCampaigns];
-
-        return Ok(new PaginatedCampaignsDto(campainsList, paginatedCampaigns.HasPreviousPage, paginatedCampaigns.HasNextPage));
     }
     [HttpPost]
     [Authorize(Roles = UserRoles.Admin)]
@@ -130,7 +129,6 @@ public class CampaignController(ICampaignRepository campaignRepository, INewsUpd
     public async Task<IActionResult> UpdateCampaign([FromRoute] int id, [FromBody] UpdateCampaignRequestDto updatedCampaignDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-
         if (id != updatedCampaignDto.Id)
             return BadRequest(new { message = "The identifiers of the campaigns don't match!" });
 

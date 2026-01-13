@@ -21,7 +21,7 @@ const VerifyRegistration: FC = () => {
 
       try {
         const response = await axios.get(
-          `${API_URL}/auth/emailConfirmation?token=${token}&email=${email}`,
+          `${API_URL}/auth/confirm-email?token=${token}&email=${email}`,
           {
             headers: {
               "Content-Type": "application/json",
