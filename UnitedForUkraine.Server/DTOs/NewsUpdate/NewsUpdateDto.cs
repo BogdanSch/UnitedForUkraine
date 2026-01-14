@@ -7,6 +7,7 @@ public record NewsUpdateDto
     public required int Id { get; init; }
     public required string Title { get; init; }
     public required string KeyWords { get; init; }
+    public required string Preview { get; set; }
     public required string Content { get; init; }
     public required string ImageUrl { get; init; }
     public required int ReadingTimeInMinutes { get; init; }

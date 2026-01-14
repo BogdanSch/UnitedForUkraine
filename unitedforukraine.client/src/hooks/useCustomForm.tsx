@@ -131,6 +131,13 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
       setRequestError("Failed to read the image file.");
     }
   };
+  const handleTextEditorChange = (name: string, value: string) => {
+    if (!setFormData) return;
+    setFormData((prev: any) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   return {
     handleChange,
@@ -139,6 +146,7 @@ function useCustomForm(setFormData: Dispatch<SetStateAction<any>> | null) {
     handleDateChange,
     handleDateChangeWithCallback,
     handleImageChange,
+    handleTextEditorChange,
   };
 }
 export const handleSelectWithDataTagChange = (

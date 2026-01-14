@@ -19,6 +19,7 @@ namespace UnitedForUkraine.Server.Repositories
                 string pattern = $"%{query}%";
                 newsUpdates = newsUpdates.Where(n =>
                     EF.Functions.Like(n.Title, pattern) ||
+                    EF.Functions.Like(n.Preview, pattern) ||
                     EF.Functions.Like(n.Content, pattern) ||
                     EF.Functions.Like(n.KeyWords, pattern)
                 );

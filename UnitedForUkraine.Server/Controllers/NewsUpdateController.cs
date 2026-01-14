@@ -64,6 +64,7 @@ public class NewsUpdateController(INewsUpdateRepository newsUpdateRepository) : 
         {
             newsUpdate.Title = updateRequestDto.Title;
             newsUpdate.KeyWords = updateRequestDto.KeyWords;
+            newsUpdate.Preview = updateRequestDto.Preview;
             newsUpdate.Content = updateRequestDto.Content;
             newsUpdate.ReadingTimeInMinutes = updateRequestDto.ReadingTimeInMinutes;
             if (!string.IsNullOrWhiteSpace(updateRequestDto.ImageUrl))

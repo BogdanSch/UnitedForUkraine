@@ -145,13 +145,7 @@ const CampaignsDetail: FC = () => {
                   </li>
                   {isAuthenticated() && campaign && (
                     <li className="campaigns-detail__buttons-item">
-                      <CampaignLikeButton
-                        campaign={campaign}
-                        handleDislike={function (): void {
-                          throw new Error("Function not implemented.");
-                        }} // campaignId={campaign.id}
-                        // campaignLiked={campaign.isLiked}
-                      />
+                      <CampaignLikeButton campaign={campaign} />
                     </li>
                   )}
                 </ul>

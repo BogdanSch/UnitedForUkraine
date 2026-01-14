@@ -59,6 +59,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
     const currentPage: number = Number(page) > 0 ? Number(page) : 1;
     setPageIndex(currentPage);
     fetchNewsUpdates();
+    document.getElementById;
   }, [page, searchQuery, sortOrder]);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>): void => {
@@ -130,7 +131,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                     </h3>
                     <p className="card-text text-muted">
                       <MatchHighlight
-                        text={newsUpdate.content}
+                        text={newsUpdate.preview}
                         query={searchQuery}
                       />
                     </p>

@@ -1,5 +1,6 @@
 import { protectedAxios } from "../../../utils/axiosInstances";
 import { FC, FormEvent, useContext, useEffect, useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 import { useNavigate } from "react-router-dom";
 import { ErrorAlert, Input } from "../../../components";
 import AuthContext from "../../../contexts/AuthContext";
@@ -16,10 +17,14 @@ import {
   LOAD_MORE_SELECT_VALUE,
 } from "../../../variables";
 import { fetchAllActiveAndCompletedCampaigns } from "../../../utils/services/campaignService";
+import { isNullOrWhitespace } from "../../../utils/helpers/stringHelper";
+
+const API_ENDPOINT: string = import.meta.env.VITE_TINYMCE_API_KEY;
 
 const getDefaultFormData = (authorId: string): CreateNewsUpdateRequestDto => ({
   title: "",
   keyWords: "",
+  preview: "",
   content: "",
   imageUrl: API_IMAGE_PLACEHOLDER_URL,
   readingTimeInMinutes: 0,
@@ -44,8 +49,12 @@ const CreateNewsUpdateForm: FC = () => {
     });
   const [pageIndex, setPageIndex] = useState<number>(DEFAULT_PAGE_INDEX);
   const navigate = useNavigate();
-  const { handleChange, handleSelectChange, handleImageChange } =
-    useCustomForm(setFormData);
+  const {
+    handleChange,
+    handleSelectChange,
+    handleImageChange,
+    handleTextEditorChange,
+  } = useCustomForm(setFormData);
 
   useEffect(() => {
     fetchAllActiveAndCompletedCampaigns(pageIndex)
@@ -133,7 +142,7 @@ const CreateNewsUpdateForm: FC = () => {
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="title" className="form-label">
-          News update title
+          News update title*
         </label>
         <Input
           type="text"
@@ -148,7 +157,7 @@ const CreateNewsUpdateForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="keyWords" className="form-label">
-          News update key words
+          News update key words*
         </label>
         <Input
           type="text"
@@ -162,24 +171,67 @@ const CreateNewsUpdateForm: FC = () => {
         {errors.keyWords && <ErrorAlert errorMessage={errors.keyWords} />}
       </div>
       <div className="mb-3">
-        <label htmlFor="content" className="form-label">
-          News update content
+        <label htmlFor="previewInput" className="form-label">
+          News update preview*
         </label>
         <textarea
-          rows={8}
+          rows={5}
           className="form-control"
-          id="content"
-          name="content"
-          value={formData.content}
+          id="previewInput"
+          name="preview"
+          value={formData.preview}
           onChange={handleChange}
-          placeholder="Enter news update content"
+          minLength={20}
+          placeholder="Enter a short preview of this news update:"
           required
+        />
+        {errors.preview && <ErrorAlert errorMessage={errors.preview} />}
+      </div>
+      <div className="mb-3">
+        <label htmlFor="content" className="form-label">
+          News update content*
+        </label>
+        <Editor
+          id="content"
+          apiKey={API_ENDPOINT}
+          initialValue={
+            !isNullOrWhitespace(formData.content)
+              ? formData.content
+              : "<p>Enter news update content.</p>"
+          }
+          init={{
+            height: 300,
+            menubar: false,
+            plugins: [
+              "anchor",
+              "autolink",
+              "charmap",
+              "codesample",
+              "emoticons",
+              "link",
+              "lists",
+              "media",
+              "searchreplace",
+              "table",
+              "visualblocks",
+              "wordcount",
+            ],
+            toolbar:
+              "undo redo | blocks | " +
+              "bold italic forecolor | alignleft aligncenter " +
+              "alignright alignjustify | bullist numlist outdent indent | " +
+              "removeformat | help",
+            tinycomments_mode: "embedded",
+          }}
+          onEditorChange={(content) => {
+            handleTextEditorChange("content", content);
+          }}
         />
         {errors.content && <ErrorAlert errorMessage={errors.content} />}
       </div>
       <div className="mb-3">
         <label htmlFor="readingTimeInMinutes" className="form-label">
-          News update reading time in minutes
+          News update reading time in minutes*
         </label>
         <Input
           type="number"
@@ -190,7 +242,7 @@ const CreateNewsUpdateForm: FC = () => {
           placeholder="Enter news update reading time in minutes"
           min={1}
           max={100}
-          isRequired={true}
+          isRequired
         />
         {errors.readingTimeInMinutes && (
           <ErrorAlert errorMessage={errors.readingTimeInMinutes} />
@@ -228,7 +280,7 @@ const CreateNewsUpdateForm: FC = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="image" className="form-label">
-          News update preview image
+          News update preview image*
         </label>
         <input
           className="form-control"
@@ -241,6 +293,9 @@ const CreateNewsUpdateForm: FC = () => {
           accept="image/png, image/jpeg"
           required
         />
+      </div>
+      <div id="formHelpBlock" className="form-text">
+        All fields marked with an asterisk (*) are required.
       </div>
       <div className="form-buttons">
         <button type="submit" className="btn btn-primary">

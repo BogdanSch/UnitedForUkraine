@@ -9,8 +9,6 @@ import { CampaignDto } from "../../types";
 interface ICampaignLikeButtonProps {
   campaign: CampaignDto;
   handleDislike?: () => void;
-  // campaignId: number;
-  // campaignLiked: boolean;
 }
 
 const CampaignLikeButton: FC<ICampaignLikeButtonProps> = ({
