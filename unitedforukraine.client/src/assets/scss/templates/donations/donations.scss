@@ -16,11 +16,12 @@
         color: $sky-blue;
         font-weight: $fw-bold;
       }
+      &-details {
+        text-align: end;
+      }
       &-amount {
-        span {
-          color: $green-light;
-          font-weight: $fw-super-bold;
-        }
+        color: $green-light;
+        font-weight: $fw-super-bold;
       }
     }
   }

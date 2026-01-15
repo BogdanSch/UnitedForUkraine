@@ -93,9 +93,9 @@ const FoundationReportForm: FC = () => {
             onChange={handleDateChange}
             isRequired={true}
           />
-          <div id="passwordHelpBlock" className="form-text mt-3">
-            All fields marked with an asterisk (*) are required.
-          </div>
+        </div>
+        <div id="passwordHelpBlock" className="form-text mt-3 mb-2">
+          All fields marked with an asterisk (*) are required.
         </div>
         <div className="form-buttons">
           <button type="submit" className="btn btn-sky btn-icon">

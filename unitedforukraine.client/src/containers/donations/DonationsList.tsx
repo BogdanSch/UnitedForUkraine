@@ -314,44 +314,42 @@ const DonationsList: FC<IDonationsListProps> = ({
                   </span>
                   <strong className="ms-2">{donation.userName}</strong>
                 </div>
-                <div className="donations-list__item-amount">
-                  <span>
+                <div className="donations-list__item-details">
+                  <span className="donations-list__item-amount">
                     +{donation.amount}
                     {` `}
                     {convertDonationCurrencyToString(donation.currency)}
                   </span>
+                  {isNoteAvailable && <p className="mb-0">{donation.notes}</p>}
                 </div>
-                {(isAdminView || isNoteAvailable) && (
-                  <div className="donations-list__item-extra">
-                    {isAdminView && (
-                      <>
-                        <p className="mb-1">
-                          Donation status:{" "}
-                          <strong>
-                            {convertDonationStatusToString(donation.status)}
-                          </strong>
-                        </p>
-                        <p>
-                          Payment date:{" "}
-                          <strong>
-                            {convertToReadableDate(donation.paymentDate)}
-                          </strong>
-                        </p>
-                      </>
-                    )}
-                    {isNoteAvailable && (
-                      <p className="mb-0">{donation.notes}</p>
-                    )}
-                  </div>
-                )}
                 {isAdminView && (
-                  <div className="donations-list__item-actions">
-                    <DeleteDonationForm
-                      id={donation.id}
-                      setPaginatedDonations={setPaginatedDonations}
-                      setMessage={setDeleteMessage}
-                    />
-                  </div>
+                  <>
+                    <div className="donations-list__item-extra">
+                      {isAdminView && (
+                        <>
+                          <p className="mb-1">
+                            Donation status:{" "}
+                            <strong>
+                              {convertDonationStatusToString(donation.status)}
+                            </strong>
+                          </p>
+                          <p>
+                            Payment date:{" "}
+                            <strong>
+                              {convertToReadableDate(donation.paymentDate)}
+                            </strong>
+                          </p>
+                        </>
+                      )}
+                    </div>
+                    <div className="donations-list__item-actions">
+                      <DeleteDonationForm
+                        id={donation.id}
+                        setPaginatedDonations={setPaginatedDonations}
+                        setMessage={setDeleteMessage}
+                      />
+                    </div>
+                  </>
                 )}
               </li>
             );

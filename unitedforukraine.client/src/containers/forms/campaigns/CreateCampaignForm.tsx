@@ -168,6 +168,27 @@ const CreateCampaignForm: FC = () => {
         {errors.goalAmount && <ErrorAlert errorMessage={errors.goalAmount} />}
       </div>
       <div className="mb-3">
+        <label htmlFor="currency" className="form-label">
+          Campaign Currency*
+        </label>
+        <select
+          id="currency"
+          name="currency"
+          className="form-select"
+          aria-label="Campaign currency select"
+          value={formData.currency}
+          onChange={(e) => handleSelectChange(e, true)}
+        >
+          {Object.keys(Currency)
+            .filter((key) => !isNaN(Number(Currency[key as any])))
+            .map((key) => (
+              <option key={key} value={Currency[key as keyof typeof Currency]}>
+                {key}
+              </option>
+            ))}
+        </select>
+      </div>
+      <div className="mb-3">
         <label htmlFor="status" className="form-label">
           Campaign Status*
         </label>
@@ -216,27 +237,6 @@ const CreateCampaignForm: FC = () => {
         </select>
       </div>
       <div className="mb-3">
-        <label htmlFor="currency" className="form-label">
-          Campaign Currency*
-        </label>
-        <select
-          id="currency"
-          name="currency"
-          className="form-select"
-          aria-label="Campaign currency select"
-          value={formData.currency}
-          onChange={(e) => handleSelectChange(e, true)}
-        >
-          {Object.keys(Currency)
-            .filter((key) => !isNaN(Number(Currency[key as any])))
-            .map((key) => (
-              <option key={key} value={Currency[key as keyof typeof Currency]}>
-                {key}
-              </option>
-            ))}
-        </select>
-      </div>
-      <div className="mb-3">
         <label htmlFor="startDate" className="form-label">
           Campaign Start Date*
         </label>
@@ -277,7 +277,6 @@ const CreateCampaignForm: FC = () => {
           type="file"
           id="image"
           name="image"
-          // value={imageFile?.name || ""}
           onChange={(e) =>
             handleImageChange(e, formData.imageUrl, setRequestError)
           }

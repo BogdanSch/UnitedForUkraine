@@ -56,7 +56,7 @@ const CampaignsDetail: FC = () => {
           {isAuthenticated() && isAdmin() && (
             <ul className="campaigns-detail__buttons-list">
               <li className="campaigns-detail__buttons-item">
-                <Link className="btn btn-primary" to={`/campaigns/edit/${id}`}>
+                <Link className="btn btn-primary btn-icon" to={`/campaigns/edit/${id}`}>
                   <span>Edit this Campaign</span>
                   <i className="bi bi-pencil-square"></i>
                 </Link>

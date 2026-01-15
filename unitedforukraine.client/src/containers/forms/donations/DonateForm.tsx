@@ -236,7 +236,7 @@ const DonateForm: FC<IDonateFormProps> = ({ campaignId }) => {
           rows={4}
         ></textarea>
       </div>
-      <div id="passwordHelpBlock" className="form-text">
+      <div id="passwordHelpBlock" className="form-text mb-2">
         All fields marked with an asterisk (*) are required.
       </div>
       <div className="form-buttons">

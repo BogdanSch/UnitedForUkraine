@@ -15,11 +15,11 @@ export const convertDate = (dateString: string): string => {
   return new Date(dateString).toISOString().slice(0, 10);
 };
 
-export const convertToReadableDate = (dateString: string): string => {
-  if (dateString.length === 0) {
-    return UNDEFINED_DATE;
-  }
-  return new Date(dateString).toLocaleDateString("en-US", options);
+export const convertToReadableDate = (value: Date | string): string => {
+  if (!value) return UNDEFINED_DATE;
+
+  let date: Date = value instanceof Date ? value : new Date(value);
+  return date.toLocaleDateString("en-US", options);
 };
 
 export const convertToUTCDate = (dateString: string): string => {

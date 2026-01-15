@@ -40,7 +40,7 @@ const DeleteDonationForm: FC<IDeleteDonationFormProps> = ({
     <form className="form donations__delete-form" onSubmit={handleSubmit}>
       <div className="form-buttons">
         <button
-          className="btn btn-outline-danger form-buttons__item"
+          className="btn btn-outline-danger form-buttons__item btn-icon"
           type="submit"
         >
           <span>Delete donation</span>

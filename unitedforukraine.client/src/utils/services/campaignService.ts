@@ -42,14 +42,14 @@ export const getCampaignTimelines = (campaign: CampaignDto): TimelineItem[] => {
 
   return [
     {
-      date: new Date(startDate).toLocaleDateString(),
+      date: new Date(startDate),
       description: "Start date",
     },
     {
-      date: new Date().toLocaleDateString(),
+      date: new Date(),
       description: "Current date",
     },
-    { date: new Date(endDate).toLocaleDateString(), description: "End date" },
+    { date: new Date(endDate), description: "End date" },
   ];
 };
 

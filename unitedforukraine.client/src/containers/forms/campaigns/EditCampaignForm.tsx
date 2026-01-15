@@ -124,7 +124,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="title" className="form-label">
-          Campaign title
+          Campaign title*
         </label>
         <Input
           type="text"
@@ -140,7 +140,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       </div>
       <div className="mb-3">
         <label htmlFor="slogan" className="form-label">
-          Campaign slogan
+          Campaign slogan*
         </label>
         <Input
           type="text"
@@ -156,7 +156,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       </div>
       <div className="mb-3">
         <label htmlFor="description" className="form-label">
-          Campaign Description
+          Campaign Description*
         </label>
         <textarea
           rows={5}
@@ -173,7 +173,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       </div>
       <div className="mb-3">
         <label htmlFor="goalAmount" className="form-label">
-          Campaign Goal Amount
+          Campaign Goal Amount*
         </label>
         <Input
           type="number"
@@ -183,13 +183,13 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           onChange={handleChange}
           placeholder="Campaign goal amount"
           min={0}
-          isRequired={true}
+          isRequired
         />
         {errors.goalAmount && <ErrorAlert errorMessage={errors.goalAmount} />}
       </div>
       <div className="mb-3">
         <label htmlFor="status" className="form-label">
-          Campaign Status
+          Campaign Status*
         </label>
         <select
           id="status"
@@ -213,7 +213,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       </div>
       <div className="mb-3">
         <label htmlFor="category" className="form-label">
-          Campaign Category
+          Campaign Category*
         </label>
         <select
           id="category"
@@ -237,7 +237,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       </div>
       <div className="mb-3">
         <label htmlFor="startDate" className="form-label">
-          Campaign Start Date
+          Campaign Start Date*
         </label>
         <Input
           type="date"
@@ -252,7 +252,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
       </div>
       <div className="mb-3">
         <label htmlFor="endDate" className="form-label">
-          Campaign End Date
+          Campaign End Date*
         </label>
         <Input
           type="date"
@@ -261,7 +261,7 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           value={formData.endDate}
           onChange={handleDateChange}
           placeholder="Campaign end date"
-          isRequired={true}
+          isRequired
         />
         {errors.endDate && <ErrorAlert errorMessage={errors.endDate} />}
       </div>
@@ -279,6 +279,9 @@ const EditCampaignForm: FC<EditCampaignFormProps> = ({ id }) => {
           }
           accept="image/png, image/jpeg"
         />
+      </div>
+      <div id="formHelpBlock" className="form-text mb-2">
+        All fields marked with an asterisk (*) are required.
       </div>
       <div className="form-buttons">
         <button type="submit" className="btn btn-primary">

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { FC, FormEvent, useState } from "react";
 import { ContactFormData } from "../../../types";
-import { ErrorAlert } from "../../../components";
+import { ErrorAlert, Input } from "../../../components";
 import { useCustomForm } from "../../../hooks";
 
 const API_ENDPOINT: string = import.meta.env.VITE_SPREADSHEET_API_ENDPOINT;
@@ -83,51 +83,48 @@ const ContactForm: FC = () => {
         <ErrorAlert className="mb-3" errorMessage={requestError} />
       )}
       <div className="mb-3">
-        <label htmlFor="name" className="form-label">
+        <label htmlFor="nameInput" className="form-label">
           Name*
         </label>
-        <input
+        <Input
           type="text"
-          className="form-control"
-          id="name"
+          id="nameInput"
           name="name"
           value={formData.name}
           onChange={handleChange}
           minLength={2}
           placeholder="Enter your name: "
-          required
+          isRequired
         />
         {errors.name && <ErrorAlert errorMessage={errors.name} />}
       </div>
       <div className="mb-3">
-        <label htmlFor="email" className="form-label">
+        <label htmlFor="emailInput" className="form-label">
           Email*
         </label>
-        <input
+        <Input
           type="email"
-          className="form-control"
-          id="email"
+          id="emailInput"
           name="email"
           value={formData.email}
           onChange={handleChange}
           placeholder="Enter your email address: "
-          required
+          isRequired
         />
         {errors.email && <ErrorAlert errorMessage={errors.email} />}
       </div>
       <div className="mb-3">
-        <label htmlFor="subject" className="form-label">
+        <label htmlFor="subjectInput" className="form-label">
           Subject*
         </label>
-        <input
+        <Input
           type="text"
-          className="form-control"
-          id="subject"
+          id="subjectInput"
           name="subject"
           value={formData.subject}
           onChange={handleChange}
           placeholder="Enter the subject of your message: "
-          required
+          isRequired
         />
         {errors.subject && <ErrorAlert errorMessage={errors.subject} />}
       </div>

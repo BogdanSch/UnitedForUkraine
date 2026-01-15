@@ -178,7 +178,7 @@ export type CampaignStatistics = {
 };
 
 export type TimelineItem = {
-  date: string;
+  date: Date;
   description: string;
 };
 
