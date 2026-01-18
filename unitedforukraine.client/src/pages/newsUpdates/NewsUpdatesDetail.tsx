@@ -27,6 +27,11 @@ const NewsUpdatesDetail: FC = () => {
           return;
         }
         setNewsUpdate(data);
+
+        const contentContainer: HTMLDivElement | null = document.querySelector(
+          ".news-detail__content"
+        );
+        if (contentContainer) contentContainer.innerHTML = data.content;
       });
     };
     fetcher();
@@ -76,12 +81,10 @@ const NewsUpdatesDetail: FC = () => {
                 <ul className="news-detail__meta-list mb-5">
                   <li className="news-detail__meta-item">
                     <i className="bi bi-calendar-plus"></i>
-                    {/* <strong>Published on:</strong>{" "} */}
                     {convertToReadableDate(newsUpdate?.postedAt || "")}
                   </li>
                   <li className="news-detail__meta-item">
                     <i className="bi bi-pencil-square"></i>
-                    {/* <strong> by </strong>  */}
                     {newsUpdate?.authorName}
                   </li>
                   <li className="news-detail__meta-item">
@@ -89,9 +92,7 @@ const NewsUpdatesDetail: FC = () => {
                     <strong>{newsUpdate?.readingTimeInMinutes} min.</strong>
                   </li>
                 </ul>
-                <div className="news-detail__content">
-                  {newsUpdate?.content}
-                </div>
+                <div className="news-detail__content"></div>
                 <div className="mt-3">
                   <Link
                     className="news-detail__link btn btn-secondary"

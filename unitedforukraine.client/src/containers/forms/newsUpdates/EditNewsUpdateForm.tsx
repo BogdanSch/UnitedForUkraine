@@ -1,12 +1,39 @@
 import axios from "axios";
 import { protectedAxios } from "../../../utils/axiosInstances";
 import { FC, FormEvent, useEffect, useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 import { useNavigate } from "react-router-dom";
 import { useCustomForm } from "../../../hooks";
 import { API_URL } from "../../../variables";
 import { UpdateNewsUpdateRequestDto } from "../../../types";
 import { fetchNewsUpdateData } from "../../../utils/services/newsUpdateService";
 import { ErrorAlert, Input } from "../../../components";
+import { isNullOrWhitespace } from "../../../utils/helpers/stringHelper";
+
+const API_ENDPOINT: string = import.meta.env.VITE_TINYMCE_API_KEY;
+const EDITOR_INIT_CONFIG = {
+  height: 300,
+  menubar: false,
+  plugins: [
+    "anchor",
+    "autolink",
+    "charmap",
+    "codesample",
+    "emoticons",
+    "link",
+    "lists",
+    "media",
+    "searchreplace",
+    "table",
+    "visualblocks",
+    "wordcount",
+  ],
+  toolbar:
+    "undo redo | blocks | " +
+    "bold italic forecolor | alignleft aligncenter " +
+    "alignright alignjustify | bullist numlist outdent indent | " +
+    "removeformat | help",
+};
 
 interface IEditNewsUpdateFormProps {
   id: number;
@@ -16,6 +43,7 @@ const getDefaultFormData = (id: number): UpdateNewsUpdateRequestDto => ({
   id: id,
   title: "",
   keyWords: "",
+  preview: "",
   content: "",
   readingTimeInMinutes: 0,
   imageUrl: "",
@@ -23,18 +51,21 @@ const getDefaultFormData = (id: number): UpdateNewsUpdateRequestDto => ({
 
 const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
   const [formData, setFormData] = useState<UpdateNewsUpdateRequestDto>(
-    getDefaultFormData(id)
+    getDefaultFormData(id),
   );
+  const [initialContent, setInitialContent] = useState<string>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [requestError, setRequestError] = useState<string>("");
   const navigate = useNavigate();
-  const { handleChange, handleImageChange } = useCustomForm(setFormData);
+  const { handleChange, handleImageChange, handleTextEditorChange } =
+    useCustomForm(setFormData);
 
   useEffect(() => {
     fetchNewsUpdateData(id)
       .then((data) => {
         if (!data) throw new Error("Invalid response from server");
         setFormData(data);
+        setInitialContent(data.content);
       })
       .catch(() => {
         navigate("/notFound");
@@ -49,8 +80,12 @@ const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
       newErrors.title = "The title must be between 10 and 255 characters long";
     }
     if (formData.keyWords.length < 10 || formData.keyWords.length > 180) {
-      newErrors.title =
+      newErrors.keyWords =
         "The key words must be between 10 and 180 characters long";
+    }
+    if (formData.preview.length < 20 || formData.preview.length > 512) {
+      newErrors.preview =
+        "The preview must be between 20 and 512 characters long";
     }
     if (formData.content.length < 20) {
       newErrors.content = "The content must be at least 20 characters long";
@@ -66,7 +101,6 @@ const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!isValid()) return;
@@ -74,7 +108,7 @@ const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
     try {
       const response = await protectedAxios.put(
         `${API_URL}/newsUpdates/${formData.id}`,
-        formData
+        formData,
       );
       console.log(response);
       if (response.status !== 204)
@@ -89,14 +123,13 @@ const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
       if (axios.isAxiosError(error)) {
         setRequestError(
           error.response?.data.message ||
-            "Failed to update the campaign. Please try again later!"
+            "Failed to update the campaign. Please try again later!",
         );
       } else {
         console.error(`Error updating campaign: ${error}`);
       }
     }
   };
-
   const handleReset = (): void => {
     setFormData(getDefaultFormData(id));
     setErrors({});
@@ -111,7 +144,7 @@ const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
       {requestError.length > 0 && <ErrorAlert errorMessage={requestError} />}
       <div className="mb-3">
         <label htmlFor="title" className="form-label">
-          News update title
+          News update title*
         </label>
         <Input
           type="text"
@@ -127,7 +160,7 @@ const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
       </div>
       <div className="mb-3">
         <label htmlFor="keyWords" className="form-label">
-          News update key words
+          News update key words*
         </label>
         <Input
           type="text"
@@ -141,24 +174,42 @@ const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
         {errors.keyWords && <ErrorAlert errorMessage={errors.keyWords} />}
       </div>
       <div className="mb-3">
-        <label htmlFor="content" className="form-label">
-          News update content
+        <label htmlFor="previewInput" className="form-label">
+          News update preview*
         </label>
         <textarea
-          rows={8}
+          rows={5}
           className="form-control"
-          id="content"
-          name="content"
-          value={formData.content}
+          id="previewInput"
+          name="preview"
+          value={formData.preview}
           onChange={handleChange}
-          placeholder="Enter news update content"
+          minLength={20}
+          placeholder="Enter a short preview of this news update:"
           required
         />
+        {errors.preview && <ErrorAlert errorMessage={errors.preview} />}
+      </div>
+      <div className="mb-3">
+        <label htmlFor="content" className="form-label">
+          News update content*
+        </label>
+        {!isNullOrWhitespace(initialContent) && (
+          <Editor
+            id="content"
+            apiKey={API_ENDPOINT}
+            initialValue={initialContent}
+            init={EDITOR_INIT_CONFIG}
+            onEditorChange={(content) => {
+              handleTextEditorChange("content", content);
+            }}
+          />
+        )}
         {errors.content && <ErrorAlert errorMessage={errors.content} />}
       </div>
       <div className="mb-3">
         <label htmlFor="readingTimeInMinutes" className="form-label">
-          News update reading time in minutes
+          News update reading time in minutes*
         </label>
         <Input
           type="number"
@@ -189,6 +240,9 @@ const EditNewsUpdateForm: FC<IEditNewsUpdateFormProps> = ({ id }) => {
           }
           accept="image/png, image/jpeg"
         />
+      </div>
+      <div id="formHelpBlock" className="form-text mb-2">
+        All fields marked with an asterisk (*) are required.
       </div>
       <div className="form-buttons">
         <button type="submit" className="btn btn-primary">

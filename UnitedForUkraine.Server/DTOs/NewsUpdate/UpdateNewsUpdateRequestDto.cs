@@ -9,6 +9,8 @@ namespace UnitedForUkraine.Server.DTOs.NewsUpdate
         public required string Title { get; init; }
         [StringLength(180, MinimumLength = 10)]
         public required string KeyWords { get; init; }
+        [StringLength(512, MinimumLength = 20)]
+        public required string Preview { get; set; }
         [MinLength(20)]
         public required string Content { get; init; }
         [Range(1, 60)]

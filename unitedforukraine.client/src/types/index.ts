@@ -199,6 +199,7 @@ export type NewsUpdateDto = {
   id: number;
   title: string;
   keyWords: string;
+  preview: string;
   content: string;
   imageUrl: string;
   readingTimeInMinutes: number;
@@ -217,6 +218,7 @@ export type PaginatedNewsUpdatesDto = {
 export type CreateNewsUpdateRequestDto = {
   title: string;
   keyWords: string;
+  preview: string;
   content: string;
   imageUrl: string;
   readingTimeInMinutes: number;
@@ -227,6 +229,7 @@ export type CreateNewsUpdateRequestDto = {
 export type UpdateNewsUpdateRequestDto = {
   id: number;
   title: string;
+  preview: string;
   keyWords: string;
   content: string;
   readingTimeInMinutes: number;

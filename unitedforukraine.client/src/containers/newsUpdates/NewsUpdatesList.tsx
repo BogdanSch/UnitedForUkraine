@@ -6,7 +6,6 @@ import { Card, MatchHighlight, Paginator, SearchBar } from "../../components";
 import { PaginatedNewsUpdatesDto } from "../../types";
 import { API_URL } from "../../variables";
 import { convertToReadableDate } from "../../utils/helpers/dateHelper";
-// import { convertToPreviewText } from "../../utils/helpers/stringHelper";
 
 interface INewsUpdatesListProps {
   className?: string;
@@ -130,7 +129,7 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                     </h3>
                     <p className="card-text text-muted">
                       <MatchHighlight
-                        text={newsUpdate.content}
+                        text={newsUpdate.preview}
                         query={searchQuery}
                       />
                     </p>

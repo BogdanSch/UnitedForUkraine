@@ -14,6 +14,7 @@ namespace UnitedForUkraine.Server.Mappers
                 TargetCampaign = newsUpdate.TargetCampaign.ToCampaignDto(),
                 Title = newsUpdate.Title,
                 KeyWords = newsUpdate.KeyWords,
+                Preview = newsUpdate.Preview,
                 Content = newsUpdate.Content,
                 ImageUrl = newsUpdate.ImageUrl,
                 ReadingTimeInMinutes = newsUpdate.ReadingTimeInMinutes,
@@ -28,6 +29,7 @@ namespace UnitedForUkraine.Server.Mappers
             {
                 Title = newsUpdate.Title,
                 KeyWords = newsUpdate.KeyWords,
+                Preview = newsUpdate.Preview,
                 Content = newsUpdate.Content,
                 ImageUrl = newsUpdate.ImageUrl,
                 ReadingTimeInMinutes = newsUpdate.ReadingTimeInMinutes,

@@ -11,6 +11,8 @@ namespace UnitedForUkraine.Server.Models
         public required string Title { get; set; }
         [StringLength(180, MinimumLength = 10)]
         public required string KeyWords { get; set; }
+        [StringLength(512, MinimumLength = 20)]
+        public required string Preview { get; set; }
         [MinLength(20)]
         public required string Content { get; set; }
         public required string ImageUrl { get; set; } = "https://placehold.co/600x400/EEE/31343C";
