@@ -183,7 +183,9 @@ section {
   border-radius: 10px;
   padding: 12px 8px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 
   &-border {
     border: 2px solid $primary-transparent;
@@ -324,7 +326,7 @@ section {
     display: flex;
     flex-direction: row;
     align-items: center;
-    column-gap: .25rem;
+    column-gap: 0.25rem;
   }
 }
 
@@ -528,5 +530,11 @@ section {
   }
   &__filter {
     min-width: 220px !important;
+  }
+}
+
+.modal {
+  &-content {
+    border-radius: 1rem;
   }
 }

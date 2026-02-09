@@ -1,13 +1,13 @@
 import { FC, useState, MouseEvent } from "react";
 
-interface ShareButtonProps {
+interface IShareCampaignButtonProps {
   relativeUrl: string;
   campaignTitle: string;
   campaignGoalAmount: number;
   campaignRaisedAmount: number;
 }
 
-const ShareButton: FC<ShareButtonProps> = ({
+const ShareCampaignButton: FC<IShareCampaignButtonProps> = ({
   relativeUrl,
   campaignTitle,
   campaignGoalAmount,
@@ -42,4 +42,4 @@ const ShareButton: FC<ShareButtonProps> = ({
   );
 };
 
-export default ShareButton;
+export default ShareCampaignButton;

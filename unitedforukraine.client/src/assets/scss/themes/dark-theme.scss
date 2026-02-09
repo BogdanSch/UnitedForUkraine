@@ -38,7 +38,6 @@
   }
   .dropdown {
     &-menu {
-      // box-shadow: $light-shadow;
       background-color: $light-navy;
     }
     &-item {
@@ -195,6 +194,12 @@
     color-scheme: dark;
     &::-webkit-calendar-picker-indicator {
       filter: invert(1);
+    }
+  }
+  .modal {
+    &-content {
+      color: $text-light-gray;
+      background-color: $dark-navy;
     }
   }
 }

@@ -117,6 +117,9 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                   cardStatus={newsUpdate.keyWords}
                   isLite={false}
                 >
+                  {/* <li className="campaigns__item-button"> */}
+
+                  {/* </li> */}
                   <Link
                     to={`/newsUpdates/detail/${newsUpdate.id}/`}
                     className="news__item-link"
@@ -141,6 +144,15 @@ const NewsUpdatesList: FC<INewsUpdatesListProps> = ({
                       <strong>Posted At:</strong>{" "}
                       {convertToReadableDate(newsUpdate.postedAt)}
                     </p>
+                    {/* <ul className="news__item-buttons">
+                      <li className="news__item-button">
+                        <ShareNewsUpdateButton
+                          relativeUrl={`/newsUpdates/detail/${newsUpdate.id}/`}
+                          newsUpdateTitle={newsUpdate.title}
+                          newsUpdateSummary={newsUpdate.preview}
+                        />
+                      </li>
+                    </ul> */}
                   </Link>
                 </Card>
               </li>

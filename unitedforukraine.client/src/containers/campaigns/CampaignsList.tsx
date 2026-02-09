@@ -7,7 +7,7 @@ import {
   CampaignItem,
   Paginator,
   SearchBar,
-  ShareButton,
+  ShareCampaignButton,
 } from "../../components";
 import { CampaignLikeButton } from "../";
 import AuthContext from "../../contexts/AuthContext";
@@ -251,7 +251,7 @@ const CampaignsList: FC<CampaignsListProps> = ({
                   <li className="campaigns__item-button">
                     <ul className="campaigns__item-buttons">
                       <li className="campaigns__item-button">
-                        <ShareButton
+                        <ShareCampaignButton
                           relativeUrl={`/campaigns/detail/${campaign.id}/`}
                           campaignTitle={campaign.title}
                           campaignGoalAmount={campaign.goalAmount}

@@ -6,7 +6,13 @@ import {
   fetchNewsUpdateData,
   incrementNewsUpdateViews,
 } from "../../utils/services/newsUpdateService";
-import { Alert, CampaignItem, Card, Image } from "../../components";
+import {
+  Alert,
+  CampaignItem,
+  Card,
+  Image,
+  ShareNewsUpdateButton,
+} from "../../components";
 import { DeleteNewsUpdateForm, DonationsList } from "../../containers";
 import { convertToReadableDate } from "../../utils/helpers/dateHelper";
 
@@ -29,7 +35,7 @@ const NewsUpdatesDetail: FC = () => {
         setNewsUpdate(data);
 
         const contentContainer: HTMLDivElement | null = document.querySelector(
-          ".news-detail__content"
+          ".news-detail__content",
         );
         if (contentContainer) contentContainer.innerHTML = data.content;
       });
@@ -90,6 +96,13 @@ const NewsUpdatesDetail: FC = () => {
                   <li className="news-detail__meta-item">
                     <i className="bi bi-clock"></i>
                     <strong>{newsUpdate?.readingTimeInMinutes} min.</strong>
+                  </li>
+                  <li className="news-detail__meta-item">
+                    <ShareNewsUpdateButton
+                      relativeUrl={`/newsUpdates/detail/${newsUpdate?.id || ""}/`}
+                      newsUpdateTitle={newsUpdate?.title || ""}
+                      newsUpdateSummary={newsUpdate?.preview || ""}
+                    />
                   </li>
                 </ul>
                 <div className="news-detail__content"></div>

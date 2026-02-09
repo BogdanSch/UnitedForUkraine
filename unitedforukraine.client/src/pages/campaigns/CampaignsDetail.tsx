@@ -6,7 +6,7 @@ import {
   CampaignActionButton,
   Image,
   ProgressBar,
-  ShareButton,
+  ShareCampaignButton,
   Timeline,
 } from "../../components";
 import {
@@ -56,7 +56,10 @@ const CampaignsDetail: FC = () => {
           {isAuthenticated() && isAdmin() && (
             <ul className="campaigns-detail__buttons-list">
               <li className="campaigns-detail__buttons-item">
-                <Link className="btn btn-primary btn-icon" to={`/campaigns/edit/${id}`}>
+                <Link
+                  className="btn btn-primary btn-icon"
+                  to={`/campaigns/edit/${id}`}
+                >
                   <span>Edit this Campaign</span>
                   <i className="bi bi-pencil-square"></i>
                 </Link>
@@ -101,7 +104,7 @@ const CampaignsDetail: FC = () => {
             <div className="campaigns-detail__status">
               <span
                 className={`status ${convertCampaignStatusToString(
-                  campaign?.status || 0
+                  campaign?.status || 0,
                 )}`}
               >
                 {convertCampaignStatusToString(campaign?.status || 0)}
@@ -136,7 +139,7 @@ const CampaignsDetail: FC = () => {
                     />
                   </li>
                   <li className="campaigns-detail__buttons-item">
-                    <ShareButton
+                    <ShareCampaignButton
                       relativeUrl={`/campaigns/detail/${id}`}
                       campaignTitle={campaign?.title ?? ""}
                       campaignGoalAmount={campaign?.goalAmount ?? 0}
@@ -145,9 +148,7 @@ const CampaignsDetail: FC = () => {
                   </li>
                   {isAuthenticated() && campaign && (
                     <li className="campaigns-detail__buttons-item">
-                      <CampaignLikeButton
-                        campaign={campaign}
-                      />
+                      <CampaignLikeButton campaign={campaign} />
                     </li>
                   )}
                 </ul>

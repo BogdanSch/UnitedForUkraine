@@ -9,7 +9,8 @@ export { default as CampaignActionButton } from "./buttons/CampaignActionButton"
 export { default as Timeline } from "./Timeline";
 export { default as Alert } from "./alerts/Alert";
 export { default as ErrorAlert } from "./alerts/ErrorAlert";
-export { default as ShareButton } from "./buttons/ShareButton";
+export { default as ShareCampaignButton } from "./buttons/share/ShareCampaignButton";
+export { default as ShareNewsUpdateButton } from "./buttons/share/ShareNewsUpdateButton";
 export { default as SectionHeadline } from "./sections/SectionHeadline";
 export { default as CallToActionSection } from "./sections/CallToActionSection";
 export { default as Carousel } from "./carousel/Carousel";
