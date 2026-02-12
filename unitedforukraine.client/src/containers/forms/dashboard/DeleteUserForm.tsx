@@ -1,7 +1,15 @@
 import axios from "axios";
 import { protectedAxios } from "../../../utils/axiosInstances";
 import { useNavigate } from "react-router-dom";
-import { FC, FormEvent, useContext, useRef, useEffect, useState } from "react";
+import {
+  FC,
+  FormEvent,
+  useContext,
+  useRef,
+  useEffect,
+  useState,
+  SubmitEvent,
+} from "react";
 import { Modal } from "bootstrap";
 import AuthContext from "../../../contexts/AuthContext";
 import { API_URL } from "../../../variables";
@@ -19,7 +27,6 @@ const getFormData = (): DeleteUserDto => {
 
 const DeleteUserForm: FC = () => {
   const [hasPassword, setHasPassword] = useState<boolean>(true);
-
   const modalElementRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
@@ -47,7 +54,7 @@ const DeleteUserForm: FC = () => {
   const userHasPassword = async (): Promise<boolean> => {
     try {
       const response = await protectedAxios.get<{ hasPassword: boolean }>(
-        `${API_URL}/Auth/me/has-password`
+        `${API_URL}/Auth/me/has-password`,
       );
       return response.data.hasPassword;
     } catch (error) {
@@ -56,8 +63,19 @@ const DeleteUserForm: FC = () => {
     }
   };
 
+  const isValid = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (formData.confirmEmail !== user?.email) {
+      newErrors.confirmEmail = "Email addresses do not match!";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (
-    event: FormEvent<HTMLFormElement>
+    event: SubmitEvent<HTMLFormElement>,
   ): Promise<void> => {
     event.preventDefault();
 
@@ -97,24 +115,13 @@ const DeleteUserForm: FC = () => {
         } else {
           setRequestError(
             error.response?.data?.message ||
-              "Deletion failed. Please, try again later!"
+              "Deletion failed. Please, try again later!",
           );
         }
       } else {
         setRequestError("An unexpected error has occurred!");
       }
     }
-  };
-
-  const isValid = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (formData.confirmEmail !== user?.email) {
-      newErrors.confirmEmail = "Email addresses do not match!";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
   return (

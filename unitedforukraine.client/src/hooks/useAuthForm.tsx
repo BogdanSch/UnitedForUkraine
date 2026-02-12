@@ -28,12 +28,15 @@ export default function useAuthForm(initialState: Record<string, any>) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateForm = (isRegisterPage = false): boolean => {
+  const isValid = (isRegisterPage: boolean = false): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!validatePassword()) return false;
     if (!formData.email.match(emailValidation)) {
       newErrors.email = "Invalid email format!";
+    }
+    if (isRegisterPage && formData.userName.trim().length === 0) {
+      newErrors.userName = "Username is required!";
     }
     if (isRegisterPage && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords should be identical!";
@@ -49,7 +52,7 @@ export default function useAuthForm(initialState: Record<string, any>) {
     requestError,
     setRequestError,
     handleChange,
-    validateForm,
+    isValid,
     setFormData,
     setErrors,
   };

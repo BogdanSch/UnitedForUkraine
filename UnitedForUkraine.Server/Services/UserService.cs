@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using UnitedForUkraine.Server.Data;
-using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Helpers;
 using UnitedForUkraine.Server.Interfaces;
 using UnitedForUkraine.Server.Models;
@@ -13,6 +13,7 @@ namespace UnitedForUkraine.Server.Services
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly ApplicationDbContext _context = context;
         private readonly ILogger<UserService> _logger = logger;
+        private const string ADMIN_EMAIL = "bogsvity777@gmail.com";
 
         public async Task<PaginatedList<AppUser>> GetPaginatedUsersAsync(QueryObject queryObject, int itemsPerPageCount)
         {
@@ -86,6 +87,13 @@ namespace UnitedForUkraine.Server.Services
                 users = users.Where(u => u.RegisteredAt >= start && u.RegisteredAt <= end);
             }
             return await users.CountAsync();
+        }
+        public async Task<string?> GetOwnerIdAsync()
+        {
+            return await _context.Users
+                .Where(u => u.Email == ADMIN_EMAIL)
+                .Select(u => u.Id)
+                .FirstOrDefaultAsync();
         }
     }
 }

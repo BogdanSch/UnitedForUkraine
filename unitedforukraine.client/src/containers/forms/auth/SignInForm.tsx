@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, SubmitEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../variables";
 import axios from "axios";
@@ -12,7 +12,6 @@ import {
   PasswordInput,
 } from "../../../components";
 import { TokenDateDto } from "../../../types";
-// import { TokenDto } from "../../../types";
 
 const SignInForm: FC = () => {
   const navigate = useNavigate();
@@ -22,49 +21,41 @@ const SignInForm: FC = () => {
     withCredentials: true,
   };
 
-  const {
-    formData,
-    errors,
-    handleChange,
-    validateForm,
-    setFormData,
-    setErrors,
-  } = useAuthForm({
-    email: "",
-    password: "",
-    rememberMe: false,
-  });
+  const { formData, errors, handleChange, isValid, setFormData, setErrors } =
+    useAuthForm({
+      email: "",
+      password: "",
+      rememberMe: false,
+    });
 
   const handleSubmit = async (
-    event: FormEvent<HTMLFormElement>
+    event: SubmitEvent<HTMLFormElement>,
   ): Promise<void> => {
     event.preventDefault();
 
-    if (!validateForm()) return;
+    if (!isValid()) return;
 
     try {
       const { data } = await axios.post<TokenDateDto>(
         `${API_URL}/Auth/login`,
         formData,
-        options
+        options,
       );
-
-      // const token: TokenDto = response.data as TokenDto;
 
       navigate(
         `/auth/authentication?` +
           `&accessTokenExpirationTime=${encodeURIComponent(
-            data.accessTokenExpirationTime
+            data.accessTokenExpirationTime,
           )}` +
           `&refreshTokenExpirationTime=${encodeURIComponent(
-            data.refreshTokenExpirationTime
-          )}`
+            data.refreshTokenExpirationTime,
+          )}`,
       );
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setRequestError(
           error.response?.data.message ||
-            "An error has occurred while logging in. Please, try again later!"
+            "An error has occurred while logging in. Please, try again later!",
         );
       } else {
         console.error(`Unexpected error: ${error}`);
@@ -79,7 +70,6 @@ const SignInForm: FC = () => {
       confirmPassword: "",
       rememberMe: false,
     });
-
     setErrors({
       email: "",
       password: "",

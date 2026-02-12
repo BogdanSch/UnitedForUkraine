@@ -21,10 +21,11 @@ namespace UnitedForUkraine.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthTokenService authTokenService, IEmailService emailService, ILogger<AuthController> logger, IUserService userService) : ControllerBase
+    public class AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IDonationRepository donationRepository, IAuthTokenService authTokenService, IEmailService emailService, ILogger<AuthController> logger, IUserService userService) : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly SignInManager<AppUser> _signInManager = signInManager;
+        private readonly IDonationRepository _donationRepository = donationRepository;
         private readonly IAuthTokenService _authTokenService = authTokenService;
         private readonly IEmailService _emailService = emailService;
         private readonly IUserService _userService = userService;
@@ -301,34 +302,36 @@ namespace UnitedForUkraine.Server.Controllers
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized();
+            string? ownerId = await _userService.GetOwnerIdAsync();
+            if (ownerId is null)
+                return BadRequest(new { message = "Account deletion failed. We weren't able to retrieve the information about the client" });
+            if (userId == ownerId)
+                return BadRequest(new { message = "Account deletion failed. The owner account cannot be deleted" });
+
+            if (await _userService.HasNewsUpdatesAsync(userId))
+                return BadRequest(new { message = "Account deletion failed. User cannot be deleted because they have associated news updates" });
 
             AppUser? user = await _userManager.FindByIdAsync(userId);
             if (user is null)
                 return Unauthorized();
-
             if (!string.Equals(user.Email, deleteUserDto.ConfirmEmail, StringComparison.OrdinalIgnoreCase))
                 return BadRequest(new { confirmEmail = "Email addresses do not match" });
 
-            bool hasPassword = await _userManager.HasPasswordAsync(user);
-            if (hasPassword)
+            if (await _userManager.HasPasswordAsync(user))
             {
                 if (string.IsNullOrWhiteSpace(deleteUserDto.Password))
                     return BadRequest(new { password = "Password is required" });
-
                 bool isPasswordValid = await _userManager.CheckPasswordAsync(user, deleteUserDto.Password);
                 if (!isPasswordValid)
-                    return BadRequest(new { password = "Incorrect password." });
+                    return BadRequest(new { password = "Incorrect password" });
             }
 
-            if(await _userService.HasDonationsAsync(user.Id))
-                return BadRequest(new { message = "User cannot be deleted because they have associated donations." });
-            if(await _userService.HasNewsUpdatesAsync(user.Id))
-                return BadRequest(new { message = "User cannot be deleted because they have associated news updates." });
+            await _donationRepository.ChangeUserDonationsOwnerAsync(user.Id, ownerId);
 
             IdentityResult result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded) 
-                return BadRequest(new { message = "Deletion failed. Please, try again later" });
-            return Ok(new { message = "Account successfully deleted" });
+                return BadRequest(new { message = "Account deletion failed. Please, try again later" });
+            return NoContent();
         }
     }
 }

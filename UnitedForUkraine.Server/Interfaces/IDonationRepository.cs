@@ -29,6 +29,7 @@ public interface IDonationRepository
     Task<bool> DonationExistsForUserAsync(int campaignId, string userId);
     Task<int> GetDonationsCountByCampaingIdAsync(int campaignId);
     Task<decimal> GetReapeatDonorsRate(int campaignId);
+    Task ChangeUserDonationsOwnerAsync(string fromUserId, string toUserId);
     Task AddAsync(Donation donation);
     Task<bool> DeleteAsync(int id);
     Task<bool> UpdateAsync(Donation donation);

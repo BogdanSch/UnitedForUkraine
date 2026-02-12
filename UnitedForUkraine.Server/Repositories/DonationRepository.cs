@@ -271,6 +271,12 @@ public class DonationRepository(ApplicationDbContext context) : IDonationReposit
             .GroupBy(d => d.UserId)
             .Where(g => g.Count() > 1)
             .CountAsync();
-        return Math.Round((decimal)repeatDonorsCount * 100m / campaign.DonorsCount, 2);
+        return Math.Round(repeatDonorsCount * 100m / campaign.DonorsCount, 2);
+    }
+    public async Task ChangeUserDonationsOwnerAsync(string fromUserId, string toUserId)
+    {
+        IQueryable<Donation> donationsToUpdate = GetDonationsQuery(fromUserId);
+        await donationsToUpdate.ForEachAsync(d => d.UserId = toUserId);
+        await SaveAsync();
     }
 }

@@ -12,5 +12,6 @@ namespace UnitedForUkraine.Server.Interfaces
         Task<bool> HasDonationsAsync(string userId);
         Task<bool> HasNewsUpdatesAsync(string userId);
         Task<int> GetNumberOfRegisteredUsers(DateTime? start = null, DateTime? end = null);
+        Task<string?> GetOwnerIdAsync();
     }
 }

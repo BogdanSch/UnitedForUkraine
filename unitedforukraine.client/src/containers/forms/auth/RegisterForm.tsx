@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FC, useState, FormEvent } from "react";
+import { FC, useState, SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../variables";
 
@@ -25,36 +25,30 @@ const RegisterForm: FC = () => {
   const navigate = useNavigate();
 
   const [requestError, setRequestError] = useState<string>("");
-  const {
-    formData,
-    errors,
-    handleChange,
-    validateForm,
-    setFormData,
-    setErrors,
-  } = useAuthForm(getDefaultData(clientUri));
+  const { formData, errors, handleChange, isValid, setFormData, setErrors } =
+    useAuthForm(getDefaultData(clientUri));
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (validateForm(true)) {
-      const options = {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      };
+    if (!isValid(true)) return;
 
-      try {
-        await axios.post(`${API_URL}/Auth/register`, formData, options);
-        navigate("/auth/registered");
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          setRequestError(
-            error.response?.data.message ||
-              "An error has occurred while registering. Please try again later!"
-          );
-        } else {
-          console.error(`Unexpected error: ${error}`);
-        }
+    const options = {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+    };
+
+    try {
+      await axios.post(`${API_URL}/Auth/register`, formData, options);
+      navigate("/auth/registered");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setRequestError(
+          error.response?.data.message ||
+            "An error has occurred while registering. Please try again later!",
+        );
+      } else {
+        console.error(`Unexpected error: ${error}`);
       }
     }
   };
@@ -92,7 +86,7 @@ const RegisterForm: FC = () => {
           placeholder="Enter user name: "
           onChange={handleChange}
           autoComplete="username"
-          isRequired={false}
+          isRequired={true}
         />
         {errors.userName && (
           <div className="alert alert-danger mt-1" role="alert">
