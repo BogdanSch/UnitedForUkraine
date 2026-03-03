@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
-using System.Net;
 using UnitedForUkraine.Server.Data.Enums;
 using UnitedForUkraine.Server.Interfaces;
 
@@ -25,7 +24,6 @@ namespace UnitedForUkraine.Server.Services
             }
 
             HttpResponseMessage response = await _httpClient.GetAsync(ApiUrl + fromCurrency);
-
             if(!response.IsSuccessStatusCode)
             {
                 throw new Exception("Error fetching currency rates from the API");

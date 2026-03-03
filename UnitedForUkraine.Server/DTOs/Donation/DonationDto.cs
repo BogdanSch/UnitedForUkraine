@@ -16,6 +16,5 @@ namespace UnitedForUkraine.Server.DTOs.Donation
         public int Status { get; set; }
         public string PaymentDate { get; set; } = string.Empty;
         public required int CampaignId { get; set; }
-        public string CheckoutSessionId { get; set; } = string.Empty;
     }
 }

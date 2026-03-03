@@ -2,6 +2,7 @@ import {
   CampaignCategory,
   CampaignStatus,
   Currency,
+  DonationStatus,
   PaymentMethod,
 } from "./enums";
 
@@ -28,31 +29,15 @@ export type PaginatedCampaignsDto = {
   hasNextPage: boolean;
 };
 
-export type CreateCampaignRequestDto = {
-  title: string;
-  slogan: string;
-  description: string;
-  goalAmount: number;
-  status: CampaignStatus;
-  currency: Currency;
-  category: CampaignCategory;
-  startDate: string;
-  endDate: string;
-  imageUrl: string;
-};
+export type CreateCampaignRequestDto = Omit<
+  CampaignDto,
+  "id" | "raisedAmount" | "donorsCount" | "isLiked"
+>;
 
-export type UpdateCampaignRequestDto = {
-  id: number;
-  title: string;
-  slogan: string;
-  description: string;
-  goalAmount: number;
-  status: CampaignStatus;
-  category: CampaignCategory;
-  startDate: string;
-  endDate: string;
-  imageUrl: string;
-};
+export type UpdateCampaignRequestDto = Omit<
+  CampaignDto,
+  "raisedAmount" | "donorsCount" | "isLiked" | "currency"
+>;
 
 export type DonationModeDto = {
   amount: number;
@@ -61,30 +46,26 @@ export type DonationModeDto = {
 
 export type DonationDto = {
   id: number;
-  userId: number;
-  userName: string;
-  amount: number;
-  notes: string;
-  currency: number;
-  paymentMethod: string;
-  status: number;
-  paymentDate: string;
-  campaignId: number;
-};
-
-export type CreateDonationRequestDto = {
   userId: string;
-  campaignId: number;
+  userName: string;
   amount: number;
   notes: string;
   currency: Currency;
   paymentMethod: PaymentMethod;
+  status: DonationStatus;
+  paymentDate: string;
+  campaignId: number;
 };
 
 export type PaginatedDonationsDto = {
   donations: DonationDto[];
   hasNextPage: boolean;
 };
+
+export type CreateDonationRequestDto = Omit<
+  DonationDto,
+  "id" | "userName" | "status" | "paymentDate"
+>;
 
 export type ImageDto = {
   path: string;
@@ -93,21 +74,15 @@ export type ImageDto = {
   description?: string;
 };
 
-export interface AddressDto {
+export type AddressDto = {
   id: number;
   country: string;
   region: string;
   city: string;
   street: string;
   postalCode: string;
-}
-export interface UpdateAddressRequestDto {
-  country: string;
-  region: string;
-  city: string;
-  street: string;
-  postalCode: string;
-}
+};
+export type UpdateAddressRequestDto = Omit<AddressDto, "id">;
 
 export type UserDto = {
   id: string;
@@ -119,18 +94,18 @@ export type UserDto = {
   isAdmin: boolean;
 };
 
+export type PaginatedUsersDto = {
+  users: UserDto[];
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+};
+
 export type RegisterUserDto = {
   userName: string;
   email: string;
   password: string;
   confirmPassword: string;
   confirmEmailClientUri: string;
-};
-
-export type PaginatedUsersDto = {
-  users: UserDto[];
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
 };
 
 export type UpdateUserProfileDto = {
@@ -215,26 +190,18 @@ export type PaginatedNewsUpdatesDto = {
   hasNextPage: boolean;
 };
 
-export type CreateNewsUpdateRequestDto = {
-  title: string;
-  keyWords: string;
-  preview: string;
-  content: string;
-  imageUrl: string;
-  readingTimeInMinutes: number;
+export type CreateNewsUpdateRequestDto = Omit<
+  NewsUpdateDto,
+  "id" | "authorName" | "postedAt" | "viewsCount" | "targetCampaign"
+> & {
   authorId: string;
   campaignId: number;
 };
 
-export type UpdateNewsUpdateRequestDto = {
-  id: number;
-  title: string;
-  preview: string;
-  keyWords: string;
-  content: string;
-  readingTimeInMinutes: number;
-  imageUrl: string;
-};
+export type UpdateNewsUpdateRequestDto = Omit<
+  NewsUpdateDto,
+  "postedAt" | "authorName" | "viewsCount" | "targetCampaign"
+>;
 
 export type DateRange = {
   startDate: string;

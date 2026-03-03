@@ -325,7 +325,6 @@ namespace UnitedForUkraine.Server.Controllers
                 if (!isPasswordValid)
                     return BadRequest(new { password = "Incorrect password" });
             }
-
             await _donationRepository.ChangeUserDonationsOwnerAsync(user.Id, ownerId);
 
             IdentityResult result = await _userManager.DeleteAsync(user);
